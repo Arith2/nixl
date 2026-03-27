@@ -13,6 +13,7 @@
 #include <aws/core/utils/stream/PreallocatedStreamBuf.h>
 #include <aws/core/utils/memory/stl/AWSStringStream.h>
 #include <absl/strings/str_format.h>
+#include <optional>
 #include <iostream>
 #include "common/nixl_log.h"
 
@@ -67,7 +68,8 @@ awsS3CrtClient::putObjectAsync(std::string_view key,
                                uintptr_t data_ptr,
                                size_t data_len,
                                size_t offset,
-                               put_object_callback_t callback) {
+                               put_object_callback_t callback,
+                               std::optional<std::string> /*rdma_token*/) {
     if (offset != 0) {
         callback(false);
         return;
@@ -106,7 +108,8 @@ awsS3CrtClient::getObjectAsync(std::string_view key,
                                uintptr_t data_ptr,
                                size_t data_len,
                                size_t offset,
-                               get_object_callback_t callback) {
+                               get_object_callback_t callback,
+                               std::optional<std::string> /*rdma_token*/) {
     auto preallocated_stream_buf = Aws::MakeShared<Aws::Utils::Stream::PreallocatedStreamBuf>(
         "GetObjectStreamBuf", reinterpret_cast<unsigned char *>(data_ptr), data_len);
     auto stream_factory = Aws::MakeShared<Aws::IOStreamFactory>(

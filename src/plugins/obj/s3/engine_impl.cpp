@@ -13,6 +13,18 @@
 #include <future>
 #include <optional>
 #include <vector>
+#include "rdma_ctx.h"
+
+// Extract hostname from endpoint URL, e.g. "http://10.93.244.74:8000" -> "10.93.244.74"
+static std::string
+extractHost(const std::string& endpoint) {
+    size_t start = endpoint.find("://");
+    if (start == std::string::npos) return endpoint;
+    start += 3;
+    size_t end = endpoint.find_first_of(":/", start);
+    if (end == std::string::npos) return endpoint.substr(start);
+    return endpoint.substr(start, end - start);
+}
 
 namespace {
 
@@ -100,6 +112,20 @@ DefaultObjEngineImpl::DefaultObjEngineImpl(const nixlBackendInitParams *init_par
     s3Client_ = std::make_shared<awsS3Client>(init_params->customParams, executor_);
     NIXL_INFO << "Object storage backend initialized with S3 Standard client only";
 
+    // Initialize RDMA context if rdma_port param is provided
+    if (init_params->customParams) {
+        auto ep_it   = init_params->customParams->find("endpoint_override");
+        auto port_it = init_params->customParams->find("rdma_port");
+        if (ep_it != init_params->customParams->end() &&
+            port_it != init_params->customParams->end()) {
+            int rdma_port = std::stoi(port_it->second);
+            std::string host = extractHost(ep_it->second);
+            rdma_ctx_ = std::make_unique<RdmaContext>(host, rdma_port);
+            if (!rdma_ctx_->isEnabled())
+                rdma_ctx_.reset();  // disable if connection failed
+        }
+    }
+
     // Ensure at least one client was created
     if (!s3Client_) {
         throw std::runtime_error("Failed to create any S3 client");
@@ -138,7 +164,11 @@ DefaultObjEngineImpl::registerMem(const nixlBlobDesc &mem,
         devIdToObjKey_[mem.devId] = obj_md->objKey;
         out = obj_md.release();
     } else {
-        out = nullptr;
+        // Always create metadata so deregisterMem can find the addr for RDMA MR cleanup
+        auto dram_md = std::make_unique<nixlDramBEMD>(mem.addr, mem.len);
+        if (rdma_ctx_ && rdma_ctx_->isEnabled())
+            rdma_ctx_->registerMR(reinterpret_cast<void*>(mem.addr), mem.len);
+        out = dram_md.release();
     }
 
     return NIXL_SUCCESS;
@@ -146,10 +176,15 @@ DefaultObjEngineImpl::registerMem(const nixlBlobDesc &mem,
 
 nixl_status_t
 DefaultObjEngineImpl::deregisterMem(nixlBackendMD *meta) {
-    nixlObjMetadata *obj_md = static_cast<nixlObjMetadata *>(meta);
-    if (obj_md) {
-        std::unique_ptr<nixlObjMetadata> obj_md_ptr = std::unique_ptr<nixlObjMetadata>(obj_md);
+    if (!meta) return NIXL_SUCCESS;
+
+    if (auto* obj_md = dynamic_cast<nixlObjMetadata*>(meta)) {
         devIdToObjKey_.erase(obj_md->devId);
+        delete obj_md;
+    } else if (auto* dram_md = dynamic_cast<nixlDramBEMD*>(meta)) {
+        if (rdma_ctx_)
+            rdma_ctx_->deregisterMR(reinterpret_cast<void*>(dram_md->addr));
+        delete dram_md;
     }
 
     return NIXL_SUCCESS;
@@ -235,12 +270,23 @@ DefaultObjEngineImpl::postXfer(const nixl_xfer_op_t &operation,
             status_promise->set_value(success ? NIXL_SUCCESS : NIXL_ERR_BACKEND);
         };
 
+        // Build RDMA token if context is active and MR is registered for this buffer
+        std::optional<std::string> rdma_token;
+        if (rdma_ctx_ && rdma_ctx_->isEnabled()) {
+            auto token = rdma_ctx_->buildToken(
+                reinterpret_cast<void*>(data_ptr), data_len, offset);
+            if (!token.empty())
+                rdma_token = token;
+        }
+
         if (operation == NIXL_WRITE)
             client->putObjectAsync(
-                obj_key_search->second, data_ptr, data_len, offset, status_callback);
+                obj_key_search->second, data_ptr, data_len, offset,
+                status_callback, rdma_token);
         else
             client->getObjectAsync(
-                obj_key_search->second, data_ptr, data_len, offset, status_callback);
+                obj_key_search->second, data_ptr, data_len, offset,
+                status_callback, rdma_token);
     }
 
     return NIXL_IN_PROG;

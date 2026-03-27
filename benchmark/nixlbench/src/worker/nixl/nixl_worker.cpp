@@ -233,6 +233,10 @@ xferBenchNixlWorker::xferBenchNixlWorker(int *argc, char ***argv, std::vector<st
             backend_params["endpoint_override"] = xferBenchConfig::obj_endpoint_override;
         }
 
+        if (xferBenchConfig::obj_rdma_port != "") {
+            backend_params["rdma_port"] = xferBenchConfig::obj_rdma_port;
+        }
+
         if (xferBenchConfig::obj_crt_min_limit > 0) {
             // Warn if both CRT and accelerated options are set - CRT takes precedence
             if (xferBenchConfig::obj_accelerated_enable) {

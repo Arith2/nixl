@@ -148,6 +148,7 @@ NB_ARG_STRING(obj_scheme, XFERBENCH_OBJ_SCHEME_HTTP, "HTTP scheme for S3 backend
 NB_ARG_STRING(obj_region, XFERBENCH_OBJ_REGION_EU_CENTRAL_1, "Region for S3 backend");
 NB_ARG_BOOL(obj_use_virtual_addressing, false, "Use virtual addressing for S3 backend");
 NB_ARG_STRING(obj_endpoint_override, "", "Endpoint override for S3 backend");
+NB_ARG_STRING(obj_rdma_port, "", "RDMA CM port for OBJ RDMA backend");
 NB_ARG_STRING(obj_req_checksum,
               XFERBENCH_OBJ_REQ_CHECKSUM_SUPPORTED,
               "Required checksum for S3 backend [supported, required]");
@@ -251,6 +252,7 @@ std::string xferBenchConfig::obj_scheme = "";
 std::string xferBenchConfig::obj_region = "";
 bool xferBenchConfig::obj_use_virtual_addressing = false;
 std::string xferBenchConfig::obj_endpoint_override = "";
+std::string xferBenchConfig::obj_rdma_port = "";
 std::string xferBenchConfig::obj_req_checksum = "";
 std::string xferBenchConfig::obj_ca_bundle = "";
 size_t xferBenchConfig::obj_crt_min_limit = 0;
@@ -398,6 +400,7 @@ xferBenchConfig::loadParams(void) {
             obj_region = NB_ARG(obj_region);
             obj_use_virtual_addressing = NB_ARG(obj_use_virtual_addressing);
             obj_endpoint_override = NB_ARG(obj_endpoint_override);
+            obj_rdma_port = NB_ARG(obj_rdma_port);
             obj_req_checksum = NB_ARG(obj_req_checksum);
             obj_ca_bundle = NB_ARG(obj_ca_bundle);
             obj_crt_min_limit = NB_ARG(obj_crt_min_limit);
@@ -612,6 +615,7 @@ xferBenchConfig::printConfig() {
                         std::to_string(obj_use_virtual_addressing));
             printOption("OBJ S3 endpoint override (--obj_endpoint_override=endpoint)",
                         obj_endpoint_override);
+            printOption("OBJ RDMA CM port (--obj_rdma_port=port)", obj_rdma_port);
             printOption("OBJ S3 required checksum (--obj_req_checksum=[supported, required])",
                         obj_req_checksum);
             printOption("OBJ S3 CA bundle (--obj_ca_bundle=cert-path)", obj_ca_bundle);

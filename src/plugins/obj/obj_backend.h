@@ -19,6 +19,7 @@
 #define OBJ_BACKEND_H
 
 #include "obj_executor.h"
+#include <optional>
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -55,7 +56,8 @@ public:
                    uintptr_t data_ptr,
                    size_t data_len,
                    size_t offset,
-                   put_object_callback_t callback) = 0;
+                   put_object_callback_t callback,
+                   std::optional<std::string> rdma_token = std::nullopt) = 0;
 
     /**
      * Asynchronously get an object from S3.
@@ -70,7 +72,8 @@ public:
                    uintptr_t data_ptr,
                    size_t data_len,
                    size_t offset,
-                   get_object_callback_t callback) = 0;
+                   get_object_callback_t callback,
+                   std::optional<std::string> rdma_token = std::nullopt) = 0;
 
     /**
      * Check if the object exists.

@@ -7,6 +7,16 @@
 #define OBJ_PLUGIN_S3_ENGINE_IMPL_H
 
 #include "obj_backend.h"
+#include "rdma_ctx.h"
+
+// Metadata for DRAM_SEG registrations — stores address for MR deregistration.
+class nixlDramBEMD : public nixlBackendMD {
+public:
+    nixlDramBEMD(uintptr_t addr, size_t len)
+        : nixlBackendMD(true), addr(addr), len(len) {}
+    uintptr_t addr;
+    size_t    len;
+};
 
 class DefaultObjEngineImpl : public nixlObjEngineImpl {
 public:
@@ -57,6 +67,7 @@ protected:
     std::shared_ptr<iS3Client> s3Client_;
     std::unordered_map<uint64_t, std::string> devIdToObjKey_;
     size_t crtMinLimit_;
+    std::unique_ptr<RdmaContext> rdma_ctx_;
 };
 
 #endif // OBJ_PLUGIN_S3_ENGINE_IMPL_H

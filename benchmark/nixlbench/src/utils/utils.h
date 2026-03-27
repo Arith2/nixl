@@ -178,6 +178,7 @@ public:
     static std::string obj_region;
     static bool obj_use_virtual_addressing;
     static std::string obj_endpoint_override;
+    static std::string obj_rdma_port;
     static std::string obj_req_checksum;
     static std::string obj_ca_bundle;
     static size_t obj_crt_min_limit;

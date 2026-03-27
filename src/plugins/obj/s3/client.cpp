@@ -59,10 +59,35 @@ awsS3Client::setExecutor(std::shared_ptr<Aws::Utils::Threading::Executor> execut
 
 void
 awsS3Client::putObjectAsync(std::string_view key,
-                            uintptr_t data_ptr,
-                            size_t data_len,
-                            size_t offset,
-                            put_object_callback_t callback) {
+                             uintptr_t data_ptr,
+                             size_t data_len,
+                             size_t offset,
+                             put_object_callback_t callback,
+                             std::optional<std::string> rdma_token) {
+    if (rdma_token.has_value()) {
+        // RDMA path: empty HTTP body + RDMA token header.
+        // Content-Length reflects the actual data size so RGW's ofs check passes.
+        // RGW's get_data() intercepts this and returns data via RDMA_READ instead of TCP.
+        Aws::S3::Model::PutObjectRequest request;
+        request.WithBucket(bucketName_).WithKey(Aws::String(key));
+        auto empty_stream = Aws::MakeShared<Aws::StringStream>("RdmaEmpty", "");
+        request.SetBody(empty_stream);
+        request.SetContentLength(static_cast<long long>(data_len));
+        request.SetAdditionalCustomHeaderValue("x-amz-rdma-token", rdma_token.value());
+
+        s3Client_->PutObjectAsync(
+            request,
+            [callback](const Aws::S3::S3Client*,
+                       const Aws::S3::Model::PutObjectRequest&,
+                       const Aws::S3::Model::PutObjectOutcome& outcome,
+                       const std::shared_ptr<const Aws::Client::AsyncCallerContext>&) {
+                callback(outcome.IsSuccess());
+            },
+            nullptr);
+        return;
+    }
+
+    // TCP path: body carries data.
     if (offset != 0) {
         callback(false);
         return;
@@ -94,7 +119,30 @@ awsS3Client::getObjectAsync(std::string_view key,
                             uintptr_t data_ptr,
                             size_t data_len,
                             size_t offset,
-                            get_object_callback_t callback) {
+                            get_object_callback_t callback,
+                            std::optional<std::string> rdma_token) {
+    if (rdma_token.has_value()) {
+        // RDMA path: send token header so RGW can RDMA_WRITE data directly into
+        // data_ptr.  Response body is empty (Content-Length: 0); the callback
+        // fires after the HTTP 200 arrives, at which point data is already in place.
+        Aws::S3::Model::GetObjectRequest request;
+        request.WithBucket(bucketName_)
+            .WithKey(Aws::String(key))
+            .WithRange(absl::StrFormat("bytes=%d-%d", offset, offset + data_len - 1));
+        request.SetAdditionalCustomHeaderValue("x-amz-rdma-token", rdma_token.value());
+
+        s3Client_->GetObjectAsync(
+            request,
+            [callback](const Aws::S3::S3Client*,
+                       const Aws::S3::Model::GetObjectRequest&,
+                       const Aws::S3::Model::GetObjectOutcome& outcome,
+                       const std::shared_ptr<const Aws::Client::AsyncCallerContext>&) {
+                callback(outcome.IsSuccess());
+            },
+            nullptr);
+        return;
+    }
+
     auto preallocated_stream_buf = Aws::MakeShared<Aws::Utils::Stream::PreallocatedStreamBuf>(
         "GetObjectStreamBuf", reinterpret_cast<unsigned char *>(data_ptr), data_len);
     auto stream_factory = Aws::MakeShared<Aws::IOStreamFactory>(

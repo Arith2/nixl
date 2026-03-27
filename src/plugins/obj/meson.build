@@ -22,6 +22,8 @@ obj_sources = [
     's3/client.h',
     's3/engine_impl.cpp',
     's3/engine_impl.h',
+    's3/rdma_ctx.cpp',
+    's3/rdma_ctx.h',
     's3_crt/engine_impl.cpp',
     's3_crt/engine_impl.h',
     's3_crt/client.cpp',
@@ -34,7 +36,8 @@ if not is_variable('obj_utils_interface')
     subdir_done()
 endif
 
-plugin_deps += [obj_utils_interface, dependency('asio', required: true)]
+plugin_deps += [obj_utils_interface, dependency('asio', required: true),
+                dependency('libibverbs'), dependency('librdmacm')]
 
 if cuobj_dep.found()
     message('Found CUObjClient Library. Enabling S3 Accelerated engines')

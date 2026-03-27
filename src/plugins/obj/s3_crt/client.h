@@ -7,6 +7,7 @@
 #define OBJ_PLUGIN_S3_CRT_CLIENT_H
 
 #include <memory>
+#include <optional>
 #include <string_view>
 #include <cstdint>
 #include <aws/s3-crt/S3CrtClient.h>
@@ -42,14 +43,16 @@ public:
                    uintptr_t data_ptr,
                    size_t data_len,
                    size_t offset,
-                   put_object_callback_t callback) override;
+                   put_object_callback_t callback,
+                   std::optional<std::string> rdma_token = std::nullopt) override;
 
     void
     getObjectAsync(std::string_view key,
                    uintptr_t data_ptr,
                    size_t data_len,
                    size_t offset,
-                   get_object_callback_t callback) override;
+                   get_object_callback_t callback,
+                   std::optional<std::string> rdma_token = std::nullopt) override;
 
     bool
     checkObjectExists(std::string_view key) override;
