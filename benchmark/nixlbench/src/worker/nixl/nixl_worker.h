@@ -45,6 +45,9 @@ class xferBenchNixlWorker: public xferBenchWorker {
         std::vector<xferFileState> remote_fds;
         std::vector<std::vector<xferBenchIOV>> remote_iovs;
         std::vector<GusliDeviceConfig> gusli_devices;
+        // prepop_keys_[thread_idx] holds all object key names for that thread
+        // when obj_prepop_num > 0; each benchmark iteration rotates through them.
+        std::vector<std::vector<std::string>> prepop_keys_;
 
     public:
         xferBenchNixlWorker(int *argc, char ***argv, std::vector<std::string> devices);

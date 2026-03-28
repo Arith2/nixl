@@ -149,6 +149,12 @@ NB_ARG_STRING(obj_region, XFERBENCH_OBJ_REGION_EU_CENTRAL_1, "Region for S3 back
 NB_ARG_BOOL(obj_use_virtual_addressing, false, "Use virtual addressing for S3 backend");
 NB_ARG_STRING(obj_endpoint_override, "", "Endpoint override for S3 backend");
 NB_ARG_STRING(obj_rdma_port, "", "RDMA CM port for OBJ RDMA backend");
+NB_ARG_INT32(obj_prepop_num,
+             0,
+             "Number of pre-populated objects per thread for cold-read benchmark (0=disabled). "
+             "PUT: writes unique objects per iteration and keeps them (no cleanup). "
+             "GET: skips initial object creation, rotates reads across pre-existing objects. "
+             "Objects are named prepop_{size}B_{thread}_{dev}_{idx:06d}.");
 NB_ARG_STRING(obj_req_checksum,
               XFERBENCH_OBJ_REQ_CHECKSUM_SUPPORTED,
               "Required checksum for S3 backend [supported, required]");
@@ -253,6 +259,7 @@ std::string xferBenchConfig::obj_region = "";
 bool xferBenchConfig::obj_use_virtual_addressing = false;
 std::string xferBenchConfig::obj_endpoint_override = "";
 std::string xferBenchConfig::obj_rdma_port = "";
+int xferBenchConfig::obj_prepop_num = 0;
 std::string xferBenchConfig::obj_req_checksum = "";
 std::string xferBenchConfig::obj_ca_bundle = "";
 size_t xferBenchConfig::obj_crt_min_limit = 0;
@@ -401,6 +408,7 @@ xferBenchConfig::loadParams(void) {
             obj_use_virtual_addressing = NB_ARG(obj_use_virtual_addressing);
             obj_endpoint_override = NB_ARG(obj_endpoint_override);
             obj_rdma_port = NB_ARG(obj_rdma_port);
+            obj_prepop_num = NB_ARG(obj_prepop_num);
             obj_req_checksum = NB_ARG(obj_req_checksum);
             obj_ca_bundle = NB_ARG(obj_ca_bundle);
             obj_crt_min_limit = NB_ARG(obj_crt_min_limit);
@@ -616,6 +624,10 @@ xferBenchConfig::printConfig() {
             printOption("OBJ S3 endpoint override (--obj_endpoint_override=endpoint)",
                         obj_endpoint_override);
             printOption("OBJ RDMA CM port (--obj_rdma_port=port)", obj_rdma_port);
+            printOption("OBJ prepop objects (--obj_prepop_num=N)",
+                        obj_prepop_num > 0 ?
+                            std::to_string(obj_prepop_num) + " (enabled; PUT keeps objects, GET rotates reads)" :
+                            "0 (disabled)");
             printOption("OBJ S3 required checksum (--obj_req_checksum=[supported, required])",
                         obj_req_checksum);
             printOption("OBJ S3 CA bundle (--obj_ca_bundle=cert-path)", obj_ca_bundle);

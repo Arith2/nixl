@@ -692,6 +692,10 @@ xferBenchNixlWorker::cleanupBasicDescFile(xferBenchIOV &iov) {
 
 void
 xferBenchNixlWorker::cleanupBasicDescObj(xferBenchIOV &iov) {
+    if (xferBenchConfig::obj_prepop_num > 0) {
+        // Prepop mode: keep all objects so they can be reused by subsequent GET benchmarks.
+        return;
+    }
     if (!xferBenchUtils::rmObj(iov.metaInfo)) {
         std::cerr << "Failed to remove object: " << iov.metaInfo << std::endl;
         exit(EXIT_FAILURE);
@@ -811,27 +815,47 @@ xferBenchNixlWorker::allocateMemory(int num_threads) {
     opt_args.backends.push_back(backend_engine);
 
     if (xferBenchConfig::isObjStorageBackend()) {
+        const bool is_prepop = (xferBenchConfig::obj_prepop_num > 0);
         struct timeval tv;
         gettimeofday(&tv, nullptr);
         uint64_t timestamp = tv.tv_sec * 1000000ULL + tv.tv_usec;
+
+        prepop_keys_.clear();
+        prepop_keys_.resize(num_threads);
 
         for (int list_idx = 0; list_idx < num_threads; list_idx++) {
             std::vector<xferBenchIOV> iov_list;
             for (i = 0; i < num_devices; i++) {
                 std::optional<xferBenchIOV> basic_desc;
-                std::string unique_name = "nixlbench_obj" + std::to_string(list_idx) + "_" +
-                    std::to_string(i) + "_" + std::to_string(timestamp);
+                std::string unique_name;
 
-                if (xferBenchConfig::op_type == XFERBENCH_OP_READ) {
-                    if (!xferBenchUtils::putObj(buffer_size, unique_name)) {
-                        std::cerr << "Failed to put object: " << unique_name << std::endl;
-                        continue;
+                if (is_prepop) {
+                    // Deterministic key prefix: prepop_{size}B_{thread}_{dev}_{idx:06d}
+                    std::string key_prefix = "prepop_" + std::to_string(buffer_size) + "B_" +
+                        std::to_string(list_idx) + "_" + std::to_string(i) + "_";
+                    for (int k = 0; k < xferBenchConfig::obj_prepop_num; k++) {
+                        std::ostringstream oss;
+                        oss << key_prefix << std::setfill('0') << std::setw(6) << k;
+                        prepop_keys_[list_idx].push_back(oss.str());
                     }
+                    unique_name = prepop_keys_[list_idx][0];
+                    // GET prepop: objects already exist from a prior PUT run, skip putObj.
+                    // PUT prepop: keys are rotated per-iteration; no pre-creation needed.
+                    std::cout << "Prepop obj (key[0]): " << unique_name << std::endl;
+                } else {
+                    unique_name = "nixlbench_obj" + std::to_string(list_idx) + "_" +
+                        std::to_string(i) + "_" + std::to_string(timestamp);
+                    if (xferBenchConfig::op_type == XFERBENCH_OP_READ) {
+                        if (!xferBenchUtils::putObj(buffer_size, unique_name)) {
+                            std::cerr << "Failed to put object: " << unique_name << std::endl;
+                            continue;
+                        }
+                    }
+                    std::cout << "Creating obj: " << unique_name << std::endl;
                 }
 
                 basic_desc = initBasicDescObj(buffer_size, i, unique_name);
                 if (basic_desc) {
-                    std::cout << "Creating obj: " << unique_name << std::endl;
                     iov_list.push_back(basic_desc.value());
                 }
             }
@@ -1245,12 +1269,18 @@ execTransferIterations(nixlAgent *agent,
                        const int num_iter,
                        xferBenchTimer &timer,
                        xferBenchStats &thread_stats,
-                       const bool recreate_per_iteration) {
+                       const bool recreate_per_iteration,
+                       const std::vector<std::string> *prepop_keys,
+                       const int prepop_iter_offset) {
     nixlXferReqH *req = nullptr;
     nixlTime::us_t total_prepare_duration = 0;
 
+    // Prepop key rotation requires recreating the xfer request per iteration
+    // so the OBJ backend picks up the new object key in metaInfo.
+    const bool use_recreate = recreate_per_iteration || (prepop_keys && !prepop_keys->empty());
+
     // Create request once if not recreating per iteration
-    if (!recreate_per_iteration) {
+    if (!use_recreate) {
         nixl_status_t create_rc =
             agent->createXferReq(op, local_desc, remote_desc, target, req, &params);
         if (NIXL_SUCCESS != create_rc) {
@@ -1262,10 +1292,15 @@ execTransferIterations(nixlAgent *agent,
     }
 
     // Execute transfer iterations
-    // Branch prediction hint: most backends don't recreate per iteration
-    if (__builtin_expect(recreate_per_iteration, 0)) {
-        // GUSLI path: Create/execute/release per iteration
+    if (__builtin_expect(use_recreate, 0)) {
+        // Recreate path: used by GUSLI and OBJ prepop (key rotation).
         for (int i = 0; i < num_iter; ++i) {
+            // Rotate object key for prepop mode before creating the request.
+            if (prepop_keys && !prepop_keys->empty()) {
+                int idx = (prepop_iter_offset + i) % (int)prepop_keys->size();
+                remote_desc[0].metaInfo = (*prepop_keys)[idx];
+            }
+
             nixl_status_t create_rc =
                 agent->createXferReq(op, local_desc, remote_desc, target, req, &params);
             if (__builtin_expect(create_rc != NIXL_SUCCESS, 0)) {
@@ -1323,7 +1358,9 @@ execTransfer(nixlAgent *agent,
              const nixl_xfer_op_t op,
              const int num_iter,
              const int num_threads,
-             xferBenchStats &stats) {
+             xferBenchStats &stats,
+             const std::vector<std::vector<std::string>> &prepop_keys = {},
+             const int prepop_iter_offset = 0) {
     int ret = 0;
     stats.clear();
 
@@ -1349,6 +1386,10 @@ execTransfer(nixlAgent *agent,
             params.notif = "0xBEEF";
         }
 
+        const std::vector<std::string> *thread_keys =
+            (!prepop_keys.empty() && tid < (int)prepop_keys.size()) ?
+                &prepop_keys[tid] : nullptr;
+
         // Execute transfers
         const int result = execTransferIterations(agent,
                                                   op,
@@ -1359,7 +1400,9 @@ execTransfer(nixlAgent *agent,
                                                   num_iter,
                                                   timer,
                                                   thread_stats,
-                                                  xferBenchConfig::recreate_xfer);
+                                                  xferBenchConfig::recreate_xfer,
+                                                  thread_keys,
+                                                  prepop_iter_offset);
 
         if (__builtin_expect(result != 0, 0)) {
             ret = result;
@@ -1392,8 +1435,8 @@ xferBenchNixlWorker::transfer(size_t block_size,
     }
 
     if (skip > 0) {
-        ret = execTransfer(
-            agent, local_iovs, remote_iovs, xfer_op, skip, xferBenchConfig::num_threads, stats);
+        ret = execTransfer(agent, local_iovs, remote_iovs, xfer_op, skip,
+                           xferBenchConfig::num_threads, stats, prepop_keys_, 0);
         if (ret < 0) {
             return std::variant<xferBenchStats, int>(ret);
         }
@@ -1404,8 +1447,8 @@ xferBenchNixlWorker::transfer(size_t block_size,
 
     stats.clear();
 
-    ret = execTransfer(
-        agent, local_iovs, remote_iovs, xfer_op, num_iter, xferBenchConfig::num_threads, stats);
+    ret = execTransfer(agent, local_iovs, remote_iovs, xfer_op, num_iter,
+                       xferBenchConfig::num_threads, stats, prepop_keys_, skip);
     if (ret < 0) {
         return std::variant<xferBenchStats, int>(ret);
     }
