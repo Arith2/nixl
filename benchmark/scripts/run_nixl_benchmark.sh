@@ -170,23 +170,21 @@ run_benchmark() {
     local rdma_flag=$3  # "" or "-obj_rdma_port 7471"
 
     local config="${nixl_tag}_${daos_tag}"
-    local put_log="${LOGDIR}/PUT_${config}.log"
-    local get_log="${LOGDIR}/GET_${config}.log"
 
     echo ""
     echo "╔══════════════════════════════════════════════╗"
     echo "  Config: $config"
-    echo "  PUT log: $put_log"
-    echo "  GET log: $get_log"
+    echo "  Logs:   PUT_${config}_{4KB..64MB}.log"
+    echo "          GET_${config}_{4KB..64MB}.log"
     echo "╚══════════════════════════════════════════════╝"
 
     # ── PUT: one invocation per block size (12K objects kept, no cleanup) ──
     echo "[hsc-12] running PUT per block size..."
-    : > "$put_log"   # truncate/create log
     for idx in "${!BLOCK_SIZES[@]}"; do
         local bs=${BLOCK_SIZES[$idx]}
         local name=${BLOCK_NAMES[$idx]}
-        echo "--- PUT $name ($bs B) ---" | tee -a "$put_log"
+        local log="${LOGDIR}/PUT_${config}_${name}.log"
+        echo "--- PUT $config $name → $log ---"
         start_hsc12   # fresh etcd metadata for each size
         # shellcheck disable=SC2086
         docker exec nixl-dev nixlbench \
@@ -196,16 +194,16 @@ run_benchmark() {
             -num_iter 12000 \
             -warmup_iter 0 \
             $rdma_flag \
-            2>&1 | tee -a "$put_log"
+            2>&1 | tee "$log"
     done
 
     # ── GET: one invocation per block size (reads pre-existing objects) ────
     echo "[hsc-12] running GET per block size..."
-    : > "$get_log"
     for idx in "${!BLOCK_SIZES[@]}"; do
         local bs=${BLOCK_SIZES[$idx]}
         local name=${BLOCK_NAMES[$idx]}
-        echo "--- GET $name ($bs B) ---" | tee -a "$get_log"
+        local log="${LOGDIR}/GET_${config}_${name}.log"
+        echo "--- GET $config $name → $log ---"
         start_hsc12
         # shellcheck disable=SC2086
         docker exec nixl-dev nixlbench \
@@ -215,7 +213,7 @@ run_benchmark() {
             -num_iter 8192 \
             -warmup_iter 1024 \
             $rdma_flag \
-            2>&1 | tee -a "$get_log"
+            2>&1 | tee "$log"
     done
 
     echo "[done] $config"
@@ -282,4 +280,4 @@ esac
 
 echo ""
 echo "=== All benchmarks complete. Logs in $LOGDIR ==="
-ls -lh "${LOGDIR}"/PUT_*.log "${LOGDIR}"/GET_*.log 2>/dev/null || true
+ls -lh "${LOGDIR}"/PUT_*.log "${LOGDIR}"/GET_*.log 2>/dev/null | sort || true
