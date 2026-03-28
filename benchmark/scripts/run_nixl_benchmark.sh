@@ -1,9 +1,13 @@
 #!/bin/bash
 # NIXL End-to-End Benchmark Script
 #
-# Runs PUT + GET sweeps (4KB→64MB) for all 4 configurations:
+# Runs PUT + GET per block size (4KB→64MB) for all 4 configurations:
 #   NIXL_TCP_DAOS_RDMA, NIXL_TCP_DAOS_TCP,
 #   NIXL_RDMA_DAOS_RDMA, NIXL_RDMA_DAOS_TCP
+#
+# Each block size runs as a separate nixlbench invocation so that the
+# prepop object key (prepop_{size}B_...) matches the actual block size,
+# preventing key collisions and object overwrites across block sizes.
 #
 # Run from hsc-12. Requires passwordless SSH to hsc-14 and hsc-21.
 #
@@ -16,6 +20,9 @@ set -euo pipefail
 
 LOGDIR=/HSC/users/zhuyu/nixl/logs
 
+BLOCK_SIZES=(4096 65536 1048576 8388608 67108864)
+BLOCK_NAMES=(4KB   64KB  1MB     8MB     64MB   )
+
 # ── nixlbench flags ─────────────────────────────────────────────────────────
 ETCD=http://localhost:2379
 ENDPOINT=http://10.93.244.74:8000
@@ -24,9 +31,7 @@ BASE_FLAGS=(
     -etcd_endpoints "$ETCD"
     -backend OBJ
     -num_threads 1
-    -large_blk_iter_ftr 32
-    -start_block_size 4096
-    -max_block_size 67108864
+    -large_blk_iter_ftr 1
     -obj_endpoint_override "$ENDPOINT"
     -obj_scheme http
     -obj_bucket_name lmcache
@@ -156,6 +161,9 @@ start_hsc12() {
 }
 
 # ── benchmark runner ─────────────────────────────────────────────────────────
+# Runs PUT then GET for every block size as separate invocations.
+# Each size uses start_block_size=max_block_size=BS so that prepop keys
+# are prepop_{BS}B_... — no cross-size overwrites in a single bucket.
 run_benchmark() {
     local daos_tag=$1   # DAOS_RDMA or DAOS_TCP
     local nixl_tag=$2   # NIXL_TCP  or NIXL_RDMA
@@ -172,28 +180,43 @@ run_benchmark() {
     echo "  GET log: $get_log"
     echo "╚══════════════════════════════════════════════╝"
 
-    # PUT sweep: 4KB→64MB, 12K iterations (populates objects, no cleanup)
-    echo "[hsc-12] running PUT sweep..."
-    # shellcheck disable=SC2086
-    docker exec nixl-dev nixlbench \
-        "${BASE_FLAGS[@]}" \
-        -op_type WRITE \
-        -num_iter 12000 \
-        -warmup_iter 0 \
-        $rdma_flag \
-        2>&1 | tee "$put_log"
+    # ── PUT: one invocation per block size (12K objects kept, no cleanup) ──
+    echo "[hsc-12] running PUT per block size..."
+    : > "$put_log"   # truncate/create log
+    for idx in "${!BLOCK_SIZES[@]}"; do
+        local bs=${BLOCK_SIZES[$idx]}
+        local name=${BLOCK_NAMES[$idx]}
+        echo "--- PUT $name ($bs B) ---" | tee -a "$put_log"
+        start_hsc12   # fresh etcd metadata for each size
+        # shellcheck disable=SC2086
+        docker exec nixl-dev nixlbench \
+            "${BASE_FLAGS[@]}" \
+            -op_type WRITE \
+            -start_block_size "$bs" -max_block_size "$bs" \
+            -num_iter 12000 \
+            -warmup_iter 0 \
+            $rdma_flag \
+            2>&1 | tee -a "$put_log"
+    done
 
-    # GET sweep: 4KB→64MB, warmup 1K + 8K iterations (reads pre-existing objects)
-    echo "[hsc-12] running GET sweep..."
-    start_hsc12   # restart etcd between PUT and GET to clear NIXL metadata
-    # shellcheck disable=SC2086
-    docker exec nixl-dev nixlbench \
-        "${BASE_FLAGS[@]}" \
-        -op_type READ \
-        -num_iter 8192 \
-        -warmup_iter 1024 \
-        $rdma_flag \
-        2>&1 | tee "$get_log"
+    # ── GET: one invocation per block size (reads pre-existing objects) ────
+    echo "[hsc-12] running GET per block size..."
+    : > "$get_log"
+    for idx in "${!BLOCK_SIZES[@]}"; do
+        local bs=${BLOCK_SIZES[$idx]}
+        local name=${BLOCK_NAMES[$idx]}
+        echo "--- GET $name ($bs B) ---" | tee -a "$get_log"
+        start_hsc12
+        # shellcheck disable=SC2086
+        docker exec nixl-dev nixlbench \
+            "${BASE_FLAGS[@]}" \
+            -op_type READ \
+            -start_block_size "$bs" -max_block_size "$bs" \
+            -num_iter 8192 \
+            -warmup_iter 1024 \
+            $rdma_flag \
+            2>&1 | tee -a "$get_log"
+    done
 
     echo "[done] $config"
 }
