@@ -3,7 +3,7 @@ ETCD Runtime: Registered as rank 0 item 1 of 1
 OBJ backend with standard S3 enabled
 Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
 All processes are ready to proceed
-Creating obj: nixlbench_obj0_0_1774610477537384
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_67108864B_0_0_000000
 ****************************************************************************************************************************************************************
 NIXLBench Configuration
 ****************************************************************************************************************************************************************
@@ -24,6 +24,8 @@ OBJ S3 scheme (--obj_scheme=[http, https])                  : http
 OBJ S3 region (--obj_region=region)                         : us-east-1
 OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
 OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
 OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
 OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
 OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
@@ -42,32 +44,16 @@ Check consistency (--check_consistency=[0,1])               : 0
 Total buffer size (--total_buffer_size=N)                   : 8589934592
 Num initiator dev (--num_initiator_dev=N)                   : 1
 Num target dev (--num_target_dev=N)                         : 1
-Start block size (--start_block_size=N)                     : 4096
+Start block size (--start_block_size=N)                     : 67108864
 Max block size (--max_block_size=N)                         : 67108864
 Start batch size (--start_batch_size=N)                     : 1
 Max batch size (--max_batch_size=N)                         : 1
-Num iter (--num_iter=N)                                     : 8192
-Warmup iter (--warmup_iter=N)                               : 1024
-Large block iter factor (--large_blk_iter_ftr=N)            : 32
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
 Num threads (--num_threads=N)                               : 1
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-4096                1              0.000413       9927.4         24.0           24.0           21.7           39.0           9905.7         10858.0        
-8192                1              0.000518       15822.1        35.0           35.0           19.4           42.0           15802.7        14834.0        
-16384               1              0.000543       30152.5        47.0           47.0           20.1           42.0           30132.4        10040.0        
-32768               1              0.004137       7920.0         31.0           31.0           17.5           41.0           7902.4         10910.0        
-65536               1              0.005201       12601.6        52.0           52.0           19.6           40.0           12581.9        16152.0        
-131072              1              0.007603       17238.6        28.0           28.0           18.7           40.0           17219.8        20930.0        
-262144              1              0.009826       26677.7        231.0          231.0          21.3           40.0           26656.3        31769.0        
-524288              1              0.015295       34278.7        38.0           38.0           19.7           40.0           34259.0        38873.0        
-1048576             1              0.025791       40656.4        35.0           35.0           18.2           41.0           40638.1        45005.0        
-2097152             1              0.045070       46531.2        54.0           54.0           21.4           43.0           46509.4        52112.0        
-4194304             1              0.077147       54367.5        45.0           45.0           16.1           44.0           54351.1        64105.0        
-8388608             1              0.119569       70157.2        66.0           66.0           14.8           42.0           70142.0        85326.0        
-16777216            1              0.171221       97985.8        26.0           26.0           19.6           56.0           97965.9        131232.0       
-33554432            1              0.221429       151535.8       62.0           62.0           24.2           58.0           151511.1       218076.0       
-67108864            1              0.265978       252309.6       52.0           52.0           26.2           88.0           252282.9       460442.0       
-Removing S3 object: nixlbench_obj0_0_1774610477537384 from bucket: lmcache
-delete: s3://lmcache/nixlbench_obj0_0_1774610477537384
+67108864            1              3.845701       17450.4        7.0            7.0            12.5           30.0           17429.9        23992.0        

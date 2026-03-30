@@ -18,6 +18,7 @@
 #include "client.h"
 #include "object/s3/utils.h"
 #include "object/s3/aws_sdk_init.h"
+#include "common/nixl_log.h"
 #include <aws/s3/model/PutObjectRequest.h>
 #include <aws/s3/model/GetObjectRequest.h>
 #include <aws/s3/model/HeadObjectRequest.h>
@@ -65,14 +66,16 @@ awsS3Client::putObjectAsync(std::string_view key,
                              put_object_callback_t callback,
                              std::optional<std::string> rdma_token) {
     if (rdma_token.has_value()) {
-        // RDMA path: empty HTTP body + RDMA token header.
-        // Content-Length reflects the actual data size so RGW's ofs check passes.
-        // RGW's get_data() intercepts this and returns data via RDMA_READ instead of TCP.
+        // RDMA path: Content-Length=0 (no TCP body) + RDMA token header.
+        // RGW reads the real data length from the token and updates s->content_length,
+        // so the size check in execute() passes.  Content-Length=0 tells beast the
+        // HTTP body is immediately done, preventing the body-drain loop that would
+        // otherwise block ~150ms waiting for data that never arrives over TCP.
         Aws::S3::Model::PutObjectRequest request;
         request.WithBucket(bucketName_).WithKey(Aws::String(key));
         auto empty_stream = Aws::MakeShared<Aws::StringStream>("RdmaEmpty", "");
         request.SetBody(empty_stream);
-        request.SetContentLength(static_cast<long long>(data_len));
+        request.SetContentLength(0);
         request.SetAdditionalCustomHeaderValue("x-amz-rdma-token", rdma_token.value());
 
         s3Client_->PutObjectAsync(
@@ -81,6 +84,11 @@ awsS3Client::putObjectAsync(std::string_view key,
                        const Aws::S3::Model::PutObjectRequest&,
                        const Aws::S3::Model::PutObjectOutcome& outcome,
                        const std::shared_ptr<const Aws::Client::AsyncCallerContext>&) {
+                if (!outcome.IsSuccess())
+                    NIXL_ERROR << "putObjectAsync (RDMA) error: "
+                               << outcome.GetError().GetMessage()
+                               << " (HTTP " << static_cast<int>(
+                                      outcome.GetError().GetResponseCode()) << ")";
                 callback(outcome.IsSuccess());
             },
             nullptr);
@@ -109,6 +117,11 @@ awsS3Client::putObjectAsync(std::string_view key,
             const Aws::S3::Model::PutObjectRequest &,
             const Aws::S3::Model::PutObjectOutcome &outcome,
             const std::shared_ptr<const Aws::Client::AsyncCallerContext> &) {
+            if (!outcome.IsSuccess())
+                NIXL_ERROR << "putObjectAsync (TCP) error: "
+                           << outcome.GetError().GetMessage()
+                           << " (HTTP " << static_cast<int>(
+                                  outcome.GetError().GetResponseCode()) << ")";
             callback(outcome.IsSuccess());
         },
         nullptr);

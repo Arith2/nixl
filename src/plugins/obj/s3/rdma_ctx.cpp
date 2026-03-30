@@ -119,14 +119,14 @@ RdmaContext::connect(const std::string& server_addr, int rdma_port) {
     pd_ = ibv_alloc_pd(id_->verbs);
     if (!pd_) { NIXL_ERROR << "RdmaContext: ibv_alloc_pd failed"; return false; }
 
-    cq_ = ibv_create_cq(id_->verbs, 64, nullptr, nullptr, 0);
+    cq_ = ibv_create_cq(id_->verbs, 128, nullptr, nullptr, 0);
     if (!cq_) { NIXL_ERROR << "RdmaContext: ibv_create_cq failed"; return false; }
 
     struct ibv_qp_init_attr qp_attr{};
     qp_attr.send_cq          = cq_;
     qp_attr.recv_cq          = cq_;
     qp_attr.qp_type          = IBV_QPT_RC;
-    qp_attr.cap.max_send_wr  = 64;
+    qp_attr.cap.max_send_wr  = 128;
     qp_attr.cap.max_recv_wr  = 1;
     qp_attr.cap.max_send_sge = 1;
     qp_attr.cap.max_recv_sge = 1;

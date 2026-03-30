@@ -802,6 +802,13 @@ xferBenchNixlWorker::allocateMemory(int num_threads) {
     }
     buffer_size = xferBenchConfig::total_buffer_size / (num_devices * num_threads);
 
+    // For OBJ backend the DRAM staging buffer only needs to hold one transfer block.
+    // The default total_buffer_size (8 GiB) would cause ibv_reg_mr to fail when
+    // the RDMA path tries to pin that much memory.  Cap to max_block_size so that
+    // RDMA MR registration succeeds and measurements reflect real RDMA behaviour.
+    if (xferBenchConfig::isObjStorageBackend() && xferBenchConfig::max_block_size > 0)
+        buffer_size = std::min(buffer_size, xferBenchConfig::max_block_size);
+
     if (xferBenchConfig::storage_enable_direct) {
         if (xferBenchConfig::page_size == 0) {
             std::cerr << "Error: Invalid page size returned by sysconf" << std::endl;
@@ -830,18 +837,46 @@ xferBenchNixlWorker::allocateMemory(int num_threads) {
                 std::string unique_name;
 
                 if (is_prepop) {
-                    // Deterministic key prefix: prepop_{size}B_{thread}_{dev}_{idx:06d}
-                    std::string key_prefix = "prepop_" + std::to_string(buffer_size) + "B_" +
+                    // Deterministic key prefix: prepop_{block_size}B_{thread}_{dev}_{idx:06d}
+                    // Use start_block_size (== max_block_size for per-size invocations) so that
+                    // 4KB, 64KB, 1MB, ... runs each have unique keys and don't overwrite each other.
+                    std::string key_prefix =
+                        "prepop_" + std::to_string(xferBenchConfig::start_block_size) + "B_" +
                         std::to_string(list_idx) + "_" + std::to_string(i) + "_";
+                    // Base devId for this (thread, dev) pair; ensures no devId collisions.
+                    int base_dev_id =
+                        (list_idx * num_devices + i) * xferBenchConfig::obj_prepop_num;
                     for (int k = 0; k < xferBenchConfig::obj_prepop_num; k++) {
                         std::ostringstream oss;
                         oss << key_prefix << std::setfill('0') << std::setw(6) << k;
                         prepop_keys_[list_idx].push_back(oss.str());
                     }
+                    // Register all obj_prepop_num objects in a single batch.
+                    // Each gets a unique devId so the transfer loop can rotate via devId.
+                    std::vector<xferBenchIOV> all_prepop_iovs;
+                    nixl_reg_dlist_t all_desc(OBJ_SEG);
+                    for (int k = 0; k < xferBenchConfig::obj_prepop_num; k++) {
+                        const std::string &key = prepop_keys_[list_idx][k];
+                        nixlBlobDesc bd;
+                        bd.addr    = 0;
+                        bd.len     = buffer_size;
+                        bd.devId   = base_dev_id + k;
+                        bd.metaInfo = key;
+                        all_desc.addDesc(bd);
+                        all_prepop_iovs.emplace_back(0, buffer_size, base_dev_id + k, key);
+                    }
+                    CHECK_NIXL_ERROR(agent->registerMem(all_desc, &opt_args),
+                                     "registerMem prepop failed");
+                    prepop_all_iovs_.push_back(std::move(all_prepop_iovs));
+
+                    // Push a dummy entry to iov_list so remote_iovs gets the base devId.
+                    // This entry is NOT re-registered — it is part of prepop_all_iovs_.
                     unique_name = prepop_keys_[list_idx][0];
-                    // GET prepop: objects already exist from a prior PUT run, skip putObj.
-                    // PUT prepop: keys are rotated per-iteration; no pre-creation needed.
-                    std::cout << "Prepop obj (key[0]): " << unique_name << std::endl;
+                    basic_desc = initBasicDescObj(buffer_size, base_dev_id, unique_name);
+                    std::cout << "Prepop: registered " << xferBenchConfig::obj_prepop_num
+                              << " objects (devIds " << base_dev_id << ".."
+                              << (base_dev_id + xferBenchConfig::obj_prepop_num - 1)
+                              << "), key[0]=" << unique_name << std::endl;
                 } else {
                     unique_name = "nixlbench_obj" + std::to_string(list_idx) + "_" +
                         std::to_string(i) + "_" + std::to_string(timestamp);
@@ -854,15 +889,23 @@ xferBenchNixlWorker::allocateMemory(int num_threads) {
                     std::cout << "Creating obj: " << unique_name << std::endl;
                 }
 
-                basic_desc = initBasicDescObj(buffer_size, i, unique_name);
+                if (!is_prepop) {
+                    basic_desc = initBasicDescObj(buffer_size, i, unique_name);
+                }
                 if (basic_desc) {
                     iov_list.push_back(basic_desc.value());
                 }
             }
-            nixl_reg_dlist_t desc_list(OBJ_SEG);
-            iovListToNixlRegDlist(iov_list, desc_list);
-            CHECK_NIXL_ERROR(agent->registerMem(desc_list, &opt_args), "registerMem failed");
-            remote_iovs.push_back(iov_list);
+            if (is_prepop) {
+                // All prepop objects were already registered in bulk above; do NOT call
+                // registerMem again for iov_list (it contains dummy entries only).
+                remote_iovs.push_back(iov_list);
+            } else {
+                nixl_reg_dlist_t desc_list(OBJ_SEG);
+                iovListToNixlRegDlist(iov_list, desc_list);
+                CHECK_NIXL_ERROR(agent->registerMem(desc_list, &opt_args), "registerMem failed");
+                remote_iovs.push_back(iov_list);
+            }
         }
     } else if (XFERBENCH_BACKEND_GUSLI == xferBenchConfig::backend) {
         // GUSLI backend uses block device descriptors
@@ -1034,13 +1077,25 @@ xferBenchNixlWorker::deallocateMemory(std::vector<std::vector<xferBenchIOV>> &io
     }
 
     if (xferBenchConfig::isObjStorageBackend()) {
-        for (auto &iov_list : remote_iovs) {
-            for (auto &iov : iov_list) {
-                cleanupBasicDescObj(iov);
+        if (!prepop_all_iovs_.empty()) {
+            // Prepop mode: all 12K objects were registered in prepop_all_iovs_ (not remote_iovs).
+            // Deregister them here; S3 objects are kept (cleanupBasicDescObj is a no-op).
+            for (auto &iov_list : prepop_all_iovs_) {
+                nixl_reg_dlist_t desc_list(OBJ_SEG);
+                iovListToNixlRegDlist(iov_list, desc_list);
+                agent->deregisterMem(desc_list, &opt_args);  // best-effort; ignore error
             }
-            nixl_reg_dlist_t desc_list(OBJ_SEG);
-            iovListToNixlRegDlist(iov_list, desc_list);
-            CHECK_NIXL_ERROR(agent->deregisterMem(desc_list, &opt_args), "deregisterMem failed");
+            prepop_all_iovs_.clear();
+        } else {
+            for (auto &iov_list : remote_iovs) {
+                for (auto &iov : iov_list) {
+                    cleanupBasicDescObj(iov);
+                }
+                nixl_reg_dlist_t desc_list(OBJ_SEG);
+                iovListToNixlRegDlist(iov_list, desc_list);
+                CHECK_NIXL_ERROR(agent->deregisterMem(desc_list, &opt_args),
+                                 "deregisterMem failed");
+            }
         }
     } else if (xferBenchConfig::backend == XFERBENCH_BACKEND_GUSLI) {
         for (auto &iov_list : remote_iovs) {
@@ -1275,9 +1330,13 @@ execTransferIterations(nixlAgent *agent,
     nixlXferReqH *req = nullptr;
     nixlTime::us_t total_prepare_duration = 0;
 
-    // Prepop key rotation requires recreating the xfer request per iteration
-    // so the OBJ backend picks up the new object key in metaInfo.
+    // Prepop key rotation requires recreating the xfer request per iteration so the OBJ
+    // backend sees the updated devId (which maps to a different registered S3 key).
     const bool use_recreate = recreate_per_iteration || (prepop_keys && !prepop_keys->empty());
+
+    // Capture base devId for prepop rotation: remote_desc[0].devId = base_dev_id at entry.
+    const uint64_t prepop_base_dev_id =
+        (prepop_keys && !prepop_keys->empty()) ? remote_desc[0].devId : 0;
 
     // Create request once if not recreating per iteration
     if (!use_recreate) {
@@ -1293,12 +1352,13 @@ execTransferIterations(nixlAgent *agent,
 
     // Execute transfer iterations
     if (__builtin_expect(use_recreate, 0)) {
-        // Recreate path: used by GUSLI and OBJ prepop (key rotation).
+        // Recreate path: used by GUSLI and OBJ prepop (devId rotation).
         for (int i = 0; i < num_iter; ++i) {
-            // Rotate object key for prepop mode before creating the request.
+            // Rotate to a different pre-registered object by updating the remote devId.
+            // The OBJ backend resolves devId → S3 key via its devIdToObjKey_ map.
             if (prepop_keys && !prepop_keys->empty()) {
                 int idx = (prepop_iter_offset + i) % (int)prepop_keys->size();
-                remote_desc[0].metaInfo = (*prepop_keys)[idx];
+                remote_desc[0].devId = prepop_base_dev_id + idx;
             }
 
             nixl_status_t create_rc =

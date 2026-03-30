@@ -1,27 +1,24 @@
 #!/bin/bash
-# NIXL End-to-End Benchmark Script
+# NIXL 256MB Benchmark Script
 #
-# Runs PUT + GET per block size (4KB→64MB) for TCP baseline configurations:
-#   NIXL_TCP_DAOS_RDMA, NIXL_TCP_DAOS_TCP
-# (NIXL_RDMA_DAOS_RDMA already measured separately)
+# Runs PUT (3000 iter) + GET (warmup 256, 2048 iter) for 256MB objects.
+# Tests NIXL_TCP + DAOS_RDMA and NIXL_TCP + DAOS_TCP configurations.
 #
-# Each block size runs as a separate nixlbench invocation so that the
-# prepop object key (prepop_{size}B_...) matches the actual block size,
-# preventing key collisions and object overwrites across block sizes.
+# Data budget: 3000 × 256MB = 750GB < 2TB DAOS pool limit
 #
 # Run from hsc-12. Requires passwordless SSH to hsc-14 and hsc-21.
 #
 # Usage:
-#   ./benchmark/scripts/run_nixl_benchmark.sh              # all 4 configs
-#   ./benchmark/scripts/run_nixl_benchmark.sh DAOS_RDMA    # RDMA configs only
-#   ./benchmark/scripts/run_nixl_benchmark.sh DAOS_TCP     # TCP configs only
+#   ./benchmark/scripts/run_nixl_benchmark_256MB.sh              # both configs
+#   ./benchmark/scripts/run_nixl_benchmark_256MB.sh DAOS_RDMA    # RDMA only
+#   ./benchmark/scripts/run_nixl_benchmark_256MB.sh DAOS_TCP     # TCP only
 
 set -euo pipefail
 
 LOGDIR=/HSC/users/zhuyu/nixl/logs
 
-BLOCK_SIZES=(4096 16384 65536 262144 1048576 4194304 16777216 67108864)
-BLOCK_NAMES=(4KB  16KB  64KB  256KB  1MB     4MB     16MB     64MB   )
+BLOCK_SIZE=268435456
+BLOCK_NAME=256MB
 
 # ── nixlbench flags ─────────────────────────────────────────────────────────
 ETCD=http://localhost:2379
@@ -167,62 +164,48 @@ start_hsc12() {
 }
 
 # ── benchmark runner ─────────────────────────────────────────────────────────
-# Runs PUT then GET for every block size as separate invocations.
-# Each size uses start_block_size=max_block_size=BS so that prepop keys
-# are prepop_{BS}B_... — no cross-size overwrites in a single bucket.
 run_benchmark() {
     local daos_tag=$1   # DAOS_RDMA or DAOS_TCP
-    local nixl_tag=$2   # NIXL_TCP  or NIXL_RDMA
+    local nixl_tag=$2   # NIXL_TCP or NIXL_RDMA
     local rdma_flag=$3  # "" or "-obj_rdma_port 7471"
 
     local config="${nixl_tag}_${daos_tag}"
 
     echo ""
     echo "╔══════════════════════════════════════════════╗"
-    echo "  Config: $config"
-    echo "  Logs:   PUT_${config}_{4KB..64MB}.log"
-    echo "          GET_${config}_{4KB..64MB}.log"
+    echo "  Config: $config  Block: $BLOCK_NAME"
+    echo "  PUT: 3000 iter   GET: 256 warmup + 2048 iter"
     echo "╚══════════════════════════════════════════════╝"
 
-    # ── PUT: 12K iterations, objects kept for subsequent GET ──
-    echo "[hsc-12] running PUT per block size..."
-    for idx in "${!BLOCK_SIZES[@]}"; do
-        local bs=${BLOCK_SIZES[$idx]}
-        local name=${BLOCK_NAMES[$idx]}
-        local log="${LOGDIR}/PUT_${config}_${name}.log"
-        echo "--- PUT $config $name → $log ---"
-        start_hsc12   # fresh etcd metadata for each size
-        # shellcheck disable=SC2086
-        docker exec nixl-dev nixlbench \
-            "${BASE_FLAGS[@]}" \
-            -op_type WRITE \
-            -start_block_size "$bs" -max_block_size "$bs" \
-            -num_iter 12000 \
-            -warmup_iter 0 \
-            -obj_prepop_num 12000 \
-            $rdma_flag \
-            2>&1 | tee "$log"
-    done
+    # ── PUT: 6000 iterations ──
+    local log="${LOGDIR}/PUT_${config}_${BLOCK_NAME}.log"
+    echo "--- PUT $config $BLOCK_NAME → $log ---"
+    start_hsc12
+    # shellcheck disable=SC2086
+    docker exec nixl-dev nixlbench \
+        "${BASE_FLAGS[@]}" \
+        -op_type WRITE \
+        -start_block_size "$BLOCK_SIZE" -max_block_size "$BLOCK_SIZE" \
+        -num_iter 3000 \
+        -warmup_iter 0 \
+        -obj_prepop_num 3000 \
+        $rdma_flag \
+        2>&1 | tee "$log"
 
-    # ── GET: warmup 1024, 8192 iterations, reads objects written by PUT ──
-    echo "[hsc-12] running GET per block size..."
-    for idx in "${!BLOCK_SIZES[@]}"; do
-        local bs=${BLOCK_SIZES[$idx]}
-        local name=${BLOCK_NAMES[$idx]}
-        local log="${LOGDIR}/GET_${config}_${name}.log"
-        echo "--- GET $config $name → $log ---"
-        start_hsc12   # fresh etcd metadata for each size
-        # shellcheck disable=SC2086
-        docker exec nixl-dev nixlbench \
-            "${BASE_FLAGS[@]}" \
-            -op_type READ \
-            -start_block_size "$bs" -max_block_size "$bs" \
-            -num_iter 8192 \
-            -warmup_iter 1024 \
-            -obj_prepop_num 12000 \
-            $rdma_flag \
-            2>&1 | tee "$log"
-    done
+    # ── GET: warmup 512, 4096 iterations ──
+    log="${LOGDIR}/GET_${config}_${BLOCK_NAME}.log"
+    echo "--- GET $config $BLOCK_NAME → $log ---"
+    start_hsc12
+    # shellcheck disable=SC2086
+    docker exec nixl-dev nixlbench \
+        "${BASE_FLAGS[@]}" \
+        -op_type READ \
+        -start_block_size "$BLOCK_SIZE" -max_block_size "$BLOCK_SIZE" \
+        -num_iter 2048 \
+        -warmup_iter 256 \
+        -obj_prepop_num 3000 \
+        $rdma_flag \
+        2>&1 | tee "$log"
 
     echo "[done] $config"
 }
@@ -256,24 +239,10 @@ run_daos_tcp_configs() {
     run_benchmark DAOS_TCP NIXL_TCP ""
 }
 
-# ── step 0: rebuild nixlbench with --obj_prepop_num flag ────────────────────
-rebuild_nixlbench() {
-    echo "=== Rebuilding nixlbench inside nixl-dev container ==="
-    docker exec nixl-dev bash -c "
-        cp /workspace/nixl/benchmark/nixlbench/src/utils/utils.h /workspace/nixlbench/src/utils/utils.h
-        cp /workspace/nixl/benchmark/nixlbench/src/utils/utils.cpp /workspace/nixlbench/src/utils/utils.cpp
-        cp /workspace/nixl/benchmark/nixlbench/src/worker/nixl/nixl_worker.h /workspace/nixlbench/src/worker/nixl/nixl_worker.h
-        cp /workspace/nixl/benchmark/nixlbench/src/worker/nixl/nixl_worker.cpp /workspace/nixlbench/src/worker/nixl/nixl_worker.cpp
-        ninja -C /workspace/nixlbench/build && ninja -C /workspace/nixlbench/build install && ldconfig"
-    echo "=== Rebuild complete ==="
-}
-
 # ── main ─────────────────────────────────────────────────────────────────────
 mkdir -p "$LOGDIR"
 
 TARGET=${1:-ALL}
-
-rebuild_nixlbench
 
 case "$TARGET" in
     DAOS_RDMA)
@@ -290,4 +259,4 @@ esac
 
 echo ""
 echo "=== All benchmarks complete. Logs in $LOGDIR ==="
-ls -lh "${LOGDIR}"/PUT_*.log "${LOGDIR}"/GET_*.log 2>/dev/null | sort || true
+ls -lh "${LOGDIR}"/PUT_*_${BLOCK_NAME}.log "${LOGDIR}"/GET_*_${BLOCK_NAME}.log 2>/dev/null | sort || true

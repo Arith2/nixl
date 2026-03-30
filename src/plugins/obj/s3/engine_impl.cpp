@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <chrono>
 #include <future>
+#include <thread>
 #include <optional>
 #include <vector>
 #include "rdma_ctx.h"
@@ -121,8 +122,16 @@ DefaultObjEngineImpl::DefaultObjEngineImpl(const nixlBackendInitParams *init_par
             int rdma_port = std::stoi(port_it->second);
             std::string host = extractHost(ep_it->second);
             rdma_ctx_ = std::make_unique<RdmaContext>(host, rdma_port);
-            if (!rdma_ctx_->isEnabled())
+            if (!rdma_ctx_->isEnabled()) {
                 rdma_ctx_.reset();  // disable if connection failed
+            } else {
+                // RGW RDMA server allocates and pins a 256 MiB pre-buffer after
+                // accepting the connection (MAP_POPULATE + ibv_reg_mr).  This takes
+                // ~200–500 ms.  Sleep here so the first PUT does not arrive before
+                // ready_ is set on the server side, avoiding HTTP 500 "server not ready".
+                NIXL_INFO << "RdmaContext: connected; waiting 2s for RGW RDMA server to be ready";
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+            }
         }
     }
 

@@ -48,6 +48,9 @@ class xferBenchNixlWorker: public xferBenchWorker {
         // prepop_keys_[thread_idx] holds all object key names for that thread
         // when obj_prepop_num > 0; each benchmark iteration rotates through them.
         std::vector<std::vector<std::string>> prepop_keys_;
+        // prepop_all_iovs_[group_idx] holds all registered prepop IOVs for deregistration.
+        // Populated only when obj_prepop_num > 0; used in deallocateMemory instead of remote_iovs.
+        std::vector<std::vector<xferBenchIOV>> prepop_all_iovs_;
 
     public:
         xferBenchNixlWorker(int *argc, char ***argv, std::vector<std::string> devices);
