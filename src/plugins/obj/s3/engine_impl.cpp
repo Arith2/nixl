@@ -146,6 +146,9 @@ DefaultObjEngineImpl::DefaultObjEngineImpl(const nixlBackendInitParams *init_par
                 kvcache_num_layers_ = std::stoi(layers_it->second);
             if (kv_it != init_params->customParams->end())
                 kvcache_kv_per_token_ = std::stoi(kv_it->second);
+            auto agg_it = init_params->customParams->find("kvcache_layer_aggregate");
+            if (agg_it != init_params->customParams->end())
+                kvcache_layer_aggregate_ = std::stoi(agg_it->second);
             NIXL_INFO << "KVCache mode enabled: layers=" << kvcache_num_layers_
                       << " kv_per_token=" << kvcache_kv_per_token_;
         }
@@ -266,28 +269,28 @@ DefaultObjEngineImpl::postXfer(const nixl_xfer_op_t &operation,
                                const nixl_opt_b_args_t *opt_args) const {
     nixlObjBackendReqH *req_h = static_cast<nixlObjBackendReqH *>(handle);
 
-    // KV cache streaming mode: collect all chunk keys and make a single
-    // getKVCacheAsync call instead of N separate getObjectAsync calls.
+    // KV cache streaming mode: collect ALL registered chunk keys and make a single
+    // getKVCacheAsync call. The caller sends a normal 1-local + 1-remote request;
+    // we expand it to include all registered objects.
     if (kvcache_mode_ && operation == NIXL_READ && local.descCount() > 0) {
-        // Compute tokens_per_chunk from the block size (each chunk = num_layers * kv_per_token * tokens_per_chunk)
         size_t chunk_size = local[0].len;
         size_t tokens_per_chunk = chunk_size / (kvcache_num_layers_ * kvcache_kv_per_token_);
 
+        // Collect ALL registered object keys (all prepop chunks)
         std::vector<std::string> chunk_keys;
-        for (int i = 0; i < remote.descCount(); ++i) {
-            auto it = devIdToObjKey_.find(remote[i].devId);
-            if (it == devIdToObjKey_.end()) {
-                NIXL_ERROR << "KVCache: chunk key not found for devId " << remote[i].devId;
-                return NIXL_ERR_INVALID_PARAM;
-            }
-            chunk_keys.push_back(it->second);
+        for (const auto& [devId, key] : devIdToObjKey_) {
+            chunk_keys.push_back(key);
+        }
+        std::sort(chunk_keys.begin(), chunk_keys.end());  // deterministic order
+
+        if (chunk_keys.empty()) {
+            NIXL_ERROR << "KVCache: no chunk keys registered";
+            return NIXL_ERR_INVALID_PARAM;
         }
 
-        // Total receive buffer spans all local descriptors
+        // Total receive buffer = num_chunks × chunk_size
         uintptr_t data_ptr = local[0].addr;
-        size_t data_len = 0;
-        for (int i = 0; i < local.descCount(); ++i)
-            data_len += local[i].len;
+        size_t data_len = chunk_keys.size() * chunk_size;
 
         iS3Client *client = getClient();
         if (!client) return NIXL_ERR_BACKEND;
@@ -307,9 +310,15 @@ DefaultObjEngineImpl::postXfer(const nixl_xfer_op_t &operation,
                 rdma_token = token;
         }
 
+        int layer_agg = kvcache_layer_aggregate_ > 0 ? kvcache_layer_aggregate_ : kvcache_num_layers_;
+
+        NIXL_INFO << "KVCache: streaming " << chunk_keys.size() << " chunks"
+                  << " layers=" << kvcache_num_layers_ << " agg=" << layer_agg
+                  << " data_len=" << data_len;
+
         client->getKVCacheAsync(
             chunk_keys, kvcache_num_layers_, kvcache_kv_per_token_,
-            tokens_per_chunk,
+            tokens_per_chunk, layer_agg,
             data_ptr, data_len, status_callback, rdma_token);
 
         return NIXL_IN_PROG;

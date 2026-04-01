@@ -1,0 +1,2 @@
+Compiled
+CUDA error /workspace/nixl/benchmark/scripts/bench_cudamemcpy.cu:38: no CUDA-capable device is detected

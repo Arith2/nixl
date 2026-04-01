@@ -152,6 +152,8 @@ NB_ARG_STRING(obj_rdma_port, "", "RDMA CM port for OBJ RDMA backend");
 NB_ARG_BOOL(kvcache_mode, false, "Enable KV cache streaming mode (x-amz-kvcache)");
 NB_ARG_INT32(kvcache_num_layers, 0, "Number of transformer layers (only used with --kvcache_mode)");
 NB_ARG_INT32(kvcache_kv_per_token, 0, "KV cache bytes per token per layer per GPU (only used with --kvcache_mode)");
+NB_ARG_INT32(kvcache_layer_aggregate, 0, "Layers per RDMA push: 1=per-layer, 0 or num_layers=bulk (only used with --kvcache_mode)");
+NB_ARG_BOOL(layerwise_mode, false, "Layer-wise range-GET baseline: each iteration reads one layer_slice (kv_per_token*tokens_per_chunk bytes) at offset layer_idx*layer_slice from the chunk");
 NB_ARG_INT32(obj_prepop_num,
              0,
              "Number of pre-populated objects per thread for cold-read benchmark (0=disabled). "
@@ -266,6 +268,8 @@ int xferBenchConfig::obj_prepop_num = 0;
 bool xferBenchConfig::kvcache_mode = false;
 int xferBenchConfig::kvcache_num_layers = 0;
 int xferBenchConfig::kvcache_kv_per_token = 0;
+int xferBenchConfig::kvcache_layer_aggregate = 0;
+bool xferBenchConfig::layerwise_mode = false;
 std::string xferBenchConfig::obj_req_checksum = "";
 std::string xferBenchConfig::obj_ca_bundle = "";
 size_t xferBenchConfig::obj_crt_min_limit = 0;
@@ -418,6 +422,8 @@ xferBenchConfig::loadParams(void) {
             kvcache_mode = NB_ARG(kvcache_mode);
             kvcache_num_layers = NB_ARG(kvcache_num_layers);
             kvcache_kv_per_token = NB_ARG(kvcache_kv_per_token);
+            kvcache_layer_aggregate = NB_ARG(kvcache_layer_aggregate);
+            layerwise_mode = NB_ARG(layerwise_mode);
             obj_req_checksum = NB_ARG(obj_req_checksum);
             obj_ca_bundle = NB_ARG(obj_ca_bundle);
             obj_crt_min_limit = NB_ARG(obj_crt_min_limit);
@@ -642,6 +648,8 @@ xferBenchConfig::printConfig() {
             if (kvcache_mode) {
                 printOption("KVCache num layers (--kvcache_num_layers)", std::to_string(kvcache_num_layers));
                 printOption("KVCache kv/token/layer (--kvcache_kv_per_token)", std::to_string(kvcache_kv_per_token));
+                printOption("KVCache layer aggregate (--kvcache_layer_aggregate)",
+                            kvcache_layer_aggregate > 0 ? std::to_string(kvcache_layer_aggregate) : "0 (all layers)");
             }
             printOption("OBJ S3 required checksum (--obj_req_checksum=[supported, required])",
                         obj_req_checksum);

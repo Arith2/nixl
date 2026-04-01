@@ -85,6 +85,7 @@ public:
      * @param num_layers Number of transformer layers
      * @param kv_per_token_per_layer KV cache bytes per token per layer per GPU
      * @param tokens_per_chunk Number of tokens per chunk (S3 object)
+     * @param layer_aggregate Number of layers per RDMA push (1=per-layer, num_layers=bulk)
      * @param data_ptr Pointer to receive buffer (layers delivered sequentially)
      * @param data_len Total receive buffer size
      * @param callback Callback when all layers delivered
@@ -95,6 +96,7 @@ public:
                     int num_layers,
                     size_t kv_per_token_per_layer,
                     size_t tokens_per_chunk,
+                    int layer_aggregate,
                     uintptr_t data_ptr,
                     size_t data_len,
                     get_object_callback_t callback,

@@ -183,6 +183,8 @@ public:
     static bool kvcache_mode;
     static int kvcache_num_layers;
     static int kvcache_kv_per_token;
+    static int kvcache_layer_aggregate;
+    static bool layerwise_mode;
     static std::string obj_req_checksum;
     static std::string obj_ca_bundle;
     static size_t obj_crt_min_limit;

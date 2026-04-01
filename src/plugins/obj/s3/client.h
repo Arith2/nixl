@@ -68,6 +68,7 @@ public:
                     int num_layers,
                     size_t kv_per_token_per_layer,
                     size_t tokens_per_chunk,
+                    int layer_aggregate,
                     uintptr_t data_ptr,
                     size_t data_len,
                     get_object_callback_t callback,

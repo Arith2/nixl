@@ -1,0 +1,983 @@
+=== Rebuilding nixlbench inside nixl-dev container ===
+ninja: Entering directory `build'
+ninja: no work to do.
+ninja: Entering directory `build'
+[0/1] Installing files
+Installing subdir /workspace/nixl/subprojects/asio-1.30.2/include/asio to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/io_service.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/buffered_stream.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/is_write_buffered.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/buffer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/any_completion_executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/error.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/serial_port.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/io_service_strand.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/bind_immediate_executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/writable_pipe.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/file_base.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/completion_condition.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/bind_allocator.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/uses_executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_datagram_socket.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/associated_immediate_executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_deadline_timer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/prepend.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/bind_executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/cancellation_signal.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/buffered_write_stream_fwd.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/high_resolution_timer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_writable_pipe.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/buffered_read_stream_fwd.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/use_awaitable.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/read_until.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detached.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/append.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/signal_set.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/strand.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/buffer_registration.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/associator.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/thread.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/deferred.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/time_traits.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/buffers_iterator.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/io_context.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/require.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/write.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/static_thread_pool.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_raw_socket.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/executor_work_guard.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_seq_packet_socket.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_socket_acceptor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/consign.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/yield.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/thread_pool.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/recycling_allocator.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/socket_base.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/associated_executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/stream_file.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/signal_set_base.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/cancellation_state.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/write_at.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/async_result.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/connect.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_readable_pipe.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/use_future.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/placeholders.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/associated_cancellation_slot.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/readable_pipe.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/io_context_strand.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/connect_pipe.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/random_access_file.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/unyield.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/multiple_exceptions.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/redirect_error.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/version.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/deadline_timer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/post.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/is_contiguous_iterator.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/wait_traits.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/this_coro.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/co_spawn.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/compose.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_file.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/serial_port_base.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_stream_file.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/require_concept.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_streambuf_fwd.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/associated_allocator.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/spawn.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_socket.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution_context.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/read.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/any_completion_handler.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/awaitable.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_signal_set.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/system_timer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/is_read_buffered.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/defer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/query.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/buffered_write_stream.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_socket_streambuf.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/system_error.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/packaged_task.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/buffered_read_stream.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_stream_socket.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_random_access_file.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_serial_port.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/bind_cancellation_slot.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/buffered_stream_fwd.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/registered_buffer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/coroutine.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_socket_iostream.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/system_executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/read_at.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/dispatch.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/handler_continuation_hook.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/cancellation_type.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_waitable_timer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/as_tuple.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/any_io_executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_io_object.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/is_applicable_property.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/steady_timer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/is_executor.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/streambuf.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/error_code.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/system_context.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/prefer.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/basic_streambuf.hpp to /usr/local/nixl/include/asio
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/posix/basic_stream_descriptor.hpp to /usr/local/nixl/include/asio/posix
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/posix/basic_descriptor.hpp to /usr/local/nixl/include/asio/posix
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/posix/descriptor.hpp to /usr/local/nixl/include/asio/posix
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/posix/descriptor_base.hpp to /usr/local/nixl/include/asio/posix
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/posix/stream_descriptor.hpp to /usr/local/nixl/include/asio/posix
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/mapping.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/invocable_archetype.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/allocator.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/any_executor.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/prefer_only.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/executor.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/relationship.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/bad_executor.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/blocking.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/blocking_adaptation.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/outstanding_work.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/context_as.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/occupancy.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/context.hpp to /usr/local/nixl/include/asio/execution
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/execution/impl/bad_executor.ipp to /usr/local/nixl/include/asio/execution/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/windows/basic_overlapped_handle.hpp to /usr/local/nixl/include/asio/windows
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/windows/random_access_handle.hpp to /usr/local/nixl/include/asio/windows
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/windows/basic_stream_handle.hpp to /usr/local/nixl/include/asio/windows
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/windows/object_handle.hpp to /usr/local/nixl/include/asio/windows
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/windows/basic_object_handle.hpp to /usr/local/nixl/include/asio/windows
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/windows/overlapped_ptr.hpp to /usr/local/nixl/include/asio/windows
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/windows/basic_random_access_handle.hpp to /usr/local/nixl/include/asio/windows
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/windows/overlapped_handle.hpp to /usr/local/nixl/include/asio/windows
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/windows/stream_handle.hpp to /usr/local/nixl/include/asio/windows
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/prepend.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/use_awaitable.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/read_until.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/detached.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/append.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/deferred.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/io_context.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/write.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/executor.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/any_io_executor.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/consign.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/thread_pool.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/any_completion_executor.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/cancellation_signal.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/write_at.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/executor.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/connect.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/use_future.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/src.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/error.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/connect_pipe.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/redirect_error.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/co_spawn.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/serial_port_base.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/spawn.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/execution_context.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/read.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/execution_context.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/awaitable.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/thread_pool.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/buffered_write_stream.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/io_context.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/buffered_read_stream.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/multiple_exceptions.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/system_executor.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/read_at.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/as_tuple.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/system_context.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/serial_port_base.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/connect_pipe.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/error_code.ipp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/impl/system_context.hpp to /usr/local/nixl/include/asio/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/cancellation_condition.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/basic_concurrent_channel.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/awaitable_operators.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/parallel_group.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/prepend.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/use_promise.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/append.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/deferred.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/channel.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/promise.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/use_coro.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/coro_traits.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/as_single.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/channel_error.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/co_composed.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/co_spawn.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/concurrent_channel.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/channel_traits.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/as_tuple.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/coro.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/basic_channel.hpp to /usr/local/nixl/include/asio/experimental
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/impl/channel_error.ipp to /usr/local/nixl/include/asio/experimental/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/impl/parallel_group.hpp to /usr/local/nixl/include/asio/experimental/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/impl/use_promise.hpp to /usr/local/nixl/include/asio/experimental/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/impl/promise.hpp to /usr/local/nixl/include/asio/experimental/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/impl/use_coro.hpp to /usr/local/nixl/include/asio/experimental/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/impl/as_single.hpp to /usr/local/nixl/include/asio/experimental/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/impl/co_composed.hpp to /usr/local/nixl/include/asio/experimental/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/impl/coro.hpp to /usr/local/nixl/include/asio/experimental/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/channel_service.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/has_signature.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/channel_operation.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/channel_message.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/coro_completion_handler.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/channel_send_op.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/partial_promise.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/coro_promise_allocator.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/channel_receive_op.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/channel_send_functions.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/channel_handler.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/channel_payload.hpp to /usr/local/nixl/include/asio/experimental/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/experimental/detail/impl/channel_service.hpp to /usr/local/nixl/include/asio/experimental/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/udp.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/address_v4_iterator.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/address_v4.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/bad_address_cast.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/address_v6_range.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/basic_endpoint.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/v6_only.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/network_v6.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/basic_resolver_query.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/address_v6.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/resolver_base.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/resolver_query_base.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/basic_resolver_iterator.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/basic_resolver.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/address_v6_iterator.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/icmp.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/multicast.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/basic_resolver_results.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/unicast.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/network_v4.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/address_v4_range.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/host_name.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/address.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/tcp.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/basic_resolver_entry.hpp to /usr/local/nixl/include/asio/ip
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/address_v4.hpp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/host_name.ipp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/network_v6.ipp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/basic_endpoint.hpp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/network_v6.hpp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/address_v6.hpp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/address.ipp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/address_v4.ipp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/network_v4.hpp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/network_v4.ipp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/address.hpp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/impl/address_v6.ipp to /usr/local/nixl/include/asio/ip/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/detail/endpoint.hpp to /usr/local/nixl/include/asio/ip/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/detail/socket_option.hpp to /usr/local/nixl/include/asio/ip/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ip/detail/impl/endpoint.ipp to /usr/local/nixl/include/asio/ip/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/generic/basic_endpoint.hpp to /usr/local/nixl/include/asio/generic
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/generic/datagram_protocol.hpp to /usr/local/nixl/include/asio/generic
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/generic/stream_protocol.hpp to /usr/local/nixl/include/asio/generic
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/generic/raw_protocol.hpp to /usr/local/nixl/include/asio/generic
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/generic/seq_packet_protocol.hpp to /usr/local/nixl/include/asio/generic
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/generic/detail/endpoint.hpp to /usr/local/nixl/include/asio/generic/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/generic/detail/impl/endpoint.ipp to /usr/local/nixl/include/asio/generic/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/local/basic_endpoint.hpp to /usr/local/nixl/include/asio/local
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/local/datagram_protocol.hpp to /usr/local/nixl/include/asio/local
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/local/connect_pair.hpp to /usr/local/nixl/include/asio/local
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/local/stream_protocol.hpp to /usr/local/nixl/include/asio/local
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/local/seq_packet_protocol.hpp to /usr/local/nixl/include/asio/local
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/local/detail/endpoint.hpp to /usr/local/nixl/include/asio/local/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/local/detail/impl/endpoint.ipp to /usr/local/nixl/include/asio/local/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/verify_mode.hpp to /usr/local/nixl/include/asio/ssl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/error.hpp to /usr/local/nixl/include/asio/ssl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/stream_base.hpp to /usr/local/nixl/include/asio/ssl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/verify_context.hpp to /usr/local/nixl/include/asio/ssl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/stream.hpp to /usr/local/nixl/include/asio/ssl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/context_base.hpp to /usr/local/nixl/include/asio/ssl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/host_name_verification.hpp to /usr/local/nixl/include/asio/ssl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/rfc2818_verification.hpp to /usr/local/nixl/include/asio/ssl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/context.hpp to /usr/local/nixl/include/asio/ssl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/impl/rfc2818_verification.ipp to /usr/local/nixl/include/asio/ssl/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/impl/src.hpp to /usr/local/nixl/include/asio/ssl/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/impl/error.ipp to /usr/local/nixl/include/asio/ssl/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/impl/context.ipp to /usr/local/nixl/include/asio/ssl/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/impl/host_name_verification.ipp to /usr/local/nixl/include/asio/ssl/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/impl/context.hpp to /usr/local/nixl/include/asio/ssl/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/io.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/password_callback.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/stream_core.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/write_op.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/handshake_op.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/verify_callback.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/engine.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/read_op.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/shutdown_op.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/openssl_init.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/openssl_types.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/buffered_handshake_op.hpp to /usr/local/nixl/include/asio/ssl/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/impl/engine.ipp to /usr/local/nixl/include/asio/ssl/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ssl/detail/impl/openssl_init.ipp to /usr/local/nixl/include/asio/ssl/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ts/buffer.hpp to /usr/local/nixl/include/asio/ts
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ts/net.hpp to /usr/local/nixl/include/asio/ts
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ts/io_context.hpp to /usr/local/nixl/include/asio/ts
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ts/socket.hpp to /usr/local/nixl/include/asio/ts
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ts/executor.hpp to /usr/local/nixl/include/asio/ts
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ts/timer.hpp to /usr/local/nixl/include/asio/ts
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ts/internet.hpp to /usr/local/nixl/include/asio/ts
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/ts/netfwd.hpp to /usr/local/nixl/include/asio/ts
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_socket_accept_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_ssocket_service_base.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/timer_scheduler.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/completion_handler.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/fd_set_adapter.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/deadline_timer_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/thread_info_base.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_fenced_block.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/blocking_executor_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/composed_work.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/initiate_post.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/resolve_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/descriptor_read_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/resolve_query_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_resolve_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/assert.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactor_op_queue.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/handler_alloc_helpers.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_descriptor_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_socket_recvmsg_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/op_queue.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/strand_executor_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/socket_holder.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_null_buffers_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/executor_function.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/bind_handler.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/wait_handler.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/old_win_sdk_compat.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_socket_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_reactor.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/base_from_cancellation_state.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/dev_poll_reactor.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winsock_init.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/config.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_file_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_global.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/resolve_endpoint_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_fd_set_adapter.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_socket_send_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/memory.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/thread_context.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/hash_map.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_operation.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/resolver_service_base.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_ssocket_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_thread.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_object_impl.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/thread.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/signal_blocker.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/socket_select_interrupter.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/signal_init.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_tss_ptr.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/atomic_count.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/fenced_block.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/pop_options.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/initiate_dispatch.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_socket_recv_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/exception.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/noncopyable.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_io_context.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/timer_queue_ptime.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/std_global.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_thread.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/socket_option.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/future.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/thread_group.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/std_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/timer_scheduler_fwd.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_socket_recv_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/event.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/local_free_on_block_exit.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_handle_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_control.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_async_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/recycling_allocator.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_wait_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/scoped_ptr.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_socket_service_base.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_file_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_socket_recv_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/chrono_time_traits.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/conditionally_enabled_event.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/throw_error.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/kqueue_reactor.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winapp_thread.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_descriptor_write_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_tss_ptr.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/wait_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/timer_queue_set.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/signal_handler.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/posix_event.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/buffer_sequence_adapter.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_thread_info.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_socket_recvmsg_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_global.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_wait_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/handler_cont_helpers.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_descriptor_read_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/push_options.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_socket_connect_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/timer_queue_base.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_socket_accept_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/posix_fd_set_adapter.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_overlapped_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_descriptor_write_at_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/posix_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/regex_fwd.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/conditionally_enabled_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_socket_recv_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_socket_send_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_overlapped_ptr.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/scheduler.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/chrono.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/limits.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_socket_connect_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/handler_type_requirements.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/scheduler_thread_info.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/utility.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/eventfd_select_interrupter.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/dependent_type.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/initiate_defer.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/type_traits.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_timer_scheduler.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/static_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/std_static_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/posix_tss_ptr.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/cstdint.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/is_buffer_sequence.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/std_thread.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_event.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/service_registry.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/call_stack.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/descriptor_write_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/signal_set_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_static_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/array.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_null_buffers_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_descriptor_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_handle_write_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/object_pool.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_resolver_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_operation.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/pipe_select_interrupter.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/date_time_fwd.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/posix_serial_port_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/handler_work.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_socket_recvfrom_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/array_fwd.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/posix_static_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_socket_sendto_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_wait_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_socket_service_base.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/keyword_tss_ptr.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_static_mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/timer_queue.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_socket_connect_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/executor_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_socket_service_base.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_socket_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/strand_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/scheduler_task.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/select_reactor.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/buffer_resize_guard.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_socket_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/select_interrupter.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactor_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/scoped_lock.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_socket_send_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/posix_global.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_socket_accept_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/non_const_lvalue.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/signal_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_socket_sendto_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_event.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/null_signal_blocker.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_socket_recvfrom_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/consuming_buffers.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_async_manager.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_socket_recvfrom_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/cstddef.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/buffered_stream_storage.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_handle_read_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/descriptor_ops.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_socket_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/tss_ptr.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/socket_ops.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/mutex.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/functional.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/string_view.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/wince_thread.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/socket_types.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_object_handle_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/handler_tracking.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/is_executor.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactor.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/io_uring_descriptor_read_at_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_socket_send_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/posix_thread.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/source_location.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/concurrency_hint.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_socket_recvmsg_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/std_event.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/resolver_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/scheduler_operation.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/wrapped_handler.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/posix_signal_blocker.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/global.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/std_fenced_block.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/reactive_null_buffers_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/throw_exception.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/epoll_reactor.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/operation.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_utils.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/base_from_completion_cond.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/work_dispatcher.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/win_iocp_serial_port_service.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/winrt_socket_connect_op.hpp to /usr/local/nixl/include/asio/detail
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/winrt_ssocket_service_base.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/io_uring_service.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_iocp_socket_service_base.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/strand_executor_service.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/reactive_socket_service_base.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_iocp_io_context.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_event.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/dev_poll_reactor.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/scheduler.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/null_event.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/winsock_init.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/io_uring_descriptor_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/pipe_select_interrupter.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/timer_queue_ptime.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/winrt_timer_scheduler.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/strand_executor_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_iocp_io_context.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/posix_event.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_tss_ptr.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/strand_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/io_uring_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/kqueue_reactor.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_iocp_serial_port_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/select_reactor.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/timer_queue_set.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/eventfd_select_interrupter.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/kqueue_reactor.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/io_uring_file_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_iocp_handle_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/buffer_sequence_adapter.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/service_registry.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/epoll_reactor.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/posix_tss_ptr.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/reactive_descriptor_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/signal_set_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/resolver_service_base.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/winrt_timer_scheduler.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/posix_thread.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/posix_serial_port_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/service_registry.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/handler_tracking.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_iocp_file_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/thread_context.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/strand_service.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/io_uring_socket_service_base.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/select_reactor.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/throw_error.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/socket_ops.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_object_handle_service.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/descriptor_ops.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_static_mutex.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_thread.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/socket_select_interrupter.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/dev_poll_reactor.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/posix_mutex.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/win_mutex.ipp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/detail/impl/epoll_reactor.hpp to /usr/local/nixl/include/asio/detail/impl
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/require_concept_member.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/query_member.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/query_free.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/execute_member.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/require_concept_free.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/require_member.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/prefer_free.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/equality_comparable.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/prefer_member.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/require_free.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/query_static_constexpr_member.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/static_query.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/static_require.hpp to /usr/local/nixl/include/asio/traits
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio/traits/static_require_concept.hpp to /usr/local/nixl/include/asio/traits
+Installing src/utils/common/libnixl_common.so to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing src/utils/serdes/libserdes.so to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing src/utils/stream/libstream.so to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing src/utils/file/libfile_utils.so to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing src/utils/object/libobj_utils.so to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing src/infra/libnixl_build.so to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing src/plugins/ucx/libplugin_UCX.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Installing src/plugins/posix/libplugin_POSIX.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Installing src/plugins/obj/libplugin_OBJ.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Installing src/plugins/azure_blob/libplugin_AZURE_BLOB.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Installing src/plugins/libfabric/libplugin_LIBFABRIC.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Installing src/plugins/cuda_gds/libplugin_GDS.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Installing src/plugins/gds_mt/libplugin_GDS_MT.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Installing src/plugins/gusli/libplugin_GUSLI.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Compiling '/usr/local/nixl/lib/python3/dist-packages/nixl_cu13/_api.py'...
+Compiling '/usr/local/nixl/lib/python3/dist-packages/nixl_cu13/__init__.py'...
+Compiling '/usr/local/nixl/lib/python3/dist-packages/nixl_cu13/logging.py'...
+Installing src/plugins/gpunetio/libplugin_GPUNETIO.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Installing subprojects/prometheus-cpp/libcore.so.1.3.0 to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing subprojects/prometheus-cpp/libpull.so.1.3.0 to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing src/plugins/telemetry/prometheus/libtelemetry_exporter_prometheus.so to /usr/local/nixl/lib/x86_64-linux-gnu/plugins
+Installing src/core/libnixl.so to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing src/libnixl_test_utils.so to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing src/bindings/python/_bindings.cpython-312-x86_64-linux-gnu.so to /usr/local/nixl/lib/python3/dist-packages/nixl_cu13
+Installing src/bindings/python/_utils.cpython-312-x86_64-linux-gnu.so to /usr/local/nixl/lib/python3/dist-packages/nixl_cu13
+Installing src/bindings/libnixl_capi.so to /usr/local/nixl/lib/x86_64-linux-gnu
+Installing examples/cpp/nixl_example to /usr/local/nixl/bin
+Installing examples/cpp/nixl_etcd_example to /usr/local/nixl/bin
+Installing examples/cpp/telemetry_reader to /usr/local/nixl/bin
+Installing /workspace/nixl/subprojects/asio-1.30.2/include/asio.hpp to /usr/local/nixl/include
+Installing /workspace/nixl/src/api/cpp/nixl.h to /usr/local/nixl/include
+Installing /workspace/nixl/src/api/cpp/nixl_types.h to /usr/local/nixl/include
+Installing /workspace/nixl/src/api/cpp/nixl_params.h to /usr/local/nixl/include
+Installing /workspace/nixl/src/api/cpp/nixl_descriptors.h to /usr/local/nixl/include
+Installing /workspace/nixl/src/utils/serdes/serdes.h to /usr/local/nixl/include/utils/serdes
+Installing /workspace/nixl/src/utils/common/nixl_time.h to /usr/local/nixl/include/utils/common
+Installing /workspace/nixl/src/utils/common/nixl_log.h to /usr/local/nixl/include/utils/common
+Installing /workspace/nixl/src/api/cpp/backend/backend_engine.h to /usr/local/nixl/include/backend
+Installing /workspace/nixl/src/api/cpp/backend/backend_aux.h to /usr/local/nixl/include/backend
+Installing /workspace/nixl/src/api/cpp/backend/backend_plugin.h to /usr/local/nixl/include/backend
+Installing /workspace/nixl/src/core/transfer_request.h to /usr/local/nixl/include
+Installing /workspace/nixl/src/core/agent_data.h to /usr/local/nixl/include
+Installing /workspace/nixl/src/infra/mem_section.h to /usr/local/nixl/include
+Installing /workspace/nixl/src/core/telemetry/telemetry_event.h to /usr/local/nixl/include
+Installing /workspace/nixl/src/api/python/_api.py to /usr/local/nixl/lib/python3/dist-packages/nixl_cu13
+Installing /workspace/nixl/src/api/python/__init__.py to /usr/local/nixl/lib/python3/dist-packages/nixl_cu13
+Installing /workspace/nixl/src/api/python/py.typed to /usr/local/nixl/lib/python3/dist-packages/nixl_cu13
+Installing /workspace/nixl/src/api/python/logging.py to /usr/local/nixl/lib/python3/dist-packages/nixl_cu13
+Installing /workspace/nixl/build/subprojects/asio-1.30.2/asio.pc to /usr/local/nixl/share/pkgconfig
+Installing symlink pointing to libcore.so.1.3.0 to /usr/local/nixl/lib/x86_64-linux-gnu/libcore.so.1.3
+Installing symlink pointing to libcore.so.1.3 to /usr/local/nixl/lib/x86_64-linux-gnu/libcore.so
+Installing symlink pointing to libpull.so.1.3.0 to /usr/local/nixl/lib/x86_64-linux-gnu/libpull.so.1.3
+Installing symlink pointing to libpull.so.1.3 to /usr/local/nixl/lib/x86_64-linux-gnu/libpull.so
+Running custom install script '/workspace/.venv/bin/python3 /workspace/nixl/build/meson-private/pycompile.py python-3.12-installed.json 0'
+=== Rebuild complete ===
+
+████████████████████████████████████████████████
+  DAOS RDMA (ucx+dc_x over ens1np0/mlx5_0)
+████████████████████████████████████████████████
+=== Teardown ===
+[hsc-12] stopping etcd...
+etcd-server
+[hsc-14] stopping Ceph RGW and DAOS agent...
+No screen session found.
+[hsc-21] stopping DAOS server...
+Starting SPDK SSD reset process...
+Resetting SPDK...
+0000:c7:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:23:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:26:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:25:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:c5:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:c6:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:24:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:c4:00.0 (1e0f 0007): vfio-pci -> nvme
+Available NVMe devices:
+Node                  SN                   Model                                    Namespace Usage                      Format           FW Rev  
+--------------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+/dev/nvme0n1          Y2A0A027TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme1n1          Y2A0A026TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme2n1          82N0A0TATMQ8         KCM6FVUL3T20                             1           0.00   B /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme3n1          82N0A0T9TMQ8         KCM6FVUL3T20                             1           0.00   B /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme4n1          Y2A0A023TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme5n1          Y2D0A002TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme6n1          Y2A0A02CTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme7n1          Y2A0A01UTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+Found NVMe devices: /dev/nvme0n1
+/dev/nvme1n1
+/dev/nvme2n1
+/dev/nvme3n1
+/dev/nvme4n1
+/dev/nvme5n1
+/dev/nvme6n1
+/dev/nvme7n1
+Formatting /dev/nvme0n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme0n1
+Formatting /dev/nvme1n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme1n1
+Formatting /dev/nvme2n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme2n1
+Formatting /dev/nvme3n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme3n1
+Formatting /dev/nvme4n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme4n1
+Formatting /dev/nvme5n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme5n1
+Formatting /dev/nvme6n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme6n1
+Formatting /dev/nvme7n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme7n1
+Waiting for format operations to complete...
+Available NVMe devices after formatting:
+Node                  SN                   Model                                    Namespace Usage                      Format           FW Rev  
+--------------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+/dev/nvme0n1          Y2A0A027TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme1n1          Y2A0A026TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme2n1          82N0A0TATMQ8         KCM6FVUL3T20                             1           0.00   B /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme3n1          82N0A0T9TMQ8         KCM6FVUL3T20                             1           0.00   B /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme4n1          Y2A0A023TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme5n1          Y2D0A002TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme6n1          Y2A0A02CTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme7n1          Y2A0A01UTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+Re-initializing SPDK...
+0000:c4:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c7:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:23:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c6:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c5:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c4:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c5:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c6:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+INFO: Requested 1024 hugepages but 4096 already allocated 
+SPDK SSD reset complete!
+=== Teardown complete ===
+[hsc-21] starting DAOS server (RDMA/ucx+dc_x)...
+Waiting for DAOS storage ready...
+hsc-21 INFO 2026/03/24 14:27:17 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/24 14:58:33 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 08:30:19 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 09:32:22 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 14:14:38 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 15:05:12 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 04:40:54 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 12:02:03 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 13:11:44 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 15:49:17 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/27 02:20:31 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/27 09:16:23 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 04:24:34 DAOS I/O Engine instance 0 storage ready
+[hsc-14] starting DAOS agent (RDMA) + Ceph RGW...
+Creating DAOS pool with automatic storage allocation: 2.1 TB total, 6.38% ratio
+ERROR: dmg: pool create failed: rpc error: code = Unknown desc = pool request contains zero target ranks
+ceph-mgr dashboard not built - disabling.
+rm -f core* 
+hostname hsc-14
+ip 10.93.244.74
+port 40967
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-authtool --create-keyring --gen-key --name=mon. /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring --cap mon 'allow *' 
+creating /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-authtool --gen-key --name=client.admin --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow *' --cap mgr 'allow *' /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool --create --clobber --addv a [v2:10.93.244.74:40967,v1:10.93.244.74:40968] --print /tmp/ceph_monmap.587983 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool: monmap file /tmp/ceph_monmap.587983
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool: generated fsid 9329ccb4-1a06-4908-8e6d-265f2a08aefc
+setting min_mon_release = pacific
+epoch 0
+fsid 9329ccb4-1a06-4908-8e6d-265f2a08aefc
+last_changed 2026-03-28T06:04:35.276618-0700
+created 2026-03-28T06:04:35.276618-0700
+min_mon_release 16 (pacific)
+election_strategy: 1
+0: [v2:10.93.244.74:40967/0,v1:10.93.244.74:40968/0] mon.a
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool: writing epoch 0 to /tmp/ceph_monmap.587983 (1 monitors)
+rm -rf -- /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/dev/mon.a 
+mkdir -p /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/dev/mon.a 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-mon --mkfs -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf -i a --monmap=/tmp/ceph_monmap.587983 --keyring=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring 
+rm -- /tmp/ceph_monmap.587983 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-mon -i a -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf 
+Populating config ...
+
+[mgr]
+	mgr/telemetry/enable = false
+	mgr/telemetry/nag = false
+setting up user testid
+2026-03-28T06:04:42.870-0700 7efc12583bc0  0 ERROR: ds3_connect() failed: -2
+couldn't init storage provider
+make_bucket failed: s3://lmcache Could not connect to the endpoint URL: "http://127.0.0.1:8000/lmcache"
+[hsc-14] Ceph RGW ready
+[hsc-12] starting etcd...
+etcd-server
+
+╔══════════════════════════════════════════════╗
+  Config: NIXL_TCP_DAOS_RDMA
+  Logs:   PUT_NIXL_TCP_DAOS_RDMA_{4KB..64MB}.log
+          GET_NIXL_TCP_DAOS_RDMA_{4KB..64MB}.log
+╚══════════════════════════════════════════════╝
+[hsc-12] running PUT per block size...
+--- PUT NIXL_TCP_DAOS_RDMA 4KB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_TCP_DAOS_RDMA_4KB.log ---
+[hsc-12] starting etcd...
+etcd-server
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Creating obj: nixlbench_obj0_0_1774703111396484
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 4096
+Max block size (--max_block_size=N)                         : 4096
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+NIXL Xfer failed with status: NIXL_ERR_BACKEND
+E0328 13:05:43.175165     207 nixl_agent.cpp:1168] getXferStatus: backend 'OBJ' returned error status NIXL_ERR_BACKEND
+Removing S3 object: nixlbench_obj0_0_1774703111396484 from bucket: lmcache
+delete failed: s3://lmcache/nixlbench_obj0_0_1774703111396484 Could not connect to the endpoint URL: "http://10.93.244.74:8000/lmcache/nixlbench_obj0_0_1774703111396484"
+Warning: Failed to remove S3 object nixlbench_obj0_0_1774703111396484 from bucket lmcache (exit code: 256)
+Failed to remove object: nixlbench_obj0_0_1774703111396484

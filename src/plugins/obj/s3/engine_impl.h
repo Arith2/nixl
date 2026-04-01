@@ -73,6 +73,7 @@ protected:
     bool kvcache_mode_{false};
     int kvcache_num_layers_{0};
     int kvcache_kv_per_token_{0};
+    int kvcache_layer_aggregate_{0};  // 0=all layers at once
     size_t kvcache_tokens_per_chunk_{0};  // computed from block_size / (num_layers * kv_per_token)
 };
 

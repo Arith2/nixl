@@ -1,0 +1,1394 @@
+=== Rebuilding nixlbench inside nixl-dev container ===
+ninja: Entering directory `/workspace/nixlbench/build'
+[1/8] Compiling C++ object nixlbench.p/src_main.cpp.o
+[2/8] Compiling C++ object src/worker/libworker.a.p/worker.cpp.o
+[3/8] Linking static target src/worker/libworker.a
+[4/8] Compiling C++ object src/worker/nixl/libnixl_worker.a.p/nixl_worker.cpp.o
+[5/8] Linking static target src/worker/nixl/libnixl_worker.a
+[6/8] Compiling C++ object src/utils/libutils.a.p/utils.cpp.o
+[7/8] Linking static target src/utils/libutils.a
+[8/8] Linking target nixlbench
+ninja: Entering directory `/workspace/nixlbench/build'
+[0/1] Installing files
+Installing src/runtime/libruntime.a to /usr/local/nixlbench/lib/x86_64-linux-gnu
+Installing src/runtime/etcd/libetcd_rt.a to /usr/local/nixlbench/lib/x86_64-linux-gnu
+Installing src/runtime/etcd/etcd_runtime.cpython-312-x86_64-linux-gnu.so to /usr/local/nixlbench/lib/python3/dist-packages/nixlbench
+Installing src/worker/nixl/libnixl_worker.a to /usr/local/nixlbench/lib/x86_64-linux-gnu
+Installing nixlbench to /usr/local/nixlbench/bin
+Installing /workspace/nixlbench/build/config.h to /usr/local/nixlbench/include/nixlbench
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvcuvid.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-ml.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-opticalflow.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-cfg.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-nvvm.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-ml.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libcuda.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libcuda.so is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-allocator.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-opticalflow.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libcuda.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-ptxjitcompiler.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-opencl.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-pkcs11-openssl3.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-ptxjitcompiler.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libvdpau_nvidia.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-encode.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libcudadebugger.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-opticalflow.so is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-allocator.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libvdpau_nvidia.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-opencl.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvcuvid.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-nvvm.so.4 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-gpucomp.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-pkcs11.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-cfg.so.1 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libnvidia-encode.so.570.124.06 is empty, not checked.
+/sbin/ldconfig.real: File /lib/x86_64-linux-gnu/libcudadebugger.so.1 is empty, not checked.
+=== Rebuild complete ===
+
+████████████████████████████████████████████████
+  DAOS RDMA (ucx+dc_x over ens1np0/mlx5_0)
+████████████████████████████████████████████████
+=== Teardown ===
+[hsc-12] stopping etcd...
+etcd-server
+[hsc-14] stopping Ceph RGW and DAOS agent...
+[hsc-21] stopping DAOS server...
+removed directory '/mnt/daos0'
+removed '/mnt/daos-md/daos_control/control_raft/snapshots/2-32-1774775762806/state.bin'
+removed '/mnt/daos-md/daos_control/control_raft/snapshots/2-32-1774775762806/meta.json'
+removed directory '/mnt/daos-md/daos_control/control_raft/snapshots/2-32-1774775762806'
+removed directory '/mnt/daos-md/daos_control/control_raft/snapshots'
+removed '/mnt/daos-md/daos_control/control_raft/daos_system.db'
+removed directory '/mnt/daos-md/daos_control/control_raft'
+removed '/mnt/daos-md/daos_control/engine0/superblock'
+removed '/mnt/daos-md/daos_control/engine0/daos_sys/sys_db'
+removed directory '/mnt/daos-md/daos_control/engine0/daos_sys'
+removed '/mnt/daos-md/daos_control/engine0/daos_nvme.conf'
+removed directory '/mnt/daos-md/daos_control/engine0'
+removed directory '/mnt/daos-md/daos_control'
+removed directory '/mnt/daos-md'
+Starting SPDK SSD reset process...
+Resetting SPDK...
+0000:c7:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:23:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:26:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:25:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:c5:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:c6:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:24:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:c4:00.0 (1e0f 0007): vfio-pci -> nvme
+Available NVMe devices:
+Node                  SN                   Model                                    Namespace Usage                      Format           FW Rev  
+--------------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+/dev/nvme0n1          Y2A0A027TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme1n1          Y2A0A026TCZ8         KCM6XVUL1T60                             1         201.77  GB /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme2n1          82N0A0TATMQ8         KCM6FVUL3T20                             1         201.64  GB /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme3n1          82N0A0T9TMQ8         KCM6FVUL3T20                             1         201.29  GB /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme4n1          Y2A0A023TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme5n1          Y2D0A002TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme6n1          Y2A0A02CTCZ8         KCM6XVUL1T60                             1         202.08  GB /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme7n1          Y2A0A01UTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+Found NVMe devices: /dev/nvme0n1
+/dev/nvme1n1
+/dev/nvme2n1
+/dev/nvme3n1
+/dev/nvme4n1
+/dev/nvme5n1
+/dev/nvme6n1
+/dev/nvme7n1
+Formatting /dev/nvme0n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme0n1
+Formatting /dev/nvme1n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme1n1
+Formatting /dev/nvme2n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme2n1
+Formatting /dev/nvme3n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme3n1
+Formatting /dev/nvme4n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme4n1
+Formatting /dev/nvme5n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme5n1
+Formatting /dev/nvme6n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme6n1
+Formatting /dev/nvme7n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme7n1
+Waiting for format operations to complete...
+Available NVMe devices after formatting:
+Node                  SN                   Model                                    Namespace Usage                      Format           FW Rev  
+--------------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+/dev/nvme0n1          Y2A0A027TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme1n1          Y2A0A026TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme2n1          82N0A0TATMQ8         KCM6FVUL3T20                             1           0.00   B /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme3n1          82N0A0T9TMQ8         KCM6FVUL3T20                             1           0.00   B /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme4n1          Y2A0A023TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme5n1          Y2D0A002TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme6n1          Y2A0A02CTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme7n1          Y2A0A01UTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+Re-initializing SPDK...
+0000:c4:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c6:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:25:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c7:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c4:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c6:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c5:00.0 not bound to vfio-pci (driver)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c5:00.0 not bound to vfio-pci (driver)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:25:00.0 (1e0f 0007): WARNING: 0000:23:00.0 not bound to vfio-pci (driver)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:24:00.0 not bound to vfio-pci (driver)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:24:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:23:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c5:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+INFO: Requested 1024 hugepages but 4096 already allocated 
+SPDK SSD reset complete!
+=== Teardown complete ===
+[hsc-21] starting DAOS server (RDMA/ucx+dc_x)...
+Waiting for DAOS storage ready...
+hsc-21 INFO 2026/03/24 14:27:17 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/24 14:58:33 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 08:30:19 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 09:32:22 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 14:14:38 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 15:05:12 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 04:40:54 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 12:02:03 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 13:11:44 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 15:49:17 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/27 02:20:31 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/27 09:16:23 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 04:24:34 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 06:04:30 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 11:42:45 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 11:46:15 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:00:59 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:12:36 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:18:30 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:27:13 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:54:55 DAOS I/O Engine instance 0 storage ready
+Waiting 15s for DAOS engine to register ranks...
+[hsc-14] starting DAOS agent (RDMA) + Ceph RGW...
+Creating DAOS pool with automatic storage allocation: 2.1 TB total, 6.38% ratio
+Pool created with 6.00%,94.00% storage tier ratio
+-------------------------------------------------
+  UUID             : fcbc01c9-35ea-4f0c-8432-b1995092a047
+  Service Leader   : 0                                   
+  Service Ranks    : 0                                   
+  Storage Ranks    : 0                                   
+  Total Size       : 2.1 TB                              
+  Metadata Storage : 125 GB (125 GB / rank)              
+  Data Storage     : 2.0 TB (2.0 TB / rank)              
+  Memory File Size : 125 GB (125 GB / rank)              
+
+ceph-mgr dashboard not built - disabling.
+rm -f core* 
+hostname hsc-14
+ip 10.93.244.74
+port 40427
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-authtool --create-keyring --gen-key --name=mon. /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring --cap mon 'allow *' 
+creating /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-authtool --gen-key --name=client.admin --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow *' --cap mgr 'allow *' /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool --create --clobber --addv a [v2:10.93.244.74:40427,v1:10.93.244.74:40428] --print /tmp/ceph_monmap.3738828 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool: monmap file /tmp/ceph_monmap.3738828
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool: generated fsid 2396e8f0-5b1d-4cb1-ae72-fdae735d3c4c
+setting min_mon_release = pacific
+epoch 0
+fsid 2396e8f0-5b1d-4cb1-ae72-fdae735d3c4c
+last_changed 2026-03-29T03:14:59.533231-0700
+created 2026-03-29T03:14:59.533231-0700
+min_mon_release 16 (pacific)
+election_strategy: 1
+0: [v2:10.93.244.74:40427/0,v1:10.93.244.74:40428/0] mon.a
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool: writing epoch 0 to /tmp/ceph_monmap.3738828 (1 monitors)
+rm -rf -- /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/dev/mon.a 
+mkdir -p /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/dev/mon.a 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-mon --mkfs -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf -i a --monmap=/tmp/ceph_monmap.3738828 --keyring=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring 
+rm -- /tmp/ceph_monmap.3738828 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-mon -i a -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf 
+Populating config ...
+
+[mgr]
+	mgr/telemetry/enable = false
+	mgr/telemetry/nag = false
+setting up user testid
+2026-03-29T03:15:01.913-0700 7faed019dbc0  0 Error: ds3_user_get failed, name=testid ret=-2
+2026-03-29T03:15:01.913-0700 7faed019dbc0  0 ERROR: load_user failed, name=testid
+2026-03-29T03:15:01.917-0700 7faed019dbc0  0 Error: ds3_user_get_by_email failed, email=tester@ceph.com ret=-2
+2026-03-29T03:15:01.917-0700 7faed019dbc0  0 Error: ds3_user_get_by_key failed, key=0555b35654ad1656d804 ret=-2
+2026-03-29T03:15:01.917-0700 7faed019dbc0  0 Error: ds3_user_get_by_key failed, key=0555b35654ad1656d804 ret=-2
+2026-03-29T03:15:01.921-0700 7faed019dbc0  0 Error: ds3_user_get failed, name=testid ret=-2
+setting up s3-test users
+2026-03-29T03:15:03.713-0700 7f5136a24bc0  0 Error: ds3_user_get failed, name=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef ret=-2
+2026-03-29T03:15:03.713-0700 7f5136a24bc0  0 ERROR: load_user failed, name=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-03-29T03:15:03.713-0700 7f5136a24bc0  0 Error: ds3_user_get_by_email failed, email=s3@example.com ret=-2
+2026-03-29T03:15:03.713-0700 7f5136a24bc0  0 Error: ds3_user_get_by_key failed, key=ABCDEFGHIJKLMNOPQRST ret=-2
+2026-03-29T03:15:03.713-0700 7f5136a24bc0  0 Error: ds3_user_get_by_key failed, key=ABCDEFGHIJKLMNOPQRST ret=-2
+2026-03-29T03:15:03.713-0700 7f5136a24bc0  0 Error: ds3_user_get failed, name=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef ret=-2
+2026-03-29T03:15:05.401-0700 7f07fa9d7bc0  0 Error: ds3_user_get failed, name=56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234 ret=-2
+2026-03-29T03:15:05.401-0700 7f07fa9d7bc0  0 ERROR: load_user failed, name=56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234
+2026-03-29T03:15:05.401-0700 7f07fa9d7bc0  0 Error: ds3_user_get_by_email failed, email=john.doe@example.com ret=-2
+2026-03-29T03:15:05.401-0700 7f07fa9d7bc0  0 Error: ds3_user_get_by_key failed, key=NOPQRSTUVWXYZABCDEFG ret=-2
+2026-03-29T03:15:05.401-0700 7f07fa9d7bc0  0 Error: ds3_user_get_by_key failed, key=NOPQRSTUVWXYZABCDEFG ret=-2
+2026-03-29T03:15:05.401-0700 7f07fa9d7bc0  0 Error: ds3_user_get failed, name=56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234 ret=-2
+2026-03-29T03:15:07.169-0700 7ff472615bc0  0 Error: ds3_user_get failed, name=testx$9876543210abcdef0123456789abcdef0123456789abcdef0123456789abcdef ret=-2
+2026-03-29T03:15:07.169-0700 7ff472615bc0  0 ERROR: load_user failed, name=testx$9876543210abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-03-29T03:15:07.169-0700 7ff472615bc0  0 Error: ds3_user_get_by_email failed, email=tenanteduser@example.com ret=-2
+2026-03-29T03:15:07.169-0700 7ff472615bc0  0 Error: ds3_user_get_by_key failed, key=HIJKLMNOPQRSTUVWXYZA ret=-2
+2026-03-29T03:15:07.169-0700 7ff472615bc0  0 Error: ds3_user_get_by_key failed, key=HIJKLMNOPQRSTUVWXYZA ret=-2
+2026-03-29T03:15:07.169-0700 7ff472615bc0  0 Error: ds3_user_get failed, name=testx$9876543210abcdef0123456789abcdef0123456789abcdef0123456789abcdef ret=-2
+
+S3 User Info:
+  access key:  0555b35654ad1656d804
+  secret key:  h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf -k /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring auth get-or-create client.rgw.8000 mon 'allow rw' osd 'allow rwx' mgr 'allow rw' 
+start rgw on http://localhost:8000
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/radosgw -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf --log-file=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/out/radosgw.8000.log --admin-socket=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/out/radosgw.8000.asok --pid-file=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/out/radosgw.8000.pid --rgw_luarocks_location=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/out/luarocks -n client.rgw.8000 '--rgw_frontends=beast port=8000' 
+
+
+
+vstart cluster complete. Use stop.sh to stop. See out/* (e.g. 'tail -f out/????') for debug output.
+export PYTHONPATH=/home/zhuyu/ceph_hsc14_daos_v18.2.7/src/pybind:/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/lib/cython_modules/lib.3:/home/zhuyu/ceph_hsc14_daos_v18.2.7/src/python-common:$PYTHONPATH
+export LD_LIBRARY_PATH=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/lib:$LD_LIBRARY_PATH
+export PATH=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin:$PATH
+alias cephfs-shell=/home/zhuyu/ceph_hsc14_daos_v18.2.7/src/tools/cephfs/shell/cephfs-shell
+CEPH_DEV=1
+make_bucket: lmcache
+[hsc-14] Ceph RGW ready
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+
+╔══════════════════════════════════════════════╗
+  Config: NIXL_RDMA_DAOS_RDMA
+  Logs:   PUT_NIXL_RDMA_DAOS_RDMA_{4KB..64MB}.log
+          GET_NIXL_RDMA_DAOS_RDMA_{4KB..64MB}.log
+╚══════════════════════════════════════════════╝
+[hsc-12] running PUT per block size...
+--- PUT NIXL_RDMA_DAOS_RDMA 4KB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_4KB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_4096B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 4096
+Max block size (--max_block_size=N)                         : 4096
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+4096                1              0.000641       6385.8         16.0           16.0           22.2           50.0           6347.5         5103.0         
+--- PUT NIXL_RDMA_DAOS_RDMA 16KB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_16KB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_16384B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 16384
+Max block size (--max_block_size=N)                         : 16384
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+16384               1              0.000370       44242.3        13.0           13.0           17.8           49.0           44210.7        459292.0       
+--- PUT NIXL_RDMA_DAOS_RDMA 64KB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_64KB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_65536B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 65536
+Max block size (--max_block_size=N)                         : 65536
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+65536               1              0.019617       3340.8         7.0            7.0            14.4           33.0           3318.8         4466.0         
+--- PUT NIXL_RDMA_DAOS_RDMA 256KB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_256KB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_262144B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 262144
+Max block size (--max_block_size=N)                         : 262144
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+262144              1              0.076354       3433.3         12.0           12.0           14.8           39.0           3406.3         4427.0         
+--- PUT NIXL_RDMA_DAOS_RDMA 1MB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_1MB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_1048576B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 1048576
+Max block size (--max_block_size=N)                         : 1048576
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+1048576             1              0.284902       3680.5         10.0           10.0           14.6           39.0           3655.4         4480.0         
+--- PUT NIXL_RDMA_DAOS_RDMA 4MB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_4MB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_4194304B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 4194304
+Max block size (--max_block_size=N)                         : 4194304
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+4194304             1              0.896733       4677.3         7.0            7.0            14.2           30.0           4655.7         5931.0         
+--- PUT NIXL_RDMA_DAOS_RDMA 16MB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_16MB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_16777216B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 16777216
+Max block size (--max_block_size=N)                         : 16777216
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+16777216            1              2.148579       7808.5         7.0            7.0            14.6           30.0           7786.8         9927.0         
+--- PUT NIXL_RDMA_DAOS_RDMA 64MB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_64MB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_67108864B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 67108864
+Max block size (--max_block_size=N)                         : 67108864
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 12000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+67108864            1              3.845701       17450.4        7.0            7.0            12.5           30.0           17429.9        23992.0        
+[hsc-12] running GET per block size...
+--- GET NIXL_RDMA_DAOS_RDMA 4KB → /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_4KB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_4096B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : READ
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 4096
+Max block size (--max_block_size=N)                         : 4096
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 8192
+Warmup iter (--warmup_iter=N)                               : 1024
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+4096                1              0.001585       2584.8         1.0            1.0            9.5            27.0           2573.4         3958.0         
+--- GET NIXL_RDMA_DAOS_RDMA 16KB → /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_16KB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_16384B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : READ
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 16384
+Max block size (--max_block_size=N)                         : 16384
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 8192
+Warmup iter (--warmup_iter=N)                               : 1024
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+16384               1              0.005694       2877.3         2.0            2.0            13.4           27.0           2861.4         3812.0         
+--- GET NIXL_RDMA_DAOS_RDMA 64KB → /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_64KB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_65536B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : READ
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 65536
+Max block size (--max_block_size=N)                         : 65536
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 8192
+Warmup iter (--warmup_iter=N)                               : 1024
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+65536               1              0.023329       2809.2         9.0            9.0            13.0           32.0           2786.9         3791.0         
+--- GET NIXL_RDMA_DAOS_RDMA 256KB → /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_256KB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_262144B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : READ
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 262144
+Max block size (--max_block_size=N)                         : 262144
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 8192
+Warmup iter (--warmup_iter=N)                               : 1024
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+262144              1              0.089091       2942.4         6.0            6.0            21.5           40.0           2914.6         3585.0         
+--- GET NIXL_RDMA_DAOS_RDMA 1MB → /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_1MB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_1048576B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : READ
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 1048576
+Max block size (--max_block_size=N)                         : 1048576
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 8192
+Warmup iter (--warmup_iter=N)                               : 1024
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+1048576             1              0.335798       3122.6         3.0            3.0            14.0           36.0           3105.6         4106.0         
+--- GET NIXL_RDMA_DAOS_RDMA 4MB → /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_4MB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_4194304B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : READ
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 4194304
+Max block size (--max_block_size=N)                         : 4194304
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 8192
+Warmup iter (--warmup_iter=N)                               : 1024
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+4194304             1              1.126886       3722.0         4.0            4.0            18.4           34.0           3699.4         4928.0         
+--- GET NIXL_RDMA_DAOS_RDMA 16MB → /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_16MB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_16777216B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : READ
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 16777216
+Max block size (--max_block_size=N)                         : 16777216
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 8192
+Warmup iter (--warmup_iter=N)                               : 1024
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+16777216            1              2.431515       6899.9         5.0            5.0            18.8           39.0           6875.3         8817.0         
+--- GET NIXL_RDMA_DAOS_RDMA 64MB → /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_64MB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_67108864B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : READ
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 67108864
+Max block size (--max_block_size=N)                         : 67108864
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 8192
+Warmup iter (--warmup_iter=N)                               : 1024
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+67108864            1              3.945123       17010.6        4.0            4.0            17.1           39.0           16989.1        24374.0        
+[done] NIXL_RDMA_DAOS_RDMA
+
+=== All benchmarks complete. Logs in /HSC/users/zhuyu/nixl/logs ===
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:16 /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_4KB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:25 /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_16KB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:26 /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_64KB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:27 /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_256KB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:28 /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_1MB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:29 /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_4MB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:31 /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_16MB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:35 /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_4KB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:35 /HSC/users/zhuyu/nixl/logs/PUT_NIXL_RDMA_DAOS_RDMA_64MB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:36 /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_16KB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:36 /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_64KB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:37 /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_256KB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:38 /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_1MB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:39 /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_4MB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:40 /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_16MB.log
+-rw-r--r-- 1 zhuyu ldap 4.5K Mar 29 03:43 /HSC/users/zhuyu/nixl/logs/GET_NIXL_RDMA_DAOS_RDMA_64MB.log

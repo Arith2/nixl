@@ -1,0 +1,377 @@
+
+████████████████████████████████████████████████
+  DAOS RDMA (ucx+dc_x) — NIXL TCP baseline
+████████████████████████████████████████████████
+=== Teardown ===
+[hsc-12] stopping etcd...
+etcd-server
+[hsc-14] stopping Ceph RGW and DAOS agent...
+[hsc-21] stopping DAOS server...
+removed directory '/mnt/daos0'
+removed '/mnt/daos-md/daos_control/control_raft/snapshots/2-32-1774791609211/state.bin'
+removed '/mnt/daos-md/daos_control/control_raft/snapshots/2-32-1774791609211/meta.json'
+removed directory '/mnt/daos-md/daos_control/control_raft/snapshots/2-32-1774791609211'
+removed directory '/mnt/daos-md/daos_control/control_raft/snapshots'
+removed '/mnt/daos-md/daos_control/control_raft/daos_system.db'
+removed directory '/mnt/daos-md/daos_control/control_raft'
+removed '/mnt/daos-md/daos_control/engine0/superblock'
+removed '/mnt/daos-md/daos_control/engine0/daos_sys/sys_db'
+removed directory '/mnt/daos-md/daos_control/engine0/daos_sys'
+removed '/mnt/daos-md/daos_control/engine0/daos_nvme.conf'
+removed directory '/mnt/daos-md/daos_control/engine0'
+removed directory '/mnt/daos-md/daos_control'
+removed directory '/mnt/daos-md'
+Starting SPDK SSD reset process...
+Resetting SPDK...
+0000:c7:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:23:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:26:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:25:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:c5:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:c6:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:24:00.0 (1e0f 0007): vfio-pci -> nvme
+0000:c4:00.0 (1e0f 0007): vfio-pci -> nvme
+Available NVMe devices:
+Node                  SN                   Model                                    Namespace Usage                      Format           FW Rev  
+--------------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+/dev/nvme0n1          Y2A0A027TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme1n1          Y2A0A026TCZ8         KCM6XVUL1T60                             1         403.33  GB /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme2n1          82N0A0TATMQ8         KCM6FVUL3T20                             1         402.99  GB /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme3n1          82N0A0T9TMQ8         KCM6FVUL3T20                             1         402.88  GB /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme4n1          Y2A0A023TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme5n1          Y2D0A002TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme6n1          Y2A0A02CTCZ8         KCM6XVUL1T60                             1         403.26  GB /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme7n1          Y2A0A01UTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+Found NVMe devices: /dev/nvme0n1
+/dev/nvme1n1
+/dev/nvme2n1
+/dev/nvme3n1
+/dev/nvme4n1
+/dev/nvme5n1
+/dev/nvme6n1
+/dev/nvme7n1
+Formatting /dev/nvme0n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme0n1
+Formatting /dev/nvme1n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme1n1
+Formatting /dev/nvme2n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme2n1
+Formatting /dev/nvme3n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme3n1
+Formatting /dev/nvme4n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme4n1
+Formatting /dev/nvme5n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme5n1
+Formatting /dev/nvme6n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme6n1
+Formatting /dev/nvme7n1...
+Success formatting namespace:1
+Successfully formatted /dev/nvme7n1
+Waiting for format operations to complete...
+Available NVMe devices after formatting:
+Node                  SN                   Model                                    Namespace Usage                      Format           FW Rev  
+--------------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+/dev/nvme0n1          Y2A0A027TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme1n1          Y2A0A026TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme2n1          82N0A0TATMQ8         KCM6FVUL3T20                             1           0.00   B /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme3n1          82N0A0T9TMQ8         KCM6FVUL3T20                             1           0.00   B /   3.20  TB    512   B +  0 B   GPK6    
+/dev/nvme4n1          Y2A0A023TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme5n1          Y2D0A002TCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme6n1          Y2A0A02CTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+/dev/nvme7n1          Y2A0A01UTCZ8         KCM6XVUL1T60                             1           0.00   B /   1.60  TB    512   B +  0 B   GPK8    
+Re-initializing SPDK...
+0000:25:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:23:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:26:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:25:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:25:00.0 (1e0f 0007): WARNING: 0000:24:00.0 not bound to vfio-pci (driver)
+0000:25:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:23:00.0 (1e0f 0007): WARNING: 0000:24:00.0 not bound to vfio-pci (driver)
+0000:23:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:26:00.0 (1e0f 0007): WARNING: 0000:24:00.0 not bound to vfio-pci (driver)
+0000:26:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c4:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c6:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:24:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c5:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c7:00.0 (1e0f 0007): nvme -> vfio-pci
+0000:c4:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:24:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.0 not bound to vfio-pci (driver)
+0000:c5:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c4:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c4:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.1 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.2 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: detected multiple devices (9) under the same IOMMU group!
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.3 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.0 not bound to vfio-pci (driver)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c6:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c6:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:24:00.0 (1e0f 0007): WARNING: 0000:20:01.4 not bound to vfio-pci (pcieport)
+0000:24:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c5:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c5:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.1 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.2 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.3 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+0000:c7:00.0 (1e0f 0007): WARNING: 0000:c0:03.4 not bound to vfio-pci (pcieport)
+0000:c7:00.0 (1e0f 0007): WARNING All devices in the IOMMU group must be bound to the same driver or unbound
+INFO: Requested 1024 hugepages but 4096 already allocated 
+SPDK SSD reset complete!
+=== Teardown complete ===
+[hsc-21] starting DAOS server (RDMA/ucx+dc_x)...
+Waiting for DAOS storage ready...
+hsc-21 INFO 2026/03/24 14:27:17 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/24 14:58:33 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 08:30:19 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 09:32:22 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 14:14:38 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/25 15:05:12 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 04:40:54 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 12:02:03 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 13:11:44 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/26 15:49:17 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/27 02:20:31 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/27 09:16:23 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 04:24:34 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 06:04:30 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 11:42:45 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 11:46:15 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:00:59 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:12:36 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:18:30 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:27:13 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/28 13:54:55 DAOS I/O Engine instance 0 storage ready
+hsc-21 INFO 2026/03/29 03:14:21 DAOS I/O Engine instance 0 storage ready
+Waiting 15s for DAOS engine to register ranks...
+[hsc-14] starting DAOS agent (RDMA) + Ceph RGW...
+Creating DAOS pool with automatic storage allocation: 2.1 TB total, 6.38% ratio
+Pool created with 6.00%,94.00% storage tier ratio
+-------------------------------------------------
+  UUID             : 5dc3f4ef-69d2-42c5-aa66-9c3a4f41e3c7
+  Service Leader   : 0                                   
+  Service Ranks    : 0                                   
+  Storage Ranks    : 0                                   
+  Total Size       : 2.1 TB                              
+  Metadata Storage : 125 GB (125 GB / rank)              
+  Data Storage     : 2.0 TB (2.0 TB / rank)              
+  Memory File Size : 125 GB (125 GB / rank)              
+
+ceph-mgr dashboard not built - disabling.
+rm -f core* 
+hostname hsc-14
+ip 10.93.244.74
+port 40813
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-authtool --create-keyring --gen-key --name=mon. /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring --cap mon 'allow *' 
+creating /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-authtool --gen-key --name=client.admin --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow *' --cap mgr 'allow *' /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool --create --clobber --addv a [v2:10.93.244.74:40813,v1:10.93.244.74:40814] --print /tmp/ceph_monmap.865863 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool: monmap file /tmp/ceph_monmap.865863
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool: generated fsid a4cc26e6-505b-464a-809b-21ed3e375efa
+setting min_mon_release = pacific
+epoch 0
+fsid a4cc26e6-505b-464a-809b-21ed3e375efa
+last_changed 2026-03-29T12:11:24.545648-0700
+created 2026-03-29T12:11:24.545648-0700
+min_mon_release 16 (pacific)
+election_strategy: 1
+0: [v2:10.93.244.74:40813/0,v1:10.93.244.74:40814/0] mon.a
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/monmaptool: writing epoch 0 to /tmp/ceph_monmap.865863 (1 monitors)
+rm -rf -- /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/dev/mon.a 
+mkdir -p /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/dev/mon.a 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-mon --mkfs -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf -i a --monmap=/tmp/ceph_monmap.865863 --keyring=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring 
+rm -- /tmp/ceph_monmap.865863 
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph-mon -i a -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf 
+Populating config ...
+
+[mgr]
+	mgr/telemetry/enable = false
+	mgr/telemetry/nag = false
+setting up user testid
+2026-03-29T12:11:26.818-0700 7f36a0903bc0  0 Error: ds3_user_get failed, name=testid ret=-2
+2026-03-29T12:11:26.818-0700 7f36a0903bc0  0 ERROR: load_user failed, name=testid
+2026-03-29T12:11:26.826-0700 7f36a0903bc0  0 Error: ds3_user_get_by_email failed, email=tester@ceph.com ret=-2
+2026-03-29T12:11:26.830-0700 7f36a0903bc0  0 Error: ds3_user_get_by_key failed, key=0555b35654ad1656d804 ret=-2
+2026-03-29T12:11:26.830-0700 7f36a0903bc0  0 Error: ds3_user_get_by_key failed, key=0555b35654ad1656d804 ret=-2
+2026-03-29T12:11:26.830-0700 7f36a0903bc0  0 Error: ds3_user_get failed, name=testid ret=-2
+setting up s3-test users
+2026-03-29T12:11:28.482-0700 7f5b64eb5bc0  0 Error: ds3_user_get failed, name=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef ret=-2
+2026-03-29T12:11:28.482-0700 7f5b64eb5bc0  0 ERROR: load_user failed, name=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-03-29T12:11:28.482-0700 7f5b64eb5bc0  0 Error: ds3_user_get_by_email failed, email=s3@example.com ret=-2
+2026-03-29T12:11:28.482-0700 7f5b64eb5bc0  0 Error: ds3_user_get_by_key failed, key=ABCDEFGHIJKLMNOPQRST ret=-2
+2026-03-29T12:11:28.482-0700 7f5b64eb5bc0  0 Error: ds3_user_get_by_key failed, key=ABCDEFGHIJKLMNOPQRST ret=-2
+2026-03-29T12:11:28.482-0700 7f5b64eb5bc0  0 Error: ds3_user_get failed, name=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef ret=-2
+2026-03-29T12:11:30.226-0700 7fb855db9bc0  0 Error: ds3_user_get failed, name=56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234 ret=-2
+2026-03-29T12:11:30.226-0700 7fb855db9bc0  0 ERROR: load_user failed, name=56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234
+2026-03-29T12:11:30.226-0700 7fb855db9bc0  0 Error: ds3_user_get_by_email failed, email=john.doe@example.com ret=-2
+2026-03-29T12:11:30.226-0700 7fb855db9bc0  0 Error: ds3_user_get_by_key failed, key=NOPQRSTUVWXYZABCDEFG ret=-2
+2026-03-29T12:11:30.226-0700 7fb855db9bc0  0 Error: ds3_user_get_by_key failed, key=NOPQRSTUVWXYZABCDEFG ret=-2
+2026-03-29T12:11:30.226-0700 7fb855db9bc0  0 Error: ds3_user_get failed, name=56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234 ret=-2
+2026-03-29T12:11:31.834-0700 7f50e6355bc0  0 Error: ds3_user_get failed, name=testx$9876543210abcdef0123456789abcdef0123456789abcdef0123456789abcdef ret=-2
+2026-03-29T12:11:31.834-0700 7f50e6355bc0  0 ERROR: load_user failed, name=testx$9876543210abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-03-29T12:11:31.834-0700 7f50e6355bc0  0 Error: ds3_user_get_by_email failed, email=tenanteduser@example.com ret=-2
+2026-03-29T12:11:31.838-0700 7f50e6355bc0  0 Error: ds3_user_get_by_key failed, key=HIJKLMNOPQRSTUVWXYZA ret=-2
+2026-03-29T12:11:31.838-0700 7f50e6355bc0  0 Error: ds3_user_get_by_key failed, key=HIJKLMNOPQRSTUVWXYZA ret=-2
+2026-03-29T12:11:31.838-0700 7f50e6355bc0  0 Error: ds3_user_get failed, name=testx$9876543210abcdef0123456789abcdef0123456789abcdef0123456789abcdef ret=-2
+
+S3 User Info:
+  access key:  0555b35654ad1656d804
+  secret key:  h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/ceph -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf -k /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/keyring auth get-or-create client.rgw.8000 mon 'allow rw' osd 'allow rwx' mgr 'allow rw' 
+start rgw on http://localhost:8000
+/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin/radosgw -c /home/zhuyu/ceph_hsc14_daos_v18.2.7/build/ceph.conf --log-file=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/out/radosgw.8000.log --admin-socket=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/out/radosgw.8000.asok --pid-file=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/out/radosgw.8000.pid --rgw_luarocks_location=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/out/luarocks -n client.rgw.8000 '--rgw_frontends=beast port=8000' 
+
+
+vstart cluster complete. Use stop.sh to stop. See out/* (e.g. 'tail -f out/????') for debug output.
+
+export PYTHONPATH=/home/zhuyu/ceph_hsc14_daos_v18.2.7/src/pybind:/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/lib/cython_modules/lib.3:/home/zhuyu/ceph_hsc14_daos_v18.2.7/src/python-common:$PYTHONPATH
+export LD_LIBRARY_PATH=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/lib:$LD_LIBRARY_PATH
+export PATH=/home/zhuyu/ceph_hsc14_daos_v18.2.7/build/bin:$PATH
+alias cephfs-shell=/home/zhuyu/ceph_hsc14_daos_v18.2.7/src/tools/cephfs/shell/cephfs-shell
+CEPH_DEV=1
+make_bucket: lmcache
+[hsc-14] Ceph RGW ready
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+
+╔══════════════════════════════════════════════╗
+  Config: NIXL_TCP_DAOS_RDMA  Block: 256MB
+  PUT: 6000 iter   GET: 512 warmup + 4096 iter
+╚══════════════════════════════════════════════╝
+--- PUT NIXL_TCP_DAOS_RDMA 256MB → /HSC/users/zhuyu/nixl/logs/PUT_NIXL_TCP_DAOS_RDMA_256MB.log ---
+[hsc-12] ensuring etcd is running and flushing keys...
+etcd-server
+0
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 6000 objects (devIds 0..5999), key[0]=prepop_268435456B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 
+OBJ prepop objects (--obj_prepop_num=N)                     : 6000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : WRITE
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 268435456
+Max block size (--max_block_size=N)                         : 268435456
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 6000
+Warmup iter (--warmup_iter=N)                               : 0
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
