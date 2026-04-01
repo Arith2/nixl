@@ -52,7 +52,7 @@ Start block size (--start_block_size=N)                     : 5242880
 Max block size (--max_block_size=N)                         : 5242880
 Start batch size (--start_batch_size=N)                     : 1
 Max batch size (--max_batch_size=N)                         : 1
-Num iter (--num_iter=N)                                     : 1000
+Num iter (--num_iter=N)                                     : 100
 Warmup iter (--warmup_iter=N)                               : 0
 Large block iter factor (--large_blk_iter_ftr=N)            : 1
 Num threads (--num_threads=N)                               : 1
@@ -61,4 +61,4 @@ Num threads (--num_threads=N)                               : 1
 Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 NIXL Xfer failed with status: NIXL_ERR_BACKEND
-E0401 19:31:07.289568    9925 nixl_agent.cpp:1168] getXferStatus: backend 'OBJ' returned error status NIXL_ERR_BACKEND
+E0401 20:23:37.710819   12723 nixl_agent.cpp:1168] getXferStatus: backend 'OBJ' returned error status NIXL_ERR_BACKEND
