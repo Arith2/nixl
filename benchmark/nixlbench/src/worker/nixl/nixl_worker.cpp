@@ -1350,9 +1350,10 @@ execTransferIterations(nixlAgent *agent,
     // backend sees the updated devId (which maps to a different registered S3 key).
     const bool use_recreate = recreate_per_iteration || (prepop_keys && !prepop_keys->empty());
 
-    // Capture base devId for prepop rotation: remote_desc[0].devId = base_dev_id at entry.
+    // Capture base devId and original len for prepop rotation.
     const uint64_t prepop_base_dev_id =
         (prepop_keys && !prepop_keys->empty()) ? remote_desc[0].devId : 0;
+    const uint64_t original_remote_len = remote_desc[0].len;
 
     // Create request once if not recreating per iteration
     if (!use_recreate) {
@@ -1375,14 +1376,18 @@ execTransferIterations(nixlAgent *agent,
             if (prepop_keys && !prepop_keys->empty()) {
                 int num_chunks = (int)prepop_keys->size();
                 if (xferBenchConfig::layerwise_mode && xferBenchConfig::kvcache_num_layers > 0) {
-                    // Layer-wise range-GET: cycle (chunk_0 L0, chunk_1 L0, ..., chunk_0 L1, ...)
-                    // block_size = layer_slice; offset = layer_idx × layer_slice
+                    // Layer-wise range-GET: read one layer_slice (64KB) from a 5MB chunk object.
+                    // Cycle: (chunk_0 L0, chunk_1 L0, ..., chunk_0 L1, ...)
                     int num_layers = xferBenchConfig::kvcache_num_layers;
+                    size_t layer_slice = static_cast<size_t>(xferBenchConfig::kvcache_kv_per_token)
+                                       * (original_remote_len / (num_layers * xferBenchConfig::kvcache_kv_per_token));
                     int total_idx = (prepop_iter_offset + i) % (num_chunks * num_layers);
                     int chunk_idx = total_idx % num_chunks;
                     int layer_idx = total_idx / num_chunks;
                     remote_desc[0].devId = prepop_base_dev_id + chunk_idx;
-                    remote_desc[0].addr = static_cast<uint64_t>(layer_idx) * remote_desc[0].len;
+                    remote_desc[0].addr = static_cast<uint64_t>(layer_idx) * layer_slice;
+                    remote_desc[0].len = layer_slice;
+                    local_desc[0].len = layer_slice;
                 } else {
                     int idx = (prepop_iter_offset + i) % num_chunks;
                     remote_desc[0].devId = prepop_base_dev_id + idx;

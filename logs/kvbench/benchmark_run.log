@@ -1,0 +1,28 @@
+============================================================
+  Section 5.6: KV Cache Streaming Benchmark
+  Model: Llama 70B (TP=8), 80 layers, 256 B/tok/layer
+  Block: 5 MB, Layer: 64 KB, Total prepop: 262144 chunks
+  Iterations: 1000 per-request (cold, sequential)
+============================================================
+
+=== Step 0: Prepopulate 262144 chunks (1280 GB) ===
+  Estimated time: ~35 minutes via RDMA
+0
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+5242880             1              1.020744       5136.3         9.0            9.0            14.0           35.0           5113.1         6542.0         
+Prepopulation complete.
+
+=== Step 1: Chunk-wise TCP (per-request latency) ===
+0
+--- Measuring per-request latency for 5 MB chunk GETs over TCP ---
+5242880             1              0.393510       13323.4        7.0            7.0            12.7           39.0           13303.4        56896.0        
+
+=== Step 2: Chunk-wise RDMA (per-request latency) ===
+0
+5242880             1              1.262143       4154.0         12.0           12.0           16.3           43.0           4125.3         5830.0         
+
+=== Step 3: Layer-wise TCP (per-request latency for 64 KB range-GETs) ===
+0
