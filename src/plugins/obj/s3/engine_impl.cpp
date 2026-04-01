@@ -46,8 +46,8 @@ isValidPrepXferParams(const nixl_xfer_op_t &operation,
             local_agent,
             remote_agent);
 
-    if (local.getType() != DRAM_SEG) {
-        NIXL_ERROR << absl::StrFormat("Error: Local memory type must be DRAM_SEG, got %d",
+    if (local.getType() != DRAM_SEG && local.getType() != VRAM_SEG) {
+        NIXL_ERROR << absl::StrFormat("Error: Local memory type must be DRAM_SEG or VRAM_SEG, got %d",
                                       local.getType());
         return false;
     }
@@ -135,6 +135,22 @@ DefaultObjEngineImpl::DefaultObjEngineImpl(const nixlBackendInitParams *init_par
         }
     }
 
+    // Parse kvcache mode parameters
+    if (init_params->customParams) {
+        auto mode_it = init_params->customParams->find("kvcache_mode");
+        if (mode_it != init_params->customParams->end() && mode_it->second == "1") {
+            kvcache_mode_ = true;
+            auto layers_it = init_params->customParams->find("kvcache_num_layers");
+            auto kv_it = init_params->customParams->find("kvcache_kv_per_token");
+            if (layers_it != init_params->customParams->end())
+                kvcache_num_layers_ = std::stoi(layers_it->second);
+            if (kv_it != init_params->customParams->end())
+                kvcache_kv_per_token_ = std::stoi(kv_it->second);
+            NIXL_INFO << "KVCache mode enabled: layers=" << kvcache_num_layers_
+                      << " kv_per_token=" << kvcache_kv_per_token_;
+        }
+    }
+
     // Ensure at least one client was created
     if (!s3Client_) {
         throw std::runtime_error("Failed to create any S3 client");
@@ -163,7 +179,7 @@ nixl_status_t
 DefaultObjEngineImpl::registerMem(const nixlBlobDesc &mem,
                                   const nixl_mem_t &nixl_mem,
                                   nixlBackendMD *&out) {
-    nixl_mem_list_t supported_mems = {OBJ_SEG, DRAM_SEG};
+    nixl_mem_list_t supported_mems = {OBJ_SEG, DRAM_SEG, VRAM_SEG};
     if (std::find(supported_mems.begin(), supported_mems.end(), nixl_mem) == supported_mems.end())
         return NIXL_ERR_NOT_SUPPORTED;
 
@@ -173,7 +189,8 @@ DefaultObjEngineImpl::registerMem(const nixlBlobDesc &mem,
         devIdToObjKey_[mem.devId] = obj_md->objKey;
         out = obj_md.release();
     } else {
-        // Always create metadata so deregisterMem can find the addr for RDMA MR cleanup
+        // DRAM_SEG or VRAM_SEG: register with RDMA NIC.
+        // For VRAM_SEG, ibv_reg_mr works transparently via nvidia_peermem kernel module.
         auto dram_md = std::make_unique<nixlDramBEMD>(mem.addr, mem.len);
         if (rdma_ctx_ && rdma_ctx_->isEnabled())
             rdma_ctx_->registerMR(reinterpret_cast<void*>(mem.addr), mem.len);
@@ -249,6 +266,56 @@ DefaultObjEngineImpl::postXfer(const nixl_xfer_op_t &operation,
                                const nixl_opt_b_args_t *opt_args) const {
     nixlObjBackendReqH *req_h = static_cast<nixlObjBackendReqH *>(handle);
 
+    // KV cache streaming mode: collect all chunk keys and make a single
+    // getKVCacheAsync call instead of N separate getObjectAsync calls.
+    if (kvcache_mode_ && operation == NIXL_READ && local.descCount() > 0) {
+        // Compute tokens_per_chunk from the block size (each chunk = num_layers * kv_per_token * tokens_per_chunk)
+        size_t chunk_size = local[0].len;
+        size_t tokens_per_chunk = chunk_size / (kvcache_num_layers_ * kvcache_kv_per_token_);
+
+        std::vector<std::string> chunk_keys;
+        for (int i = 0; i < remote.descCount(); ++i) {
+            auto it = devIdToObjKey_.find(remote[i].devId);
+            if (it == devIdToObjKey_.end()) {
+                NIXL_ERROR << "KVCache: chunk key not found for devId " << remote[i].devId;
+                return NIXL_ERR_INVALID_PARAM;
+            }
+            chunk_keys.push_back(it->second);
+        }
+
+        // Total receive buffer spans all local descriptors
+        uintptr_t data_ptr = local[0].addr;
+        size_t data_len = 0;
+        for (int i = 0; i < local.descCount(); ++i)
+            data_len += local[i].len;
+
+        iS3Client *client = getClient();
+        if (!client) return NIXL_ERR_BACKEND;
+
+        auto status_promise = std::make_shared<std::promise<nixl_status_t>>();
+        req_h->statusFutures_.push_back(status_promise->get_future());
+
+        auto status_callback = [status_promise](bool success) {
+            status_promise->set_value(success ? NIXL_SUCCESS : NIXL_ERR_BACKEND);
+        };
+
+        std::optional<std::string> rdma_token;
+        if (rdma_ctx_ && rdma_ctx_->isEnabled()) {
+            auto token = rdma_ctx_->buildToken(
+                reinterpret_cast<void*>(data_ptr), data_len, 0);
+            if (!token.empty())
+                rdma_token = token;
+        }
+
+        client->getKVCacheAsync(
+            chunk_keys, kvcache_num_layers_, kvcache_kv_per_token_,
+            tokens_per_chunk,
+            data_ptr, data_len, status_callback, rdma_token);
+
+        return NIXL_IN_PROG;
+    }
+
+    // Normal (non-kvcache) path
     for (int i = 0; i < local.descCount(); ++i) {
         const auto &local_desc = local[i];
         const auto &remote_desc = remote[i];
@@ -273,13 +340,10 @@ DefaultObjEngineImpl::postXfer(const nixl_xfer_op_t &operation,
             return NIXL_ERR_BACKEND;
         }
 
-        // S3 client interface signals completion via a callback, but NIXL API polls request handle
-        // for the status code. Use future/promise pair to bridge the gap.
         auto status_callback = [status_promise](bool success) {
             status_promise->set_value(success ? NIXL_SUCCESS : NIXL_ERR_BACKEND);
         };
 
-        // Build RDMA token if context is active and MR is registered for this buffer
         std::optional<std::string> rdma_token;
         if (rdma_ctx_ && rdma_ctx_->isEnabled()) {
             auto token = rdma_ctx_->buildToken(

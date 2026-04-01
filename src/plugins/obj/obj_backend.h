@@ -18,6 +18,9 @@
 #ifndef OBJ_BACKEND_H
 #define OBJ_BACKEND_H
 
+#include <vector>
+#include <string>
+
 #include "obj_executor.h"
 #include <optional>
 #include <string>
@@ -74,6 +77,31 @@ public:
                    size_t offset,
                    get_object_callback_t callback,
                    std::optional<std::string> rdma_token = std::nullopt) = 0;
+
+    /**
+     * Asynchronously load KV cache from multiple chunk objects, streamed layer-by-layer.
+     * Sends x-amz-kvcache header so the server performs server-side layer extraction.
+     * @param chunk_keys S3 object keys for each cached chunk
+     * @param num_layers Number of transformer layers
+     * @param kv_per_token_per_layer KV cache bytes per token per layer per GPU
+     * @param tokens_per_chunk Number of tokens per chunk (S3 object)
+     * @param data_ptr Pointer to receive buffer (layers delivered sequentially)
+     * @param data_len Total receive buffer size
+     * @param callback Callback when all layers delivered
+     * @param rdma_token RDMA token for zero-copy delivery
+     */
+    virtual void
+    getKVCacheAsync(const std::vector<std::string>& chunk_keys,
+                    int num_layers,
+                    size_t kv_per_token_per_layer,
+                    size_t tokens_per_chunk,
+                    uintptr_t data_ptr,
+                    size_t data_len,
+                    get_object_callback_t callback,
+                    std::optional<std::string> rdma_token = std::nullopt) {
+        // Default: not supported
+        callback(false);
+    }
 
     /**
      * Check if the object exists.

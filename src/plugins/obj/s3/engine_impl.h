@@ -68,6 +68,12 @@ protected:
     std::unordered_map<uint64_t, std::string> devIdToObjKey_;
     size_t crtMinLimit_;
     std::unique_ptr<RdmaContext> rdma_ctx_;
+
+    // KV cache streaming mode
+    bool kvcache_mode_{false};
+    int kvcache_num_layers_{0};
+    int kvcache_kv_per_token_{0};
+    size_t kvcache_tokens_per_chunk_{0};  // computed from block_size / (num_layers * kv_per_token)
 };
 
 #endif // OBJ_PLUGIN_S3_ENGINE_IMPL_H

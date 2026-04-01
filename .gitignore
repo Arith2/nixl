@@ -20,4 +20,4 @@ cufile.log
 .cache/
 
 # Asio
-subprojects/asio-*
+subprojects/asio-*tex/

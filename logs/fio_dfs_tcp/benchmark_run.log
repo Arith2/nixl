@@ -1,0 +1,133 @@
+=== FIO DFS Baseline Benchmark ===
+Log dir: /HSC/users/zhuyu/nixl/logs/fio_dfs_tcp
+CSV: /HSC/users/zhuyu/nixl/logs/fio_dfs_tcp/fio_dfs_baseline.csv
+
+============================================
+  Block Size: 64KB (65536 bytes)
+============================================
+Successfully created container 5f29d9cb-a99a-40d5-9fba-c97a3e517d25 type POSIX
+  Container UUID : 5f29d9cb-a99a-40d5-9fba-c97a3e517d25
+  Container Label: fio_bench                           
+  Container Type : POSIX                               
+
+--- Phase 1: WRITE benchmark (64KB) ---
+  WRITE: IOPS=2466.1  BW=154.13 MB/s  Lat=404.71us  P99=569.34us
+--- Phase 2: Prepopulate 500GB (64KB, fast, not recorded) ---
+  Prepopulate done
+--- Phase 3: READ benchmark (64KB, cold storage) ---
+  READ:  IOPS=2018.833333  BW=126.18 MB/s  Lat=494.42us  P99=667.65us
+
+============================================
+  Block Size: 256KB (262144 bytes)
+============================================
+Successfully destroyed container fio_bench
+Successfully created container eb30ee70-b74d-49ef-a73f-decf9dfff0cd type POSIX
+  Container UUID : eb30ee70-b74d-49ef-a73f-decf9dfff0cd
+  Container Label: fio_bench                           
+  Container Type : POSIX                               
+
+--- Phase 1: WRITE benchmark (256KB) ---
+  WRITE: IOPS=1604.183333  BW=401.05 MB/s  Lat=622.31us  P99=864.26us
+--- Phase 2: Prepopulate 500GB (256KB, fast, not recorded) ---
+  Prepopulate done
+--- Phase 3: READ benchmark (256KB, cold storage) ---
+  READ:  IOPS=1253.55  BW=313.39 MB/s  Lat=796.59us  P99=1138.69us
+
+============================================
+  Block Size: 1MB (1048576 bytes)
+============================================
+Successfully destroyed container fio_bench
+Successfully created container e37a6a24-eb47-4d7d-8940-8168fd34260f type POSIX
+  Container UUID : e37a6a24-eb47-4d7d-8940-8168fd34260f
+  Container Label: fio_bench                           
+  Container Type : POSIX                               
+
+--- Phase 1: WRITE benchmark (1MB) ---
+  WRITE: IOPS=655.633333  BW=655.63 MB/s  Lat=1523.72us  P99=1941.50us
+--- Phase 2: Prepopulate 500GB (1MB, fast, not recorded) ---
+  Prepopulate done
+--- Phase 3: READ benchmark (1MB, cold storage) ---
+  READ:  IOPS=408.966667  BW=408.97 MB/s  Lat=2443.13us  P99=4227.07us
+
+============================================
+  Block Size: 4MB (4194304 bytes)
+============================================
+Successfully destroyed container fio_bench
+Successfully created container 1d26c078-f82b-4782-853c-f9f4ecdb601f type POSIX
+  Container UUID : 1d26c078-f82b-4782-853c-f9f4ecdb601f
+  Container Label: fio_bench                           
+  Container Type : POSIX                               
+
+--- Phase 1: WRITE benchmark (4MB) ---
+  WRITE: IOPS=259.75  BW=1039.00 MB/s  Lat=3847.17us  P99=6651.90us
+--- Phase 2: Prepopulate 500GB (4MB, fast, not recorded) ---
+  Prepopulate done
+--- Phase 3: READ benchmark (4MB, cold storage) ---
+  READ:  IOPS=163.533333  BW=654.13 MB/s  Lat=6111.82us  P99=11993.09us
+
+============================================
+  Block Size: 16MB (16777216 bytes)
+============================================
+Successfully destroyed container fio_bench
+Successfully created container 85f81931-9d18-44a3-913d-9f7c8b08c701 type POSIX
+  Container UUID : 85f81931-9d18-44a3-913d-9f7c8b08c701
+  Container Label: fio_bench                           
+  Container Type : POSIX                               
+
+--- Phase 1: WRITE benchmark (16MB) ---
+  WRITE: IOPS=65.2  BW=1043.20 MB/s  Lat=15329.91us  P99=21626.88us
+--- Phase 2: Prepopulate 500GB (16MB, fast, not recorded) ---
+  Prepopulate done
+--- Phase 3: READ benchmark (16MB, cold storage) ---
+  READ:  IOPS=38.733333  BW=619.73 MB/s  Lat=25805.13us  P99=50593.79us
+
+============================================
+  Block Size: 64MB (67108864 bytes)
+============================================
+Successfully destroyed container fio_bench
+Successfully created container 6f17a0f2-3920-4baf-8ff5-d89fa79f6561 type POSIX
+  Container UUID : 6f17a0f2-3920-4baf-8ff5-d89fa79f6561
+  Container Label: fio_bench                           
+  Container Type : POSIX                               
+
+--- Phase 1: WRITE benchmark (64MB) ---
+  WRITE: IOPS=17.325  BW=1109.31 MB/s  Lat=57660.18us  P99=87556.10us
+--- Phase 2: Prepopulate 500GB (64MB, fast, not recorded) ---
+  Prepopulate done
+--- Phase 3: READ benchmark (64MB, cold storage) ---
+  READ:  IOPS=10.125  BW=648.53 MB/s  Lat=98637.29us  P99=145752.06us
+
+============================================
+  Block Size: 256MB (268435456 bytes)
+============================================
+Successfully destroyed container fio_bench
+Successfully created container 1a30a630-8be8-42b6-ba75-da5e5dea45f0 type POSIX
+  Container UUID : 1a30a630-8be8-42b6-ba75-da5e5dea45f0
+  Container Label: fio_bench                           
+  Container Type : POSIX                               
+
+--- Phase 1: WRITE benchmark (256MB) ---
+  WRITE: IOPS=4.319328  BW=1105.75 MB/s  Lat=232823.43us  P99=425721.86us
+--- Phase 2: Prepopulate 500GB (256MB, fast, not recorded) ---
+  Prepopulate done
+--- Phase 3: READ benchmark (256MB, cold storage) ---
+  READ:  IOPS=2.581197  BW=660.79 MB/s  Lat=396897.09us  P99=960495.62us
+
+Successfully destroyed container fio_bench
+=== All FIO DFS Benchmarks Complete ===
+Results: /HSC/users/zhuyu/nixl/logs/fio_dfs_tcp/fio_dfs_baseline.csv
+BlockSize,BlockName,Op,IOPS,BW_MBs,Avg_Lat_us,P99_Lat_us
+65536,64KB,WRITE,2466.1,154.13,404.71,569.34
+65536,64KB,READ,2018.833333,126.18,494.42,667.65
+262144,256KB,WRITE,1604.183333,401.05,622.31,864.26
+262144,256KB,READ,1253.55,313.39,796.59,1138.69
+1048576,1MB,WRITE,655.633333,655.63,1523.72,1941.50
+1048576,1MB,READ,408.966667,408.97,2443.13,4227.07
+4194304,4MB,WRITE,259.75,1039.00,3847.17,6651.90
+4194304,4MB,READ,163.533333,654.13,6111.82,11993.09
+16777216,16MB,WRITE,65.2,1043.20,15329.91,21626.88
+16777216,16MB,READ,38.733333,619.73,25805.13,50593.79
+67108864,64MB,WRITE,17.325,1109.31,57660.18,87556.10
+67108864,64MB,READ,10.125,648.53,98637.29,145752.06
+268435456,256MB,WRITE,4.319328,1105.75,232823.43,425721.86
+268435456,256MB,READ,2.581197,660.79,396897.09,960495.62

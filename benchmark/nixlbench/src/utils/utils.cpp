@@ -149,6 +149,9 @@ NB_ARG_STRING(obj_region, XFERBENCH_OBJ_REGION_EU_CENTRAL_1, "Region for S3 back
 NB_ARG_BOOL(obj_use_virtual_addressing, false, "Use virtual addressing for S3 backend");
 NB_ARG_STRING(obj_endpoint_override, "", "Endpoint override for S3 backend");
 NB_ARG_STRING(obj_rdma_port, "", "RDMA CM port for OBJ RDMA backend");
+NB_ARG_BOOL(kvcache_mode, false, "Enable KV cache streaming mode (x-amz-kvcache)");
+NB_ARG_INT32(kvcache_num_layers, 0, "Number of transformer layers (only used with --kvcache_mode)");
+NB_ARG_INT32(kvcache_kv_per_token, 0, "KV cache bytes per token per layer per GPU (only used with --kvcache_mode)");
 NB_ARG_INT32(obj_prepop_num,
              0,
              "Number of pre-populated objects per thread for cold-read benchmark (0=disabled). "
@@ -260,6 +263,9 @@ bool xferBenchConfig::obj_use_virtual_addressing = false;
 std::string xferBenchConfig::obj_endpoint_override = "";
 std::string xferBenchConfig::obj_rdma_port = "";
 int xferBenchConfig::obj_prepop_num = 0;
+bool xferBenchConfig::kvcache_mode = false;
+int xferBenchConfig::kvcache_num_layers = 0;
+int xferBenchConfig::kvcache_kv_per_token = 0;
 std::string xferBenchConfig::obj_req_checksum = "";
 std::string xferBenchConfig::obj_ca_bundle = "";
 size_t xferBenchConfig::obj_crt_min_limit = 0;
@@ -409,6 +415,9 @@ xferBenchConfig::loadParams(void) {
             obj_endpoint_override = NB_ARG(obj_endpoint_override);
             obj_rdma_port = NB_ARG(obj_rdma_port);
             obj_prepop_num = NB_ARG(obj_prepop_num);
+            kvcache_mode = NB_ARG(kvcache_mode);
+            kvcache_num_layers = NB_ARG(kvcache_num_layers);
+            kvcache_kv_per_token = NB_ARG(kvcache_kv_per_token);
             obj_req_checksum = NB_ARG(obj_req_checksum);
             obj_ca_bundle = NB_ARG(obj_ca_bundle);
             obj_crt_min_limit = NB_ARG(obj_crt_min_limit);
@@ -628,6 +637,12 @@ xferBenchConfig::printConfig() {
                         obj_prepop_num > 0 ?
                             std::to_string(obj_prepop_num) + " (enabled; PUT keeps objects, GET rotates reads)" :
                             "0 (disabled)");
+            printOption("KVCache mode (--kvcache_mode)",
+                        kvcache_mode ? "enabled" : "disabled");
+            if (kvcache_mode) {
+                printOption("KVCache num layers (--kvcache_num_layers)", std::to_string(kvcache_num_layers));
+                printOption("KVCache kv/token/layer (--kvcache_kv_per_token)", std::to_string(kvcache_kv_per_token));
+            }
             printOption("OBJ S3 required checksum (--obj_req_checksum=[supported, required])",
                         obj_req_checksum);
             printOption("OBJ S3 CA bundle (--obj_ca_bundle=cert-path)", obj_ca_bundle);

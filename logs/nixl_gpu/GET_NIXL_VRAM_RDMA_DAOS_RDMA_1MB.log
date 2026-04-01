@@ -1,0 +1,59 @@
+Connecting to ETCD at http://localhost:2379
+ETCD Runtime: Registered as rank 0 item 1 of 1
+OBJ backend with standard S3 enabled
+Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
+All processes are ready to proceed
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_1048576B_0_0_000000
+****************************************************************************************************************************************************************
+NIXLBench Configuration
+****************************************************************************************************************************************************************
+Runtime (--runtime_type=[etcd])                             : ETCD
+ETCD Endpoint                                               : http://localhost:2379
+Worker type (--worker_type=[nixl,nvshmem])                  : nixl
+Backend (--backend=[UCX,GDS,GDS_MT,POSIX,Mooncake,HF3FS,OBJ,AZURE_BLOB]): OBJ
+Enable pt (--enable_pt=[0,1])                               : 0
+Progress threads (--progress_threads=N)                     : 0
+Device list (--device_list=dev1,dev2,...)                   : all
+Enable VMM (--enable_vmm=[0,1])                             : 0
+Recreate xfer each iteration (--recreate_xfer=[0,1])        : 0
+OBJ S3 access key (--obj_access_key=key)                    : 0555b35654ad1656d804
+OBJ S3 secret key (--obj_secret_key=key)                    : h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q==
+OBJ S3 session token (--obj_session_token=token)            : 
+OBJ S3 bucket name (--obj_bucket_name=nixlbench-bucket)     : lmcache
+OBJ S3 scheme (--obj_scheme=[http, https])                  : http
+OBJ S3 region (--obj_region=region)                         : us-east-1
+OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
+OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
+OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
+OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
+OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
+OBJ S3 CRT min limit (--obj_crt_min_limit=N bytes)          : 0 (CRT disabled)
+OBJ S3 Accelerated enable (--obj_accelerated_enable=[true|false]): false (Accelerated disabled)
+OBJ S3 Accelerated type (--obj_accelerated_type=type)       : (default)
+filepath (--filepath=path)                                  : 
+filenames (--filenames=filename1,filename2,...)             : 
+Number of files (--num_files=N)                             : 1
+Storage enable direct (--storage_enable_direct=[0,1])       : 0
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : VRAM
+Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
+Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
+Mode (--mode=[SG,MG])                                       : SG
+Op type (--op_type=[READ,WRITE])                            : READ
+Check consistency (--check_consistency=[0,1])               : 0
+Total buffer size (--total_buffer_size=N)                   : 8589934592
+Num initiator dev (--num_initiator_dev=N)                   : 1
+Num target dev (--num_target_dev=N)                         : 1
+Start block size (--start_block_size=N)                     : 1048576
+Max block size (--max_block_size=N)                         : 1048576
+Start batch size (--start_batch_size=N)                     : 1
+Max batch size (--max_batch_size=N)                         : 1
+Num iter (--num_iter=N)                                     : 8192
+Warmup iter (--warmup_iter=N)                               : 1024
+Large block iter factor (--large_blk_iter_ftr=N)            : 1
+Num threads (--num_threads=N)                               : 1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+1048576             1              0.314340       3335.8         4.0            4.0            14.6           30.0           3316.3         4239.0         

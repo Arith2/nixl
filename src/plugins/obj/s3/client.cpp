@@ -180,6 +180,46 @@ awsS3Client::getObjectAsync(std::string_view key,
         nullptr);
 }
 
+void
+awsS3Client::getKVCacheAsync(const std::vector<std::string>& chunk_keys,
+                              int num_layers,
+                              size_t kv_per_token_per_layer,
+                              size_t tokens_per_chunk,
+                              uintptr_t data_ptr,
+                              size_t data_len,
+                              get_object_callback_t callback,
+                              std::optional<std::string> rdma_token) {
+    // Build JSON for x-amz-kvcache header
+    std::string json = "{\"chunks\":[";
+    for (size_t i = 0; i < chunk_keys.size(); i++) {
+        if (i > 0) json += ",";
+        json += "\"" + chunk_keys[i] + "\"";
+    }
+    json += "],\"num_layers\":" + std::to_string(num_layers)
+         + ",\"kv_per_token_per_layer\":" + std::to_string(kv_per_token_per_layer)
+         + ",\"tokens_per_chunk\":" + std::to_string(tokens_per_chunk) + "}";
+
+    // Use first chunk key as the request object key (server uses x-amz-kvcache, not the key)
+    Aws::S3::Model::GetObjectRequest request;
+    request.WithBucket(bucketName_).WithKey(Aws::String(chunk_keys[0]));
+    request.SetAdditionalCustomHeaderValue("x-amz-kvcache", json);
+    if (rdma_token.has_value())
+        request.SetAdditionalCustomHeaderValue("x-amz-rdma-token", rdma_token.value());
+
+    NIXL_INFO << "getKVCacheAsync: chunks=" << chunk_keys.size()
+              << " layers=" << num_layers << " json_len=" << json.size();
+
+    s3Client_->GetObjectAsync(
+        request,
+        [callback](const Aws::S3::S3Client*,
+                   const Aws::S3::Model::GetObjectRequest&,
+                   const Aws::S3::Model::GetObjectOutcome& outcome,
+                   const std::shared_ptr<const Aws::Client::AsyncCallerContext>&) {
+            callback(outcome.IsSuccess());
+        },
+        nullptr);
+}
+
 bool
 awsS3Client::checkObjectExists(std::string_view key) {
     Aws::S3::Model::HeadObjectRequest request;

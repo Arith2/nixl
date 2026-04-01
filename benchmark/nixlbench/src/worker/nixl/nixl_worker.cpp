@@ -237,6 +237,12 @@ xferBenchNixlWorker::xferBenchNixlWorker(int *argc, char ***argv, std::vector<st
             backend_params["rdma_port"] = xferBenchConfig::obj_rdma_port;
         }
 
+        if (xferBenchConfig::kvcache_mode) {
+            backend_params["kvcache_mode"] = "1";
+            backend_params["kvcache_num_layers"] = std::to_string(xferBenchConfig::kvcache_num_layers);
+            backend_params["kvcache_kv_per_token"] = std::to_string(xferBenchConfig::kvcache_kv_per_token);
+        }
+
         if (xferBenchConfig::obj_crt_min_limit > 0) {
             // Warn if both CRT and accelerated options are set - CRT takes precedence
             if (xferBenchConfig::obj_accelerated_enable) {
@@ -1450,19 +1456,76 @@ execTransfer(nixlAgent *agent,
             (!prepop_keys.empty() && tid < (int)prepop_keys.size()) ?
                 &prepop_keys[tid] : nullptr;
 
-        // Execute transfers
-        const int result = execTransferIterations(agent,
-                                                  op,
-                                                  local_desc,
-                                                  remote_desc,
-                                                  target,
-                                                  params,
-                                                  num_iter,
-                                                  timer,
-                                                  thread_stats,
-                                                  xferBenchConfig::recreate_xfer,
-                                                  thread_keys,
-                                                  prepop_iter_offset);
+        int result = 0;
+
+        // KVCache mode: build a single request with ALL chunk descriptors
+        if (xferBenchConfig::kvcache_mode && thread_keys && !thread_keys->empty()) {
+            // Build multi-descriptor lists: one local (total buffer) + N remote (one per chunk)
+            size_t chunk_size = local_iov[0].len;
+
+            for (int i = 0; i < num_iter; ++i) {
+                nixl_xfer_dlist_t kv_local(GET_SEG_TYPE(true));
+                nixl_xfer_dlist_t kv_remote(OBJ_SEG);
+
+                // One local + one remote descriptor per chunk (matched counts)
+                // Local: each points to offset within receive buffer
+                // Remote: each points to a different chunk object
+                uint64_t base_dev_id = remote_iov[0].devId;
+                for (size_t ci = 0; ci < thread_keys->size(); ci++) {
+                    nixlBasicDesc local_d;
+                    local_d.addr = local_iov[0].addr + ci * chunk_size;
+                    local_d.len = chunk_size;
+                    local_d.devId = local_iov[0].devId;
+                    kv_local.addDesc(local_d);
+
+                    nixlBasicDesc remote_d;
+                    remote_d.addr = 0;
+                    remote_d.len = chunk_size;
+                    remote_d.devId = base_dev_id + ci;
+                    kv_remote.addDesc(remote_d);
+                }
+
+                nixlXferReqH *req = nullptr;
+                nixl_status_t create_rc =
+                    agent->createXferReq(op, kv_local, kv_remote, target, req, &params);
+                if (create_rc != NIXL_SUCCESS) {
+                    std::cerr << "kvcache createXferReq failed: "
+                              << nixlEnumStrings::statusStr(create_rc) << std::endl;
+                    result = -1;
+                    break;
+                }
+                thread_stats.prepare_duration.add(timer.lap());
+
+                nixl_status_t rc = agent->postXferReq(req);
+                thread_stats.post_duration.add(timer.lap());
+                while (NIXL_IN_PROG == rc) {
+                    rc = agent->getXferStatus(req);
+                }
+                if (rc != NIXL_SUCCESS) {
+                    std::cerr << "kvcache xfer failed: "
+                              << nixlEnumStrings::statusStr(rc) << std::endl;
+                    agent->releaseXferReq(req);
+                    result = -1;
+                    break;
+                }
+                thread_stats.transfer_duration.add(timer.lap());
+                agent->releaseXferReq(req);
+            }
+        } else {
+            // Normal (non-kvcache) transfer path
+            result = execTransferIterations(agent,
+                                            op,
+                                            local_desc,
+                                            remote_desc,
+                                            target,
+                                            params,
+                                            num_iter,
+                                            timer,
+                                            thread_stats,
+                                            xferBenchConfig::recreate_xfer,
+                                            thread_keys,
+                                            prepop_iter_offset);
+        }
 
         if (__builtin_expect(result != 0, 0)) {
             ret = result;

@@ -3,7 +3,7 @@ ETCD Runtime: Registered as rank 0 item 1 of 1
 OBJ backend with standard S3 enabled
 Waiting for all processes to start... (expecting 1 total: 1 initiators and 1 targets)
 All processes are ready to proceed
-Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_16384B_0_0_000000
+Prepop: registered 12000 objects (devIds 0..11999), key[0]=prepop_65536B_0_0_000000
 ****************************************************************************************************************************************************************
 NIXLBench Configuration
 ****************************************************************************************************************************************************************
@@ -24,7 +24,7 @@ OBJ S3 scheme (--obj_scheme=[http, https])                  : http
 OBJ S3 region (--obj_region=region)                         : us-east-1
 OBJ S3 use virtual addressing (--obj_use_virtual_addressing=[0,1]): 0
 OBJ S3 endpoint override (--obj_endpoint_override=endpoint) : http://10.93.244.74:8000
-OBJ RDMA CM port (--obj_rdma_port=port)                     : 
+OBJ RDMA CM port (--obj_rdma_port=port)                     : 7471
 OBJ prepop objects (--obj_prepop_num=N)                     : 12000 (enabled; PUT keeps objects, GET rotates reads)
 OBJ S3 required checksum (--obj_req_checksum=[supported, required]): supported
 OBJ S3 CA bundle (--obj_ca_bundle=cert-path)                : 
@@ -35,7 +35,7 @@ filepath (--filepath=path)                                  :
 filenames (--filenames=filename1,filename2,...)             : 
 Number of files (--num_files=N)                             : 1
 Storage enable direct (--storage_enable_direct=[0,1])       : 0
-Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : DRAM
+Initiator seg type (--initiator_seg_type=[DRAM,VRAM])       : VRAM
 Target seg type (--target_seg_type=[DRAM,VRAM])             : DRAM
 Scheme (--scheme=[pairwise,manytoone,onetomany,tp])         : pairwise
 Mode (--mode=[SG,MG])                                       : SG
@@ -44,8 +44,8 @@ Check consistency (--check_consistency=[0,1])               : 0
 Total buffer size (--total_buffer_size=N)                   : 8589934592
 Num initiator dev (--num_initiator_dev=N)                   : 1
 Num target dev (--num_target_dev=N)                         : 1
-Start block size (--start_block_size=N)                     : 16384
-Max block size (--max_block_size=N)                         : 16384
+Start block size (--start_block_size=N)                     : 65536
+Max block size (--max_block_size=N)                         : 65536
 Start batch size (--start_batch_size=N)                     : 1
 Max batch size (--max_batch_size=N)                         : 1
 Num iter (--num_iter=N)                                     : 12000
@@ -56,4 +56,4 @@ Num threads (--num_threads=N)                               : 1
 
 Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-16384               1              0.000104       157748.9       10.0           10.0           13.6           39.0           157724.5       4924268.0      
+65536               1              0.018725       3499.9         9.0            9.0            13.9           42.0           3476.4         5114.0         

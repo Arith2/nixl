@@ -63,6 +63,16 @@ public:
                    get_object_callback_t callback,
                    std::optional<std::string> rdma_token = std::nullopt) override;
 
+    void
+    getKVCacheAsync(const std::vector<std::string>& chunk_keys,
+                    int num_layers,
+                    size_t kv_per_token_per_layer,
+                    size_t tokens_per_chunk,
+                    uintptr_t data_ptr,
+                    size_t data_len,
+                    get_object_callback_t callback,
+                    std::optional<std::string> rdma_token = std::nullopt) override;
+
     bool
     checkObjectExists(std::string_view key) override;
 
