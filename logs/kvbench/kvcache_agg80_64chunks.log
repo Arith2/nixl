@@ -60,5 +60,4 @@ Num threads (--num_threads=N)                               : 1
 
 Block Size (B)      Batch Size     B/W (GB/Sec)   Avg Lat. (us)  Avg Prep (us)  P99 Prep (us)  Avg Post (us)  P99 Post (us)  Avg Tx (us)    P99 Tx (us)    
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-NIXL Xfer failed with status: NIXL_ERR_BACKEND
-E0401 20:23:37.710819   12723 nixl_agent.cpp:1168] getXferStatus: backend 'OBJ' returned error status NIXL_ERR_BACKEND
+5242880             1              0.047956       109327.7       14.0           14.0           31.1           118.0          109281.3       434815.0       
