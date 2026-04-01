@@ -195,8 +195,15 @@ DefaultObjEngineImpl::registerMem(const nixlBlobDesc &mem,
         // DRAM_SEG or VRAM_SEG: register with RDMA NIC.
         // For VRAM_SEG, ibv_reg_mr works transparently via nvidia_peermem kernel module.
         auto dram_md = std::make_unique<nixlDramBEMD>(mem.addr, mem.len);
-        if (rdma_ctx_ && rdma_ctx_->isEnabled())
+        if (rdma_ctx_ && rdma_ctx_->isEnabled()) {
             rdma_ctx_->registerMR(reinterpret_cast<void*>(mem.addr), mem.len);
+            // In kvcache mode, store the registered buffer info so postXfer
+            // can build a token covering the full registered region.
+            if (kvcache_mode_) {
+                kvcache_buf_addr_ = mem.addr;
+                kvcache_buf_len_ = mem.len;
+            }
+        }
         out = dram_md.release();
     }
 
@@ -288,9 +295,10 @@ DefaultObjEngineImpl::postXfer(const nixl_xfer_op_t &operation,
             return NIXL_ERR_INVALID_PARAM;
         }
 
-        // Total receive buffer = num_chunks × chunk_size
-        uintptr_t data_ptr = local[0].addr;
-        size_t data_len = chunk_keys.size() * chunk_size;
+        // Use registered buffer for RDMA token. Cap to actual MR size.
+        uintptr_t data_ptr = kvcache_buf_addr_ ? kvcache_buf_addr_ : local[0].addr;
+        size_t needed = chunk_keys.size() * chunk_size;
+        size_t data_len = kvcache_buf_len_ ? std::min(needed, kvcache_buf_len_) : needed;
 
         iS3Client *client = getClient();
         if (!client) return NIXL_ERR_BACKEND;

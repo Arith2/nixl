@@ -813,8 +813,17 @@ xferBenchNixlWorker::allocateMemory(int num_threads) {
     // The default total_buffer_size (8 GiB) would cause ibv_reg_mr to fail when
     // the RDMA path tries to pin that much memory.  Cap to max_block_size so that
     // RDMA MR registration succeeds and measurements reflect real RDMA behaviour.
-    if (xferBenchConfig::isObjStorageBackend() && xferBenchConfig::max_block_size > 0)
-        buffer_size = std::min(buffer_size, xferBenchConfig::max_block_size);
+    // In kvcache mode, need num_chunks × chunk_size for the full KV cache.
+    if (xferBenchConfig::isObjStorageBackend() && xferBenchConfig::max_block_size > 0) {
+        if (xferBenchConfig::kvcache_mode && xferBenchConfig::obj_prepop_num > 0) {
+            // KVCache: buffer must hold all chunks' data
+            size_t kvcache_total = (size_t)xferBenchConfig::obj_prepop_num
+                                 * xferBenchConfig::max_block_size;
+            buffer_size = std::min(buffer_size, std::max(kvcache_total, xferBenchConfig::max_block_size));
+        } else {
+            buffer_size = std::min(buffer_size, xferBenchConfig::max_block_size);
+        }
+    }
 
     if (xferBenchConfig::storage_enable_direct) {
         if (xferBenchConfig::page_size == 0) {

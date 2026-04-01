@@ -75,6 +75,8 @@ protected:
     int kvcache_kv_per_token_{0};
     int kvcache_layer_aggregate_{0};  // 0=all layers at once
     size_t kvcache_tokens_per_chunk_{0};  // computed from block_size / (num_layers * kv_per_token)
+    uintptr_t kvcache_buf_addr_{0};  // registered DRAM buffer base
+    size_t kvcache_buf_len_{0};      // registered DRAM buffer size
 };
 
 #endif // OBJ_PLUGIN_S3_ENGINE_IMPL_H
