@@ -21,3 +21,56 @@ cufile.log
 
 # Asio
 subprojects/asio-*
+
+# Paper repo (separate: Arith2/S3Cache_paper)
+tex/
+
+# Datasets / models / generated KV chunk dirs
+dataset/
+models/
+kv_*/
+kv_hash_tables/
+
+# Vendored / patched out-of-tree builds (each has its own repo or install)
+LMCache_v0.4.2/
+daos_install_patched/
+
+# Personal session notes and todos
+RUNBOOK*.md
+PAPER_*.md
+TODO.md
+texput.log
+
+# Logs (raw measurements live in the private Arith2/S3Cache_logs_scripts)
+logs/
+logs_arxive*/
+logs_04_*/
+
+# Tool / editor state
+.claude/
+.codex
+.bin/
+
+# Editor backups
+*.bak*
+
+# Local TeX Live install (~/nixl/texlive/) used only for building tex/
+texlive/
+texlive-*
+
+# Python caches and bytecode
+**/__pycache__/
+*.pyc
+
+# Meson wrap lockfiles
+**/.wraplock
+
+# Top-level personal sweep scripts (leading slash anchors to repo root,
+# so upstream CI scripts under .ci/.github/.gitlab/ remain tracked)
+/a100_*.py
+/h100_*.py
+/bench_*.py
+/a100_*.sh
+/h100_*.sh
+/run_*.sh
+/h100_sweep*.sh

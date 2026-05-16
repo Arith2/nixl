@@ -1183,6 +1183,46 @@ nixlAgent::getXferStatus (nixlXferReqH *req_hndl) const {
 }
 
 nixl_status_t
+nixlAgent::getXferDoneIndices(nixlXferReqH *req_hndl,
+                              std::vector<int> &done_indices) const {
+
+    NIXL_SHARED_LOCK_GUARD(data->lock);
+    if (req_hndl == nullptr) {
+        return NIXL_ERR_INVALID_PARAM;
+    }
+
+    if (req_hndl->status != NIXL_IN_PROG) {
+        return req_hndl->status;
+    }
+
+    if (data->remoteSections.count(req_hndl->remoteAgent) == 0) {
+        NIXL_ERROR_FUNC << "remote agent '" << req_hndl->remoteAgent
+                        << "' was invalidated during transfer";
+        return NIXL_ERR_NOT_FOUND;
+    }
+
+    nixl_status_t ret = req_hndl->engine->getXferDoneIndices(
+        req_hndl->backendHandle, done_indices);
+    if (ret < 0) {
+        if (ret == NIXL_ERR_REMOTE_DISCONNECT) {
+            data->invalidateRemoteData(req_hndl->remoteAgent);
+        } else if (ret != NIXL_ERR_NOT_SUPPORTED) {
+            NIXL_ERROR_FUNC << "backend '" << req_hndl->engine->getType()
+                            << "' returned error status " << ret;
+        }
+        req_hndl->status = ret;
+    } else if (ret == NIXL_SUCCESS) {
+        req_hndl->status = NIXL_SUCCESS;
+        if (data->telemetryEnabled) {
+            req_hndl->updateRequestStats(data->telemetry_,
+                                         NIXL_TELEMETRY_FINISH);
+        }
+    }
+
+    return ret;
+}
+
+nixl_status_t
 nixlAgent::getXferTelemetry(const nixlXferReqH *req_hndl, nixl_xfer_telem_t &telemetry) const {
 
     if (!data->telemetryEnabled) {

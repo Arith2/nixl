@@ -625,6 +625,17 @@ class nixl_agent:
             return "ERR"
 
     """
+    @brief Return descriptor indices that have completed since the previous
+           completion/status poll for backends that support descriptor-level
+           completion. Unsupported backends return an empty list.
+    """
+
+    def get_xfer_done_indices(self, handle: nixl_xfer_handle) -> list[int]:
+        if not hasattr(self.agent, "getXferDoneIndices"):
+            return []
+        return list(self.agent.getXferDoneIndices(handle._handle))
+
+    """
     @brief Get telemetry information of a transfer request.
            The output object has three time values fields in microseconds
            (startTime, postDuration, xferDuration), as well as integer totalBytes transferred

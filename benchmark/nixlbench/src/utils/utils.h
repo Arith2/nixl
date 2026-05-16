@@ -151,6 +151,7 @@ public:
     static int large_blk_iter_ftr;
     static int warmup_iter;
     static int num_threads;
+    static int iodepth;       // sliding-window depth per worker thread (FIO iodepth analog)
     static bool enable_pt;
     static size_t progress_threads;
     static std::string device_list;
@@ -178,11 +179,48 @@ public:
     static std::string obj_region;
     static bool obj_use_virtual_addressing;
     static std::string obj_endpoint_override;
+    static std::string obj_rdma_port;
+    static int obj_prepop_num;
+    static std::string obj_prepop_keys_file;
+    static bool batch_mode;
+    static int batch_size;
+    static int server_aggregate_size;
+    static int num_threads_daos;       // alias for num_threads_batch; clearer
+                                        // for S3RDMA data-plane DAOS lanes
+    static int iodepth_daos;           // alias for iodepth_batch; clearer
+                                        // for S3RDMA data-plane DAOS depth
+    static int num_threads_batch;       // engine-side fan-out pool size in batch_mode
+                                        // (independent of -num_threads which keeps
+                                        // its original benchmark-worker semantics)
+    static int iodepth_batch;           // engine-side per-worker DAOS async iodepth
+                                        // for s3rdma_batch; 0 keeps legacy cap
+    static int batch_inflight_cap;      // s3rdma_batch: cap on simultaneous in-flight
+                                        // daos_obj_fetch per HTTP batch (default 32 = 4x8)
+    static int obj_prepop_start;
     static std::string obj_req_checksum;
     static std::string obj_ca_bundle;
     static size_t obj_crt_min_limit;
     static bool obj_accelerated_enable;
     static std::string obj_accelerated_type;
+    static bool obj_daos_direct;
+    static bool obj_daos_direct_hashoid;
+    static bool obj_daos_agg;
+    static bool obj_daos_agg_patch;
+    static bool obj_daos_agg_patch_lwagg_manifest;
+    static bool obj_daos_agg_patch_rangeget;
+    static int  obj_agg_chunks_per_layer;
+    static int  obj_chunks_per_layer;
+    static bool obj_daos_lwagg_server_mode;
+    static std::string obj_lwagg_issue_mode;
+    static std::string obj_lwagg_manifest_tsv;
+    static int  obj_lwagg_num_layers;
+    static uint64_t obj_lwagg_layer_bytes;
+    static uint64_t obj_lwagg_object_bytes;
+    static uint64_t obj_lwagg_manifest_start;
+    static std::string obj_daos_pool;
+    static std::string obj_daos_cont;
+    static std::string obj_mode;
+    static bool cuda_stage_after_op;
     static std::string azure_blob_account_url;
     static std::string azure_blob_container_name;
     static std::string azure_blob_connection_string;
@@ -253,6 +291,8 @@ public:
     double
     avg() const;
     double
+    p50();
+    double
     p90();
     double
     p95();
@@ -278,6 +318,7 @@ struct xferBenchStats {
     xferMetricStats prepare_duration;
     xferMetricStats post_duration;
     xferMetricStats transfer_duration;
+    xferMetricStats iter_duration;  // per-iteration end-to-end latency
 
     void
     clear();

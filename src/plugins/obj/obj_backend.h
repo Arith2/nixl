@@ -18,7 +18,11 @@
 #ifndef OBJ_BACKEND_H
 #define OBJ_BACKEND_H
 
+#include <vector>
+#include <string>
+
 #include "obj_executor.h"
+#include <optional>
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -55,7 +59,9 @@ public:
                    uintptr_t data_ptr,
                    size_t data_len,
                    size_t offset,
-                   put_object_callback_t callback) = 0;
+                   put_object_callback_t callback,
+                   std::optional<std::string> rdma_token = std::nullopt,
+                   uint64_t req_id = 0) = 0;
 
     /**
      * Asynchronously get an object from S3.
@@ -70,7 +76,35 @@ public:
                    uintptr_t data_ptr,
                    size_t data_len,
                    size_t offset,
-                   get_object_callback_t callback) = 0;
+                   get_object_callback_t callback,
+                   std::optional<std::string> rdma_token = std::nullopt,
+                   uint64_t req_id = 0) = 0;
+
+    /**
+     * Asynchronously fetch a batch of equally-sized objects in one request.
+     * Sends x-amz-rdma-batch header listing the chunk keys; server returns
+     * the concatenated payload (N × object_size bytes) via RDMA or HTTP body.
+     * @param chunk_keys S3 object keys for the batch (N entries)
+     * @param object_size Per-object byte size (must be uniform across the batch)
+     * @param server_aggregate_size Objects per server-side RDMA push (0 = whole
+     *        batch in one push, 1 = one push per object, N = push every N).
+     * @param data_ptr Pointer to receive buffer (N × object_size bytes)
+     * @param data_len Total receive buffer size
+     * @param callback Callback when the batched transfer completes
+     * @param rdma_token RDMA token for zero-copy delivery
+     */
+    virtual void
+    getBatchAsync(const std::vector<std::string>& chunk_keys,
+                  size_t object_size,
+                  int server_aggregate_size,
+                  uintptr_t data_ptr,
+                  size_t data_len,
+                  get_object_callback_t callback,
+                  std::optional<std::string> rdma_token = std::nullopt,
+                  uint64_t req_id = 0) {
+        // Default: not supported
+        callback(false);
+    }
 
     /**
      * Check if the object exists.
@@ -115,6 +149,11 @@ public:
              const nixl_opt_b_args_t *opt_args) const = 0;
     virtual nixl_status_t
     checkXfer(nixlBackendReqH *handle) const = 0;
+    virtual nixl_status_t
+    getXferDoneIndices(nixlBackendReqH *handle,
+                       std::vector<int> &done_indices) const {
+        return NIXL_ERR_NOT_SUPPORTED;
+    }
     virtual nixl_status_t
     releaseReqH(nixlBackendReqH *handle) const = 0;
 };
@@ -187,6 +226,9 @@ public:
 
     nixl_status_t
     checkXfer(nixlBackendReqH *handle) const override;
+    nixl_status_t
+    getXferDoneIndices(nixlBackendReqH *handle,
+                       std::vector<int> &done_indices) const override;
     nixl_status_t
     releaseReqH(nixlBackendReqH *handle) const override;
 

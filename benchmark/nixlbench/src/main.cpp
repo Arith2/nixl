@@ -181,6 +181,28 @@ int main(int argc, char *argv[]) {
 
     int num_threads = xferBenchConfig::num_threads;
 
+    // If NIXL_OBJ_TRACE is enabled and NIXL_OBJ_TRACE_FILE is set, inject a
+    // _nt<N> suffix into the filename so per-mode/per-concurrency runs don't
+    // overwrite each other. Suffix uses num_threads_batch in batch_mode (the
+    // single-OMP-thread + executor-pool model), num_threads otherwise.
+    // Must run BEFORE any plugin loads or first trace emit.
+    if (std::getenv("NIXL_OBJ_TRACE")) {
+        const char *base = std::getenv("NIXL_OBJ_TRACE_FILE");
+        std::string base_path = base ? base : "/tmp/nixl_obj_trace_us.log";
+        int suffix_n = xferBenchConfig::batch_mode
+                     ? xferBenchConfig::num_threads_batch
+                     : xferBenchConfig::num_threads;
+        std::string suffix = "_nt" + std::to_string(suffix_n);
+        size_t dot = base_path.rfind('.');
+        std::string out;
+        if (dot != std::string::npos && dot > base_path.rfind('/'))
+            out = base_path.substr(0, dot) + suffix + base_path.substr(dot);
+        else
+            out = base_path + suffix;
+        setenv("NIXL_OBJ_TRACE_FILE", out.c_str(), 1);
+        std::cerr << "[nixlbench] trace file: " << out << std::endl;
+    }
+
     // Create the appropriate worker based on worker configuration
     std::unique_ptr<xferBenchWorker> worker_ptr = createWorker(&argc, &argv);
     if (!worker_ptr) {

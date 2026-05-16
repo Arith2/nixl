@@ -91,6 +91,12 @@ NB_ARG_INT32(num_threads,
              "Number of threads used by benchmark."
              " Num_iter must be greater or equal than num_threads and equally divisible by"
              " num_threads.");
+NB_ARG_INT32(iodepth,
+             1,
+             "Sliding-window depth per worker thread (FIO iodepth analog)."
+             " Each worker keeps up to <iodepth> NIXL transfer requests outstanding,"
+             " posting the next as soon as one completes. Total in-flight requests = "
+             " num_threads * iodepth. Default 1 = serial post-then-wait (today's behavior).");
 NB_ARG_INT32(num_initiator_dev, 1, "Number of device in initiator process");
 NB_ARG_INT32(num_target_dev, 1, "Number of device in target process");
 NB_ARG_BOOL(enable_pt, false, "Enable Progress Thread (only used with nixl worker)");
@@ -148,6 +154,25 @@ NB_ARG_STRING(obj_scheme, XFERBENCH_OBJ_SCHEME_HTTP, "HTTP scheme for S3 backend
 NB_ARG_STRING(obj_region, XFERBENCH_OBJ_REGION_EU_CENTRAL_1, "Region for S3 backend");
 NB_ARG_BOOL(obj_use_virtual_addressing, false, "Use virtual addressing for S3 backend");
 NB_ARG_STRING(obj_endpoint_override, "", "Endpoint override for S3 backend");
+NB_ARG_STRING(obj_rdma_port, "", "RDMA CM port for OBJ RDMA backend");
+NB_ARG_BOOL(batch_mode, false, "Enable x-amz-rdma-batch mode: one batched request per postXfer of batch_size objects");
+NB_ARG_INT32(batch_size, 16, "Number of objects per batch in batch_mode (sliding window over prepop pool).");
+NB_ARG_INT32(server_aggregate_size, 0, "Objects per server-side RDMA push (0 = whole batch, 1 = one push per object). Default-S3 engine only.");
+NB_ARG_INT32(num_threads_daos, -1, "Alias for --num_threads_batch: DAOS data-plane issue lanes used by S3RDMA batch/agg paths.");
+NB_ARG_INT32(iodepth_daos, -1, "Alias for --iodepth_batch: DAOS async iodepth per data-plane lane used by S3RDMA batch paths.");
+NB_ARG_INT32(num_threads_batch, 16, "Engine-side executor pool size for batch_mode fan-out (parallel libdfs reads inside one postXfer). Independent of -num_threads.");
+NB_ARG_INT32(iodepth_batch, 0, "Per-engine-worker DAOS async iodepth for s3rdma_batch. When >0, effective in-flight cap is num_threads_batch * iodepth_batch.");
+NB_ARG_INT32(batch_inflight_cap, 32, "Max simultaneous in-flight daos_obj_fetch ops per batched HTTP callback (s3rdma_batch). Mirrors the NT x IOD sliding-window cap from daos_direct hashoid (default 32 = 4 x 8). Effective only when -batch_mode -obj_mode=s3rdma_direct -obj_daos_direct_hashoid.");
+NB_ARG_INT32(obj_prepop_start, 0, "Starting key index for cold-read rotation (avoids overlap between sequential runs).");
+NB_ARG_INT32(obj_prepop_num,
+             0,
+             "Number of pre-populated objects per thread for cold-read benchmark (0=disabled). "
+             "PUT: writes unique objects per iteration and keeps them (no cleanup). "
+             "GET: skips initial object creation, rotates reads across pre-existing objects. "
+             "Objects are named prepop_{size}B_{thread}_{dev}_{idx:06d}.");
+NB_ARG_STRING(obj_prepop_keys_file, "",
+              "File with one S3 key per line (e.g., LMCache hash keys). "
+              "Overrides default prepop key naming. obj_prepop_num is set to the number of keys.");
 NB_ARG_STRING(obj_req_checksum,
               XFERBENCH_OBJ_REQ_CHECKSUM_SUPPORTED,
               "Required checksum for S3 backend [supported, required]");
@@ -164,6 +189,118 @@ NB_ARG_STRING(obj_accelerated_type,
               "",
               "S3 Accelerated client vendor type to use. "
               "Only used when obj_accelerated_enable=true");
+
+// DAOS Direct options — bypass Ceph RGW on the data plane
+NB_ARG_BOOL(obj_daos_direct,
+            false,
+            "Enable direct DAOS DFS access (bypass Ceph RGW data plane). "
+            "Requires daos_agent running locally and DAOS pool accessible.");
+NB_ARG_STRING(obj_daos_pool,
+              "Pool1",
+              "DAOS pool label for direct access");
+NB_ARG_STRING(obj_daos_cont,
+              "nixl_direct",
+              "DAOS container label for direct access (created if needed)");
+NB_ARG_BOOL(obj_daos_direct_hashoid,
+            false,
+            "Enable hashoid mode in the DAOS direct backend: skip dfs_open "
+            "and synthesize OID client-side via hashoid.h (shared with DAOS "
+            "agg_sidecar). NIXL postXfer + DAOS RPC path is preserved; only "
+            "the dentry lookup is bypassed. Requires -obj_daos_direct=true.");
+NB_ARG_BOOL(obj_daos_agg,
+            false,
+            "Enable s3rdma_agg sub-mode: each postXfer covers a whole logical "
+            "load (set -batch_size = OBJECTS_PER_LOAD); plugin fires 1 HTTP "
+            "HEAD-batch then fans out into (batch_size / agg_chunks_per_layer) "
+            "per-layer daos_obj_fetch calls, each with the agg recipe (server "
+            "synthesizes per-chunk OIDs as base + i and returns one bulk "
+            "transfer per layer). Requires -batch_mode -obj_mode=s3rdma_direct "
+            "-obj_daos_direct_hashoid=true. Also set "
+            "-obj_agg_chunks_per_layer=N to define the chunks-per-layer fan-out.");
+NB_ARG_BOOL(obj_daos_agg_patch,
+            false,
+            "Enable S3RDMA agg-patch mode: keep the s3rdma_batch outer "
+            "dispatch and DAOS sliding window, but issue daos_obj_fetch_agg "
+            "for each logical object so the DAOS server assembles "
+            "obj_agg_chunks_per_layer fine-grained chunks into one response.");
+NB_ARG_BOOL(obj_daos_agg_patch_lwagg_manifest,
+            false,
+            "In S3RDMA agg-patch mode, tell DAOS to resolve source chunk OIDs "
+            "from DAOS_LWAGG_MANIFEST using the logical aggregate index. This "
+            "allows round-robin target placement without changing the NIXL "
+            "client-side dispatch shape.");
+NB_ARG_BOOL(obj_daos_agg_patch_rangeget,
+            false,
+            "In S3RDMA agg-patch + lwagg-manifest mode, treat each manifest "
+            "entry as a large source object and make DAOS fetch "
+            "obj.data_len / obj_agg_chunks_per_layer bytes from each source "
+            "object before aggregating one logical response.");
+NB_ARG_INT32(obj_agg_chunks_per_layer,
+             0,
+             "s3rdma_agg: chunks per agg fetch (= agg_size/chunk_bs). For "
+             "whole-layer agg this equals chunks_per_layer (= ISL/T). For "
+             "partial-layer agg (e.g. 4 MiB aggs inside 16 MiB layers) this "
+             "is smaller. Default 0 means 'fall back to batch_size'.");
+NB_ARG_INT32(obj_chunks_per_layer,
+             0,
+             "s3rdma_agg: total chunks in a single layer (= ISL/T). Used to "
+             "compute layer_idx from key indices when the agg fetch unit is "
+             "smaller than a whole layer. Default 0 means 'fall back to "
+             "agg_chunks_per_layer' (whole-layer agg).");
+NB_ARG_BOOL(obj_daos_lwagg_server_mode,
+            false,
+            "Enable lw-Agg range-get server mode in the S3RDMA split-plane "
+            "engine. Requires -batch_mode -obj_mode=s3rdma_direct "
+            "-obj_daos_direct_hashoid and a lwAgg manifest.");
+NB_ARG_STRING(obj_lwagg_issue_mode,
+              "lanes",
+              "lw-Agg range-get issue mode: lanes, taskpool, s3rdma_agg, or "
+              "perfetch_open. Use lanes for DAOS-lane/depth scheduling.");
+NB_ARG_STRING(obj_lwagg_manifest_tsv,
+              "",
+              "Manifest TSV for lw-Agg range-get server mode.");
+NB_ARG_INT32(obj_lwagg_num_layers,
+             1,
+             "Number of layers exposed to the lw-Agg range-get scheduler.");
+NB_ARG_UINT64(obj_lwagg_layer_bytes,
+              0,
+              "Bytes per range slice in lw-Agg range-get server mode.");
+NB_ARG_UINT64(obj_lwagg_object_bytes,
+              0,
+              "Stored object size used for DAOS OID derivation in lw-Agg "
+              "range-get server mode. If unset, the transfer descriptor "
+              "length is used.");
+NB_ARG_UINT64(obj_lwagg_manifest_start,
+              0,
+              "Starting row in the lw-Agg manifest for this benchmark window.");
+
+// Sub-engine selector for the OBJ backend.
+// Currently recognized values:
+//   ""              -> default (s3 / s3_crt / s3_accel as configured by other flags)
+//   "s3rdma_direct" -> cuObject-style split plane: HTTP control to RGW with
+//                      x-amz-rdma-direct header, then libdfs data plane to
+//                      DAOS server (requires obj_daos_pool / obj_daos_cont).
+NB_ARG_STRING(obj_mode,
+              "",
+              "OBJ backend sub-engine selector ('' or 's3rdma_direct'). "
+              "When set to 's3rdma_direct', NIXL issues an HTTP control hop to "
+              "Ceph RGW and only on success dispatches the data plane via libdfs "
+              "directly to the DAOS server (cuObject-style split plane).");
+
+// CPU-staged GPU buffer mode: when -initiator_seg_type DRAM is set and
+// this flag is true, each per-op iteration also issues a cudaMemcpy
+// between the host buffer and a per-thread CUDA device buffer (H2D for
+// READ, D2H for WRITE) inside the timed region. This makes the
+// resulting throughput a fair end-to-end "time to land bytes in GPU
+// memory" measurement, comparable against -initiator_seg_type VRAM
+// (GPUDirect RDMA). Naive serial pipeline — no overlap.
+NB_ARG_BOOL(cuda_stage_after_op,
+            false,
+            "If true and initiator_seg_type=DRAM, issue a cudaMemcpy between "
+            "the host buffer and a per-thread CUDA device buffer around each "
+            "transfer (H2D for READ, D2H for WRITE) inside the timed region. "
+            "Used to construct a fair CPU-staged baseline for comparison "
+            "against the GPUDirect path (initiator_seg_type=VRAM).");
 
 // AZURE BLOB options - only used when backend is AZURE_BLOB
 NB_ARG_STRING(azure_blob_account_url, "", "Account URL for Azure Blob backend");
@@ -223,6 +360,7 @@ int xferBenchConfig::num_iter = 0;
 int xferBenchConfig::large_blk_iter_ftr = 16;
 int xferBenchConfig::warmup_iter = 0;
 int xferBenchConfig::num_threads = 0;
+int xferBenchConfig::iodepth = 1;
 bool xferBenchConfig::enable_pt = false;
 size_t xferBenchConfig::progress_threads = 0;
 bool xferBenchConfig::enable_vmm = false;
@@ -251,11 +389,42 @@ std::string xferBenchConfig::obj_scheme = "";
 std::string xferBenchConfig::obj_region = "";
 bool xferBenchConfig::obj_use_virtual_addressing = false;
 std::string xferBenchConfig::obj_endpoint_override = "";
+std::string xferBenchConfig::obj_rdma_port = "";
+int xferBenchConfig::obj_prepop_num = 0;
+std::string xferBenchConfig::obj_prepop_keys_file = "";
+bool xferBenchConfig::batch_mode = false;
+int xferBenchConfig::batch_size = 16;
+int xferBenchConfig::server_aggregate_size = 0;
+int xferBenchConfig::num_threads_daos = -1;
+int xferBenchConfig::iodepth_daos = -1;
+int xferBenchConfig::num_threads_batch = 16;
+int xferBenchConfig::iodepth_batch = 0;
+int xferBenchConfig::batch_inflight_cap = 32;
+int xferBenchConfig::obj_prepop_start = 0;
 std::string xferBenchConfig::obj_req_checksum = "";
 std::string xferBenchConfig::obj_ca_bundle = "";
 size_t xferBenchConfig::obj_crt_min_limit = 0;
 bool xferBenchConfig::obj_accelerated_enable = false;
 std::string xferBenchConfig::obj_accelerated_type = "";
+bool xferBenchConfig::obj_daos_direct = false;
+bool xferBenchConfig::obj_daos_direct_hashoid = false;
+bool xferBenchConfig::obj_daos_agg = false;
+bool xferBenchConfig::obj_daos_agg_patch = false;
+bool xferBenchConfig::obj_daos_agg_patch_lwagg_manifest = false;
+bool xferBenchConfig::obj_daos_agg_patch_rangeget = false;
+int  xferBenchConfig::obj_agg_chunks_per_layer = 0;
+int  xferBenchConfig::obj_chunks_per_layer = 0;
+bool xferBenchConfig::obj_daos_lwagg_server_mode = false;
+std::string xferBenchConfig::obj_lwagg_issue_mode = "lanes";
+std::string xferBenchConfig::obj_lwagg_manifest_tsv = "";
+int  xferBenchConfig::obj_lwagg_num_layers = 1;
+uint64_t xferBenchConfig::obj_lwagg_layer_bytes = 0;
+uint64_t xferBenchConfig::obj_lwagg_object_bytes = 0;
+uint64_t xferBenchConfig::obj_lwagg_manifest_start = 0;
+std::string xferBenchConfig::obj_daos_pool = "Pool1";
+std::string xferBenchConfig::obj_daos_cont = "nixl_direct";
+std::string xferBenchConfig::obj_mode = "";
+bool xferBenchConfig::cuda_stage_after_op = false;
 std::string xferBenchConfig::azure_blob_account_url = "";
 std::string xferBenchConfig::azure_blob_container_name = "";
 std::string xferBenchConfig::azure_blob_connection_string = "";
@@ -398,11 +567,48 @@ xferBenchConfig::loadParams(void) {
             obj_region = NB_ARG(obj_region);
             obj_use_virtual_addressing = NB_ARG(obj_use_virtual_addressing);
             obj_endpoint_override = NB_ARG(obj_endpoint_override);
+            obj_rdma_port = NB_ARG(obj_rdma_port);
+            obj_prepop_num = NB_ARG(obj_prepop_num);
+            obj_prepop_keys_file = NB_ARG(obj_prepop_keys_file);
+            batch_mode = NB_ARG(batch_mode);
+            batch_size = NB_ARG(batch_size);
+            server_aggregate_size = NB_ARG(server_aggregate_size);
+            num_threads_batch = NB_ARG(num_threads_batch);
+            iodepth_batch = NB_ARG(iodepth_batch);
+            num_threads_daos = NB_ARG(num_threads_daos);
+            iodepth_daos = NB_ARG(iodepth_daos);
+            if (num_threads_daos > 0)
+                num_threads_batch = num_threads_daos;
+            if (iodepth_daos > 0)
+                iodepth_batch = iodepth_daos;
+            batch_inflight_cap = NB_ARG(batch_inflight_cap);
+            obj_prepop_start = NB_ARG(obj_prepop_start);
             obj_req_checksum = NB_ARG(obj_req_checksum);
             obj_ca_bundle = NB_ARG(obj_ca_bundle);
             obj_crt_min_limit = NB_ARG(obj_crt_min_limit);
             obj_accelerated_enable = NB_ARG(obj_accelerated_enable);
             obj_accelerated_type = NB_ARG(obj_accelerated_type);
+            obj_daos_direct = NB_ARG(obj_daos_direct);
+            obj_daos_direct_hashoid = NB_ARG(obj_daos_direct_hashoid);
+            obj_daos_agg = NB_ARG(obj_daos_agg);
+            obj_daos_agg_patch = NB_ARG(obj_daos_agg_patch);
+            obj_daos_agg_patch_lwagg_manifest =
+                NB_ARG(obj_daos_agg_patch_lwagg_manifest);
+            obj_daos_agg_patch_rangeget =
+                NB_ARG(obj_daos_agg_patch_rangeget);
+            obj_agg_chunks_per_layer = NB_ARG(obj_agg_chunks_per_layer);
+            obj_chunks_per_layer = NB_ARG(obj_chunks_per_layer);
+            obj_daos_lwagg_server_mode = NB_ARG(obj_daos_lwagg_server_mode);
+            obj_lwagg_issue_mode = NB_ARG(obj_lwagg_issue_mode);
+            obj_lwagg_manifest_tsv = NB_ARG(obj_lwagg_manifest_tsv);
+            obj_lwagg_num_layers = NB_ARG(obj_lwagg_num_layers);
+            obj_lwagg_layer_bytes = NB_ARG(obj_lwagg_layer_bytes);
+            obj_lwagg_object_bytes = NB_ARG(obj_lwagg_object_bytes);
+            obj_lwagg_manifest_start = NB_ARG(obj_lwagg_manifest_start);
+            obj_daos_pool = NB_ARG(obj_daos_pool);
+            obj_daos_cont = NB_ARG(obj_daos_cont);
+            obj_mode = NB_ARG(obj_mode);
+            cuda_stage_after_op = NB_ARG(cuda_stage_after_op);
 
             // Validate OBJ S3 scheme
             if (obj_scheme != XFERBENCH_OBJ_SCHEME_HTTP &&
@@ -445,6 +651,8 @@ xferBenchConfig::loadParams(void) {
     large_blk_iter_ftr = NB_ARG(large_blk_iter_ftr);
     warmup_iter = NB_ARG(warmup_iter);
     num_threads = NB_ARG(num_threads);
+    iodepth = NB_ARG(iodepth);
+    if (iodepth < 1) iodepth = 1;
     etcd_endpoints = NB_ARG(etcd_endpoints);
     filepath = NB_ARG(filepath);
     filenames = NB_ARG(filenames);
@@ -612,6 +820,27 @@ xferBenchConfig::printConfig() {
                         std::to_string(obj_use_virtual_addressing));
             printOption("OBJ S3 endpoint override (--obj_endpoint_override=endpoint)",
                         obj_endpoint_override);
+            printOption("OBJ RDMA CM port (--obj_rdma_port=port)", obj_rdma_port);
+            printOption("OBJ prepop objects (--obj_prepop_num=N)",
+                        obj_prepop_num > 0 ?
+                            std::to_string(obj_prepop_num) + " (enabled; PUT keeps objects, GET rotates reads)" :
+                            "0 (disabled)");
+            if (obj_prepop_start > 0) {
+                printOption("OBJ prepop start index (--obj_prepop_start=N)", std::to_string(obj_prepop_start));
+            }
+            printOption("Batch mode (--batch_mode)",
+                        batch_mode ? "enabled" : "disabled");
+            if (batch_mode) {
+                printOption("Batch size (--batch_size)", std::to_string(batch_size));
+                printOption("DAOS lanes (--num_threads_daos/--num_threads_batch)",
+                            std::to_string(num_threads_batch));
+                printOption("DAOS iodepth (--iodepth_daos/--iodepth_batch)",
+                            iodepth_batch > 0 ? std::to_string(iodepth_batch)
+                                              : "0 (legacy cap)");
+                printOption("Server aggregate size (--server_aggregate_size)",
+                            server_aggregate_size > 0 ? std::to_string(server_aggregate_size)
+                                                      : "0 (whole batch in one push)");
+            }
             printOption("OBJ S3 required checksum (--obj_req_checksum=[supported, required])",
                         obj_req_checksum);
             printOption("OBJ S3 CA bundle (--obj_ca_bundle=cert-path)", obj_ca_bundle);
@@ -670,6 +899,7 @@ xferBenchConfig::printConfig() {
     printOption("Large block iter factor (--large_blk_iter_ftr=N)",
                 std::to_string(large_blk_iter_ftr));
     printOption("Num threads (--num_threads=N)", std::to_string(num_threads));
+    printOption("IO depth (--iodepth=N)", std::to_string(iodepth));
     printSeparator('-');
     std::cout << std::endl;
 }
@@ -1065,10 +1295,13 @@ xferBenchUtils::printStatsHeader() {
                   << std::setw(20) << "Network Util (%)"
                   << std::setw(15) << "Avg Lat. (us)"
                   << std::setw(15) << "Avg Prep (us)"
+                  << std::setw(15) << "P50 Prep (us)"
                   << std::setw(15) << "P99 Prep (us)"
                   << std::setw(15) << "Avg Post (us)"
+                  << std::setw(15) << "P50 Post (us)"
                   << std::setw(15) << "P99 Post (us)"
                   << std::setw(15) << "Avg Tx (us)"
+                  << std::setw(15) << "P50 Tx (us)"
                   << std::setw(15) << "P99 Tx (us)"
                   << std::endl;
         // clang-format on
@@ -1079,11 +1312,16 @@ xferBenchUtils::printStatsHeader() {
                   << std::setw(15) << "Batch Size"
                   << std::setw(15) << "B/W (GB/Sec)"
                   << std::setw(15) << "Avg Lat. (us)"
+                  << std::setw(15) << "P50 Lat. (us)"
+                  << std::setw(15) << "P99 Lat. (us)"
                   << std::setw(15) << "Avg Prep (us)"
+                  << std::setw(15) << "P50 Prep (us)"
                   << std::setw(15) << "P99 Prep (us)"
                   << std::setw(15) << "Avg Post (us)"
+                  << std::setw(15) << "P50 Post (us)"
                   << std::setw(15) << "P99 Post (us)"
                   << std::setw(15) << "Avg Tx (us)"
+                  << std::setw(15) << "P50 Tx (us)"
                   << std::setw(15) << "P99 Tx (us)"
                   << std::endl;
         // clang-format on
@@ -1134,11 +1372,16 @@ xferBenchUtils::printStats(bool is_target,
     }
 
     double prepare_duration = stats.prepare_duration.avg();
+    double prepare_p50_duration = stats.prepare_duration.p50();
     double prepare_p99_duration = stats.prepare_duration.p99();
     double post_duration = stats.post_duration.avg();
+    double post_p50_duration = stats.post_duration.p50();
     double post_p99_duration = stats.post_duration.p99();
     double transfer_duration = stats.transfer_duration.avg();
+    double transfer_p50_duration = stats.transfer_duration.p50();
     double transfer_p99_duration = stats.transfer_duration.p99();
+    double p50_latency = stats.iter_duration.p50();
+    double p99_latency = stats.iter_duration.p99();
 
     // Tabulate print with fixed width for each string
     if (IS_PAIRWISE_AND_SG() && rt->getSize() > 2) {
@@ -1152,10 +1395,13 @@ xferBenchUtils::printStats(bool is_target,
                   << std::setprecision(1)
                   << std::setw(15) << avg_latency
                   << std::setw(15) << prepare_duration
+                  << std::setw(15) << prepare_p50_duration
                   << std::setw(15) << prepare_p99_duration
                   << std::setw(15) << post_duration
+                  << std::setw(15) << post_p50_duration
                   << std::setw(15) << post_p99_duration
                   << std::setw(15) << transfer_duration
+                  << std::setw(15) << transfer_p50_duration
                   << std::setw(15) << transfer_p99_duration
                   << std::endl;
         // clang-format on
@@ -1167,11 +1413,16 @@ xferBenchUtils::printStats(bool is_target,
                   << std::setw(15) << throughput_gb
                   << std::setprecision(1)
                   << std::setw(15) << avg_latency
+                  << std::setw(15) << p50_latency
+                  << std::setw(15) << p99_latency
                   << std::setw(15) << prepare_duration
+                  << std::setw(15) << prepare_p50_duration
                   << std::setw(15) << prepare_p99_duration
                   << std::setw(15) << post_duration
+                  << std::setw(15) << post_p50_duration
                   << std::setw(15) << post_p99_duration
                   << std::setw(15) << transfer_duration
+                  << std::setw(15) << transfer_p50_duration
                   << std::setw(15) << transfer_p99_duration
                   << std::endl;
         // clang-format on
@@ -1468,6 +1719,14 @@ xferMetricStats::avg() const {
 }
 
 double
+xferMetricStats::p50() {
+    if (samples.empty()) return 0;
+    std::sort(samples.begin(), samples.end());
+    size_t index = samples.size() * 0.5;
+    return samples[std::min(index, samples.size() - 1)];
+}
+
+double
 xferMetricStats::p90() {
     if (samples.empty()) return 0;
     std::sort(samples.begin(), samples.end());
@@ -1521,6 +1780,7 @@ xferBenchStats::clear() {
     prepare_duration.clear();
     post_duration.clear();
     transfer_duration.clear();
+    iter_duration.clear();
 }
 
 void
@@ -1529,6 +1789,7 @@ xferBenchStats::add(const xferBenchStats &other) {
     prepare_duration.add(other.prepare_duration);
     post_duration.add(other.post_duration);
     transfer_duration.add(other.transfer_duration);
+    iter_duration.add(other.iter_duration);
 }
 
 void
@@ -1537,6 +1798,7 @@ xferBenchStats::reserve(size_t n) {
     prepare_duration.reserve(n);
     post_duration.reserve(n);
     transfer_duration.reserve(n);
+    iter_duration.reserve(n);
 }
 
 /*

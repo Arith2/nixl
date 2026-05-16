@@ -22,15 +22,47 @@
 #if defined HAVE_CUOBJ_CLIENT
 #include "s3_accel/engine_impl.h"
 #endif
+#if defined HAVE_DAOS_DIRECT
+// DAOS direct engine — standalone, does not depend on S3/AWS SDK
+#include "daos_direct/engine_impl.h"
+// S3 split-plane engine (cuObject-style) — control plane via S3, data
+// plane via libdfs. Built only when libdaos+libdfs are available.
+#include "s3_split_plane/engine_impl.h"
+#endif
 #include <memory>
 
 // -----------------------------------------------------------------------------
 // Obj Engine Implementation
 // -----------------------------------------------------------------------------
 
+#if defined HAVE_DAOS_DIRECT
+static bool isDaosDirectRequested(nixl_b_params_t *custom_params) {
+    if (!custom_params) return false;
+    auto it = custom_params->find("daos_direct");
+    return it != custom_params->end() && it->second == "true";
+}
+
+// cuObject-style split plane: HTTP control to RGW, libdfs data plane to
+// DAOS. Selected by `mode=s3rdma_direct` in customParams.
+static bool isS3SplitPlaneRequested(nixl_b_params_t *custom_params) {
+    if (!custom_params) return false;
+    auto it = custom_params->find("mode");
+    return it != custom_params->end() && it->second == "s3rdma_direct";
+}
+#endif
+
 // TODO: Consider a registration pattern as more vendor engines are added.
 std::unique_ptr<nixlObjEngineImpl>
 createObjEngineImpl(const nixlBackendInitParams *init_params) {
+#if defined HAVE_DAOS_DIRECT
+    if (isS3SplitPlaneRequested(init_params->customParams)) {
+        return std::make_unique<S3SplitPlaneObjEngineImpl>(init_params);
+    }
+    if (isDaosDirectRequested(init_params->customParams)) {
+        return std::make_unique<DaosDirectObjEngineImpl>(init_params);
+    }
+#endif
+
     if (isAcceleratedRequested(init_params->customParams)) {
 #if defined HAVE_CUOBJ_CLIENT
         return std::make_unique<S3AccelObjEngineImpl>(init_params);
@@ -122,6 +154,12 @@ nixlObjEngine::postXfer(const nixl_xfer_op_t &operation,
 nixl_status_t
 nixlObjEngine::checkXfer(nixlBackendReqH *handle) const {
     return impl_->checkXfer(handle);
+}
+
+nixl_status_t
+nixlObjEngine::getXferDoneIndices(nixlBackendReqH *handle,
+                                  std::vector<int> &done_indices) const {
+    return impl_->getXferDoneIndices(handle, done_indices);
 }
 
 nixl_status_t

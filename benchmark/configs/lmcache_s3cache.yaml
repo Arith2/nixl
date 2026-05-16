@@ -1,0 +1,28 @@
+chunk_size: 256
+local_cpu: false
+# use_layerwise=true is REQUIRED for S3RDMA_batch to benefit from layer-wise delivery.
+# When enabled, LMCache uses a separate CUDA stream per layer and starts prefill
+# on layer L as soon as layer L's KV cache arrives, overlapping with the load of
+# layer L+1. The chunk-wise S3 baselines (lmcache_s3_tcp.yaml, lmcache_s3_rdma.yaml)
+# keep use_layerwise=false because they fetch full chunks at once.
+use_layerwise: true
+save_unfull_chunk: false
+enable_async_loading: false
+use_gpu_connector_v3: true
+nixl_buffer_size: 10737418240
+nixl_buffer_device: cpu
+extra_config:
+  enable_nixl_storage: true
+  nixl_backend: OBJ
+  nixl_pool_size: 0
+  nixl_presence_cache: false
+  nixl_async_put: false
+  nixl_backend_params:
+    access_key: "0555b35654ad1656d804"
+    secret_key: "h7GhxuBLTrlhVUyxSPUKUV8r/2EI4ngqJxD7iBdBYLhwluN30JaT3Q=="
+    bucket: "lmcache"
+    region: "us-east-1"
+    endpoint_override: "http://localhost:8000"
+    rdma_port: "7471"
+    batch_mode: "1"
+    batch_size: "16"

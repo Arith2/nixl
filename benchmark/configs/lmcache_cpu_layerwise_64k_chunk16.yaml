@@ -1,0 +1,6 @@
+chunk_size: 16
+local_cpu: true
+max_local_cpu_size: 100.0
+use_layerwise: true
+save_unfull_chunk: false
+enable_nixl_storage: false

@@ -22,6 +22,8 @@ obj_sources = [
     's3/client.h',
     's3/engine_impl.cpp',
     's3/engine_impl.h',
+    's3/rdma_ctx.cpp',
+    's3/rdma_ctx.h',
     's3_crt/engine_impl.cpp',
     's3_crt/engine_impl.h',
     's3_crt/client.cpp',
@@ -34,7 +36,8 @@ if not is_variable('obj_utils_interface')
     subdir_done()
 endif
 
-plugin_deps += [obj_utils_interface, dependency('asio', required: true)]
+plugin_deps += [obj_utils_interface, dependency('asio', required: true),
+                dependency('libibverbs'), dependency('librdmacm')]
 
 if cuobj_dep.found()
     message('Found CUObjClient Library. Enabling S3 Accelerated engines')
@@ -49,13 +52,36 @@ else
     message ('Could not find CUObjClient Library. Skipping S3 Accelerated engines')
 endif
 
+# DAOS Direct DFS engine — bypass Ceph RGW on the data plane.
+# Requires libdaos and libdfs. When found, provides DaosDirectObjEngineImpl
+# which talks to DAOS storage directly via Mercury RDMA.
+cc_obj = meson.get_compiler('cpp')
+libdaos_dep = cc_obj.find_library('daos', dirs: ['/opt/daos_install/lib64'], required: false)
+libdfs_dep = cc_obj.find_library('dfs', dirs: ['/opt/daos_install/lib64'], required: false)
+if libdaos_dep.found() and libdfs_dep.found()
+    message('Found libdaos + libdfs. Enabling DAOS Direct DFS engine + S3 split-plane engine')
+    obj_sources += [
+        'daos_direct/engine_impl.cpp',
+        'daos_direct/engine_impl.h',
+        's3_split_plane/engine_impl.cpp',
+        's3_split_plane/engine_impl.h',
+    ]
+    daos_inc = include_directories('/opt/daos_install/include')
+    plugin_deps += [libdaos_dep, libdfs_dep]
+    compile_defs += ['-DHAVE_DAOS_DIRECT']
+    daos_inc_dirs = [include_directories('/opt/daos_install/include')]
+else
+    message('libdaos/libdfs not found. Skipping DAOS Direct DFS engine')
+    daos_inc_dirs = []
+endif
+
 if 'OBJ' in static_plugins
     obj_backend_lib = static_library(
         'OBJ',
         obj_sources,
         dependencies: plugin_deps,
         cpp_args: compile_defs + compile_flags,
-        include_directories: [nixl_inc_dirs, utils_inc_dirs],
+        include_directories: [nixl_inc_dirs, utils_inc_dirs] + daos_inc_dirs,
         install: false,
         name_prefix: 'libplugin_')  # Custom prefix for plugin libraries
 else
@@ -64,7 +90,7 @@ else
         obj_sources,
         dependencies: plugin_deps,
         cpp_args: compile_defs + ['-fPIC'],
-        include_directories: [nixl_inc_dirs, utils_inc_dirs],
+        include_directories: [nixl_inc_dirs, utils_inc_dirs] + daos_inc_dirs,
         install: true,
         name_prefix: 'libplugin_',  # Custom prefix for plugin libraries
         install_dir: plugin_install_dir,

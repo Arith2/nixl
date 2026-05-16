@@ -153,6 +153,15 @@ class nixlBackendEngine {
         // Use a handle to progress backend engine and see if a transfer is completed or not
         virtual nixl_status_t checkXfer(nixlBackendReqH* handle) const = 0;
 
+        // Optional descriptor-level completion query. Backends that support
+        // batched requests may append indices whose descriptors have completed
+        // since the previous query while preserving whole-request checkXfer()
+        // semantics. Default: unsupported.
+        virtual nixl_status_t
+        getXferDoneIndices(nixlBackendReqH*, std::vector<int>&) const {
+            return NIXL_ERR_NOT_SUPPORTED;
+        }
+
         //Backend aborts the transfer if necessary, and destructs the relevant objects
         virtual nixl_status_t releaseReqH(nixlBackendReqH* handle) const = 0;
 

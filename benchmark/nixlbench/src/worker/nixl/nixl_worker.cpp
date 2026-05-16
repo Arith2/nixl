@@ -17,7 +17,11 @@
 
 #include "worker/nixl/nixl_worker.h"
 #include <algorithm>
+#include <atomic>
 #include <cctype>
+#include <chrono>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #if HAVE_CUDA
 #include <cuda.h>
@@ -25,14 +29,17 @@
 #endif
 #include <fcntl.h>
 #include <filesystem>
+#include <fstream>
 #include <iomanip>
 #include <sstream>
 #include "utils/neuron.h"
 #include "utils/utils.h"
 #include <unistd.h>
 #include <utility>
+#include <mutex>
 #include <sys/time.h>
 #include <sys/stat.h>
+#include <sys/syscall.h>
 #include <utils/serdes/serdes.h>
 #include <omp.h>
 
@@ -233,7 +240,149 @@ xferBenchNixlWorker::xferBenchNixlWorker(int *argc, char ***argv, std::vector<st
             backend_params["endpoint_override"] = xferBenchConfig::obj_endpoint_override;
         }
 
-        if (xferBenchConfig::obj_crt_min_limit > 0) {
+        if (xferBenchConfig::obj_rdma_port != "") {
+            backend_params["rdma_port"] = xferBenchConfig::obj_rdma_port;
+        }
+
+        if (xferBenchConfig::batch_mode) {
+            backend_params["batch_mode"] = "1";
+            backend_params["batch_size"] = std::to_string(xferBenchConfig::batch_size);
+            backend_params["server_aggregate_size"] =
+                std::to_string(xferBenchConfig::server_aggregate_size);
+            if (xferBenchConfig::obj_prepop_start > 0)
+                backend_params["batch_window_start"] = std::to_string(xferBenchConfig::obj_prepop_start);
+            // -num_threads_batch sizes the engine's executor pool (fan-out
+            // parallelism for the N libdfs reads inside one postXfer).
+            // -num_threads keeps its original benchmark-worker semantic;
+            // for batch_mode the script is expected to set it to 1 so each
+            // iteration corresponds to exactly one HTTP control hop.
+            backend_params["num_threads"] =
+                std::to_string(xferBenchConfig::num_threads_batch);
+            backend_params["num_threads_batch"] =
+                std::to_string(xferBenchConfig::num_threads_batch);
+            backend_params["num_threads_daos"] =
+                std::to_string(xferBenchConfig::num_threads_batch);
+            // -iodepth_batch makes s3rdma_batch mirror daos_direct's
+            // NT × IOD shape inside the engine: num_threads_batch workers
+            // with iodepth_batch async DAOS fetches per worker. Older scripts
+            // can still use -batch_inflight_cap directly.
+            if (xferBenchConfig::iodepth_batch > 0) {
+                backend_params["iodepth_batch"] =
+                    std::to_string(xferBenchConfig::iodepth_batch);
+                backend_params["iodepth_daos"] =
+                    std::to_string(xferBenchConfig::iodepth_batch);
+                backend_params["batch_inflight_cap"] = std::to_string(
+                    xferBenchConfig::num_threads_batch *
+                    xferBenchConfig::iodepth_batch);
+            } else {
+                backend_params["batch_inflight_cap"] =
+                    std::to_string(xferBenchConfig::batch_inflight_cap);
+            }
+        }
+
+        if (xferBenchConfig::obj_daos_direct) {
+            // DAOS direct engine — bypass Ceph on the data plane
+            backend_params["daos_direct"] = "true";
+            backend_params["daos_pool"] = xferBenchConfig::obj_daos_pool;
+            backend_params["daos_cont"] = xferBenchConfig::obj_daos_cont;
+            if (xferBenchConfig::obj_daos_direct_hashoid) {
+                // Hashoid mode: skip dfs_open, synthesize OID client-side.
+                // (T, IOD) feed oid.hi encoding in hashoid_oid_hi_user().
+                backend_params["daos_hashoid"]  = "true";
+                backend_params["hashoid_T"]     = std::to_string(xferBenchConfig::num_threads);
+                backend_params["hashoid_IOD"]   = std::to_string(xferBenchConfig::iodepth);
+            }
+            std::cout << "OBJ backend with DAOS direct DFS engine enabled"
+                      << " (pool=" << xferBenchConfig::obj_daos_pool
+                      << " cont=" << xferBenchConfig::obj_daos_cont
+                      << (xferBenchConfig::obj_daos_direct_hashoid ? " [HASHOID]" : "")
+                      << ")" << std::endl;
+        } else if (xferBenchConfig::obj_mode == "s3rdma_direct") {
+            // Split-plane (cuObject-style): NIXL → Ceph RGW (control over HTTP
+            // with x-amz-rdma-direct header) → on success → NIXL → DAOS
+            // server via libdfs (data plane). Needs both the S3 params (for
+            // the control hop) and the DAOS params (for the data plane).
+            backend_params["mode"] = "s3rdma_direct";
+            backend_params["daos_pool"] = xferBenchConfig::obj_daos_pool;
+            backend_params["daos_cont"] = xferBenchConfig::obj_daos_cont;
+            if (xferBenchConfig::obj_daos_direct_hashoid) {
+                // Applies to both s3rdma_direct and s3rdma_batch (batch_mode
+                // is parsed independently on the same engine).
+                backend_params["daos_hashoid"]  = "true";
+                backend_params["hashoid_T"]     = std::to_string(xferBenchConfig::num_threads);
+                backend_params["hashoid_IOD"]   = std::to_string(xferBenchConfig::iodepth);
+            }
+            if (xferBenchConfig::obj_daos_agg) {
+                // s3rdma_agg: server-side aggregation. With the new agg
+                // postXfer flow ("1 HTTP per load + N per-layer fetches"),
+                // -batch_size = OBJECTS_PER_LOAD and the chunks-per-layer
+                // fan-out is controlled by -obj_agg_chunks_per_layer.
+                // Falls back to batch_size if the new flag is unset (legacy).
+                backend_params["daos_agg"] = "true";
+                int acpl = xferBenchConfig::obj_agg_chunks_per_layer > 0
+                              ? xferBenchConfig::obj_agg_chunks_per_layer
+                              : xferBenchConfig::batch_size;
+                backend_params["agg_chunks_per_layer"] = std::to_string(acpl);
+                // chunks_per_layer = total chunks in a layer (= ISL/T).
+                // Distinct from agg_chunks_per_layer (the agg fetch unit) —
+                // when 4 MiB aggs are used inside 16 MiB layers, multiple
+                // groups share the same layer_idx and need different recx
+                // offsets. Falls back to agg_chunks_per_layer for the
+                // legacy whole-layer case.
+                int cpl = xferBenchConfig::obj_chunks_per_layer > 0
+                              ? xferBenchConfig::obj_chunks_per_layer
+                              : acpl;
+                backend_params["chunks_per_layer"] = std::to_string(cpl);
+            }
+            if (xferBenchConfig::obj_daos_agg_patch) {
+                // S3RDMA agg-patch: use the same outer S3RDMA-batch
+                // dispatch, but call daos_obj_fetch_agg for each logical
+                // object so DAOS stitches fine-grained chunks server-side.
+                backend_params["daos_agg_patch"] = "true";
+                if (xferBenchConfig::obj_daos_agg_patch_lwagg_manifest)
+                    backend_params["daos_agg_patch_lwagg_manifest"] = "true";
+                if (xferBenchConfig::obj_daos_agg_patch_rangeget)
+                    backend_params["daos_agg_patch_rangeget"] = "true";
+                int acpl = xferBenchConfig::obj_agg_chunks_per_layer > 0
+                              ? xferBenchConfig::obj_agg_chunks_per_layer
+                              : xferBenchConfig::batch_size;
+                backend_params["agg_chunks_per_layer"] = std::to_string(acpl);
+                int cpl = xferBenchConfig::obj_chunks_per_layer > 0
+                              ? xferBenchConfig::obj_chunks_per_layer
+                              : acpl;
+                backend_params["chunks_per_layer"] = std::to_string(cpl);
+            }
+            if (xferBenchConfig::obj_daos_lwagg_server_mode) {
+                backend_params["daos_lwagg_server_mode"] = "true";
+                backend_params["lwagg_issue_mode"] =
+                    xferBenchConfig::obj_lwagg_issue_mode;
+                backend_params["lwagg_manifest_tsv"] =
+                    xferBenchConfig::obj_lwagg_manifest_tsv;
+                backend_params["lwagg_num_layers"] =
+                    std::to_string(xferBenchConfig::obj_lwagg_num_layers);
+                if (xferBenchConfig::obj_lwagg_layer_bytes > 0) {
+                    backend_params["lwagg_layer_bytes"] =
+                        std::to_string(xferBenchConfig::obj_lwagg_layer_bytes);
+                }
+                if (xferBenchConfig::obj_lwagg_object_bytes > 0) {
+                    backend_params["lwagg_object_bytes"] =
+                        std::to_string(xferBenchConfig::obj_lwagg_object_bytes);
+                }
+                if (xferBenchConfig::obj_lwagg_manifest_start > 0) {
+                    backend_params["lwagg_manifest_start"] =
+                        std::to_string(xferBenchConfig::obj_lwagg_manifest_start);
+                }
+            }
+            std::cout << "OBJ backend with S3 split-plane (s3rdma_direct) enabled"
+                      << " (pool=" << xferBenchConfig::obj_daos_pool
+                      << " cont=" << xferBenchConfig::obj_daos_cont
+                      << (xferBenchConfig::obj_daos_direct_hashoid ? " [HASHOID]" : "")
+                      << (xferBenchConfig::batch_mode ? " [BATCH]" : "")
+                      << (xferBenchConfig::obj_daos_agg ? " [AGG]" : "")
+                      << (xferBenchConfig::obj_daos_agg_patch ? " [AGG_PATCH]" : "")
+                      << (xferBenchConfig::obj_daos_lwagg_server_mode ? " [LWAGG]" : "")
+                      << ")" << std::endl;
+        } else if (xferBenchConfig::obj_crt_min_limit > 0) {
             // Warn if both CRT and accelerated options are set - CRT takes precedence
             if (xferBenchConfig::obj_accelerated_enable) {
                 std::cerr << "Warning: Both obj_crt_min_limit and obj_accelerated_enable are set. "
@@ -688,6 +837,10 @@ xferBenchNixlWorker::cleanupBasicDescFile(xferBenchIOV &iov) {
 
 void
 xferBenchNixlWorker::cleanupBasicDescObj(xferBenchIOV &iov) {
+    if (xferBenchConfig::obj_prepop_num > 0) {
+        // Prepop mode: keep all objects so they can be reused by subsequent GET benchmarks.
+        return;
+    }
     if (!xferBenchUtils::rmObj(iov.metaInfo)) {
         std::cerr << "Failed to remove object: " << iov.metaInfo << std::endl;
         exit(EXIT_FAILURE);
@@ -794,6 +947,24 @@ xferBenchNixlWorker::allocateMemory(int num_threads) {
     }
     buffer_size = xferBenchConfig::total_buffer_size / (num_devices * num_threads);
 
+    // For OBJ backend the DRAM staging buffer only needs to hold one transfer block.
+    // The default total_buffer_size (8 GiB) would cause ibv_reg_mr to fail when
+    // the RDMA path tries to pin that much memory.  Cap to max_block_size so that
+    // RDMA MR registration succeeds and measurements reflect real RDMA behaviour.
+    // In batch mode, need batch_size × object_size for the full batched load.
+    if (xferBenchConfig::isObjStorageBackend() && xferBenchConfig::max_block_size > 0) {
+        if (xferBenchConfig::batch_mode && xferBenchConfig::obj_prepop_num > 0) {
+            // Batch mode: buffer must hold batch_size × object_size (not full prepop pool)
+            int batch_n = xferBenchConfig::batch_size > 0
+                        ? xferBenchConfig::batch_size
+                        : xferBenchConfig::obj_prepop_num;
+            size_t batch_total = (size_t)batch_n * xferBenchConfig::max_block_size;
+            buffer_size = std::min(buffer_size, std::max(batch_total, xferBenchConfig::max_block_size));
+        } else {
+            buffer_size = std::min(buffer_size, xferBenchConfig::max_block_size);
+        }
+    }
+
     if (xferBenchConfig::storage_enable_direct) {
         if (xferBenchConfig::page_size == 0) {
             std::cerr << "Error: Invalid page size returned by sysconf" << std::endl;
@@ -807,34 +978,125 @@ xferBenchNixlWorker::allocateMemory(int num_threads) {
     opt_args.backends.push_back(backend_engine);
 
     if (xferBenchConfig::isObjStorageBackend()) {
+        const bool is_prepop = (xferBenchConfig::obj_prepop_num > 0);
         struct timeval tv;
         gettimeofday(&tv, nullptr);
         uint64_t timestamp = tv.tv_sec * 1000000ULL + tv.tv_usec;
+
+        prepop_keys_.clear();
+        prepop_keys_.resize(num_threads);
+        prepop_base_dev_ids_.clear();
+        prepop_base_dev_ids_.resize(num_threads, 0);
 
         for (int list_idx = 0; list_idx < num_threads; list_idx++) {
             std::vector<xferBenchIOV> iov_list;
             for (i = 0; i < num_devices; i++) {
                 std::optional<xferBenchIOV> basic_desc;
-                std::string unique_name = "nixlbench_obj" + std::to_string(list_idx) + "_" +
-                    std::to_string(i) + "_" + std::to_string(timestamp);
+                std::string unique_name;
 
-                if (xferBenchConfig::op_type == XFERBENCH_OP_READ) {
-                    if (!xferBenchUtils::putObj(buffer_size, unique_name)) {
-                        std::cerr << "Failed to put object: " << unique_name << std::endl;
-                        continue;
+                if (is_prepop) {
+                    // Base devId for this (thread, dev) pair; ensures no devId collisions.
+                    int base_dev_id =
+                        (list_idx * num_devices + i) * xferBenchConfig::obj_prepop_num;
+
+                    if (!xferBenchConfig::obj_prepop_keys_file.empty()) {
+                        // Read keys from file once, then scatter across threads.
+                        static std::vector<std::string> all_file_keys;
+                        static bool file_loaded = false;
+                        if (!file_loaded) {
+                            std::ifstream keys_file(xferBenchConfig::obj_prepop_keys_file);
+                            if (!keys_file.is_open()) {
+                                std::cerr << "Failed to open keys file: "
+                                          << xferBenchConfig::obj_prepop_keys_file << std::endl;
+                                return {};
+                            }
+                            std::string line;
+                            while (std::getline(keys_file, line)) {
+                                if (!line.empty())
+                                    all_file_keys.push_back(line);
+                            }
+                            keys_file.close();
+                            file_loaded = true;
+                            std::cout << "Loaded " << all_file_keys.size()
+                                      << " keys from " << xferBenchConfig::obj_prepop_keys_file
+                                      << std::endl;
+                        }
+                        // Scatter keys to this thread: stride by num_threads.
+                        int T = num_threads * num_devices;
+                        int my_idx = list_idx * num_devices + i;
+                        for (size_t k = my_idx; k < all_file_keys.size(); k += T) {
+                            prepop_keys_[list_idx].push_back(all_file_keys[k]);
+                        }
+                        xferBenchConfig::obj_prepop_num = (int)prepop_keys_[list_idx].size();
+                        base_dev_id = my_idx * xferBenchConfig::obj_prepop_num;
+                        prepop_base_dev_ids_[list_idx] = base_dev_id;
+                    } else if (xferBenchConfig::obj_prepop_keys_file.empty()) {
+                        // Default: generate prepop_{size}B_{thread}_{dev}_{idx:06d} keys
+                        std::string key_prefix =
+                            "prepop_" + std::to_string(xferBenchConfig::start_block_size) + "B_" +
+                            std::to_string(list_idx) + "_" + std::to_string(i) + "_";
+                        for (int k = 0; k < xferBenchConfig::obj_prepop_num; k++) {
+                            std::ostringstream oss;
+                            oss << key_prefix << std::setfill('0') << std::setw(6) << k;
+                            prepop_keys_[list_idx].push_back(oss.str());
+                        }
+                        prepop_base_dev_ids_[list_idx] = base_dev_id;
                     }
+                    // Register all obj_prepop_num objects in a single batch.
+                    // Each gets a unique devId so the transfer loop can rotate via devId.
+                    std::vector<xferBenchIOV> all_prepop_iovs;
+                    nixl_reg_dlist_t all_desc(OBJ_SEG);
+                    for (int k = 0; k < xferBenchConfig::obj_prepop_num; k++) {
+                        const std::string &key = prepop_keys_[list_idx][k];
+                        nixlBlobDesc bd;
+                        bd.addr    = 0;
+                        bd.len     = buffer_size;
+                        bd.devId   = base_dev_id + k;
+                        bd.metaInfo = key;
+                        all_desc.addDesc(bd);
+                        all_prepop_iovs.emplace_back(0, buffer_size, base_dev_id + k, key);
+                    }
+                    CHECK_NIXL_ERROR(agent->registerMem(all_desc, &opt_args),
+                                     "registerMem prepop failed");
+                    prepop_all_iovs_.push_back(std::move(all_prepop_iovs));
+
+                    // Push a dummy entry to iov_list so remote_iovs gets the base devId.
+                    // This entry is NOT re-registered — it is part of prepop_all_iovs_.
+                    unique_name = prepop_keys_[list_idx][0];
+                    basic_desc = initBasicDescObj(buffer_size, base_dev_id, unique_name);
+                    std::cout << "Prepop: registered " << xferBenchConfig::obj_prepop_num
+                              << " objects (devIds " << base_dev_id << ".."
+                              << (base_dev_id + xferBenchConfig::obj_prepop_num - 1)
+                              << "), key[0]=" << unique_name << std::endl;
+                } else {
+                    unique_name = "nixlbench_obj" + std::to_string(list_idx) + "_" +
+                        std::to_string(i) + "_" + std::to_string(timestamp);
+                    if (xferBenchConfig::op_type == XFERBENCH_OP_READ) {
+                        if (!xferBenchUtils::putObj(buffer_size, unique_name)) {
+                            std::cerr << "Failed to put object: " << unique_name << std::endl;
+                            continue;
+                        }
+                    }
+                    std::cout << "Creating obj: " << unique_name << std::endl;
                 }
 
-                basic_desc = initBasicDescObj(buffer_size, i, unique_name);
+                if (!is_prepop) {
+                    basic_desc = initBasicDescObj(buffer_size, i, unique_name);
+                }
                 if (basic_desc) {
-                    std::cout << "Creating obj: " << unique_name << std::endl;
                     iov_list.push_back(basic_desc.value());
                 }
             }
-            nixl_reg_dlist_t desc_list(OBJ_SEG);
-            iovListToNixlRegDlist(iov_list, desc_list);
-            CHECK_NIXL_ERROR(agent->registerMem(desc_list, &opt_args), "registerMem failed");
-            remote_iovs.push_back(iov_list);
+            if (is_prepop) {
+                // All prepop objects were already registered in bulk above; do NOT call
+                // registerMem again for iov_list (it contains dummy entries only).
+                remote_iovs.push_back(iov_list);
+            } else {
+                nixl_reg_dlist_t desc_list(OBJ_SEG);
+                iovListToNixlRegDlist(iov_list, desc_list);
+                CHECK_NIXL_ERROR(agent->registerMem(desc_list, &opt_args), "registerMem failed");
+                remote_iovs.push_back(iov_list);
+            }
         }
     } else if (XFERBENCH_BACKEND_GUSLI == xferBenchConfig::backend) {
         // GUSLI backend uses block device descriptors
@@ -1006,13 +1268,25 @@ xferBenchNixlWorker::deallocateMemory(std::vector<std::vector<xferBenchIOV>> &io
     }
 
     if (xferBenchConfig::isObjStorageBackend()) {
-        for (auto &iov_list : remote_iovs) {
-            for (auto &iov : iov_list) {
-                cleanupBasicDescObj(iov);
+        if (!prepop_all_iovs_.empty()) {
+            // Prepop mode: all 12K objects were registered in prepop_all_iovs_ (not remote_iovs).
+            // Deregister them here; S3 objects are kept (cleanupBasicDescObj is a no-op).
+            for (auto &iov_list : prepop_all_iovs_) {
+                nixl_reg_dlist_t desc_list(OBJ_SEG);
+                iovListToNixlRegDlist(iov_list, desc_list);
+                agent->deregisterMem(desc_list, &opt_args);  // best-effort; ignore error
             }
-            nixl_reg_dlist_t desc_list(OBJ_SEG);
-            iovListToNixlRegDlist(iov_list, desc_list);
-            CHECK_NIXL_ERROR(agent->deregisterMem(desc_list, &opt_args), "deregisterMem failed");
+            prepop_all_iovs_.clear();
+        } else {
+            for (auto &iov_list : remote_iovs) {
+                for (auto &iov : iov_list) {
+                    cleanupBasicDescObj(iov);
+                }
+                nixl_reg_dlist_t desc_list(OBJ_SEG);
+                iovListToNixlRegDlist(iov_list, desc_list);
+                CHECK_NIXL_ERROR(agent->deregisterMem(desc_list, &opt_args),
+                                 "deregisterMem failed");
+            }
         }
     } else if (xferBenchConfig::backend == XFERBENCH_BACKEND_GUSLI) {
         for (auto &iov_list : remote_iovs) {
@@ -1196,17 +1470,105 @@ xferBenchNixlWorker::exchangeIOV(const std::vector<std::vector<xferBenchIOV>> &l
     return res;
 }
 
+// Per-request wallclock tracing (enabled with NIXL_TRACE=1).
+// Prints absolute system_clock timestamps at POST and DONE for each xfer so
+// they can be correlated against RGW radosgw.8000.log timestamps.
+static inline bool nixl_trace_enabled() {
+    static const bool en = (std::getenv("NIXL_TRACE") != nullptr);
+    return en;
+}
+
+static inline double nixl_now_sec() {
+    auto t = std::chrono::system_clock::now().time_since_epoch();
+    return std::chrono::duration_cast<std::chrono::microseconds>(t).count() / 1e6;
+}
+
+static inline void nixl_trace(const char *evt, int tid, int slot, int iter) {
+    if (!nixl_trace_enabled()) return;
+    fprintf(stderr, "[NIXL_TRACE t=%.6f tid=%d slot=%d iter=%d] %s\n",
+            nixl_now_sec(), tid, slot, iter, evt);
+    fflush(stderr);
+}
+
+// Per-iteration markers written into the OBJ plugin trace log
+// (/tmp/nixl_obj_trace_us.log by default, NIXL_OBJ_TRACE_FILE override). Format
+// matches the NIXL_OBJ_US_R macro in src/plugins/obj/s3/obj_us_trace.h so that
+// post-processing can merge these markers with the per-chunk completion events
+// emitted from the OBJ plugin.
+static inline FILE* obj_trace_fp() {
+    static FILE* f = nullptr;
+    static std::once_flag once;
+    std::call_once(once, []{
+        const char* path = std::getenv("NIXL_OBJ_TRACE_FILE");
+        if (!path) path = "/tmp/nixl_obj_trace_us.log";
+        f = std::fopen(path, "a");
+        if (f) std::setvbuf(f, nullptr, _IOLBF, 0);
+    });
+    return f;
+}
+
+static inline bool obj_trace_enabled() {
+    static const bool en = (std::getenv("NIXL_OBJ_TRACE") != nullptr);
+    return en;
+}
+
+// Whether to add a synchronizing #pragma omp barrier at the top of each
+// iteration so that "iteration k" is well-defined globally across threads.
+// Off by default — enabling adds a per-iter rendezvous cost (slow threads
+// stall fast ones), which intentionally slightly reduces the BW number but
+// makes per-iteration TTFL/TFL analysis clean.
+static inline bool iter_barrier_enabled() {
+    static const bool en = (std::getenv("NIXL_ITER_BARRIER") != nullptr);
+    return en;
+}
+
+static inline void obj_trace_iter_marker(const char *evt, int iter_idx) {
+    if (!obj_trace_enabled()) return;
+    FILE* f = obj_trace_fp();
+    if (!f) return;
+    auto now = std::chrono::system_clock::now().time_since_epoch();
+    double ts = std::chrono::duration_cast<std::chrono::microseconds>(now).count() / 1e6;
+    long tid = (long)syscall(SYS_gettid);
+    std::fprintf(f, "%.6f %ld %d %s\n", ts, tid, iter_idx, evt);
+}
+
+// One-shot config marker emitted at the start of transfer(), capturing the
+// run-wide knobs that determine how to interpret per-chunk events. Format
+// keeps the same 4 leading columns (ts, tid, iter_idx=-1 placeholder, event)
+// so existing parsers see "config" as just another event name. The K=V tail
+// is appended after the event name.
+static inline void obj_trace_emit_config(int num_threads, int num_iter, int warmup_iter,
+                                         size_t start_batch_size, bool batch_mode,
+                                         int batch_size, int num_threads_batch,
+                                         const char *op_type) {
+    if (!obj_trace_enabled()) return;
+    FILE* f = obj_trace_fp();
+    if (!f) return;
+    auto now = std::chrono::system_clock::now().time_since_epoch();
+    double ts = std::chrono::duration_cast<std::chrono::microseconds>(now).count() / 1e6;
+    long tid = (long)syscall(SYS_gettid);
+    std::fprintf(f,
+        "%.6f %ld -1 nixlbench_config op=%s num_threads=%d num_iter=%d warmup_iter=%d "
+        "start_batch_size=%zu batch_mode=%d batch_size=%d num_threads_batch=%d\n",
+        ts, tid, op_type, num_threads, num_iter, warmup_iter,
+        start_batch_size, batch_mode ? 1 : 0, batch_size, num_threads_batch);
+}
+
 // Helper to execute a single transfer iteration
 static inline nixl_status_t
 execSingleTransfer(nixlAgent *agent,
                    nixlXferReqH *req,
                    xferBenchTimer &timer,
-                   xferBenchStats &thread_stats) {
+                   xferBenchStats &thread_stats,
+                   int trace_iter = -1) {
+    int trace_tid = nixl_trace_enabled() ? omp_get_thread_num() : 0;
+    nixl_trace("POST", trace_tid, 0, trace_iter);
     nixl_status_t rc = agent->postXferReq(req);
     thread_stats.post_duration.add(timer.lap());
     while (NIXL_IN_PROG == rc) {
         rc = agent->getXferStatus(req);
     }
+    nixl_trace("DONE", trace_tid, 0, trace_iter);
     return rc;
 }
 
@@ -1241,49 +1603,311 @@ execTransferIterations(nixlAgent *agent,
                        const int num_iter,
                        xferBenchTimer &timer,
                        xferBenchStats &thread_stats,
-                       const bool recreate_per_iteration) {
+                       const bool recreate_per_iteration,
+                       const std::vector<std::string> *prepop_keys,
+                       const int prepop_iter_offset) {
     nixlXferReqH *req = nullptr;
     nixlTime::us_t total_prepare_duration = 0;
 
+    // Prepop key rotation requires recreating the xfer request per iteration so the OBJ
+    // backend sees the updated devId (which maps to a different registered S3 key).
+    const bool use_recreate = recreate_per_iteration || (prepop_keys && !prepop_keys->empty());
+
+    // Capture base devId for prepop rotation.
+    const uint64_t prepop_base_dev_id =
+        (prepop_keys && !prepop_keys->empty()) ? remote_desc[0].devId : 0;
+
+    // ----------------------------------------------------------------------
+    // CPU-staged GPU buffer mode (-cuda_stage_after_op):
+    //
+    // When enabled and the initiator buffer is host DRAM, every iteration
+    // also issues a synchronous cudaMemcpy between the host buffer and a
+    // per-thread CUDA device buffer (H2D for READ, D2H for WRITE) inside
+    // the timed region. The resulting end-to-end throughput is the
+    // "naive serial CPU staging" baseline used by Figure 3 to compare
+    // against the GPUDirect path (-initiator_seg_type VRAM, no extra
+    // flag).
+    //
+    // We allocate one CUDA buffer per OMP thread, sized to the largest
+    // local descriptor we expect to see (original local_desc[0].len at
+    // entry; layerwise mode shrinks the per-iter len, never grows it).
+    // The buffer is freed at function exit.
+    // ----------------------------------------------------------------------
+#if HAVE_CUDA
+    const bool stage_enabled = xferBenchConfig::cuda_stage_after_op &&
+                               xferBenchConfig::initiator_seg_type ==
+                                   XFERBENCH_SEG_TYPE_DRAM;
+#else
+    const bool stage_enabled = false;
+#endif
+    void *stage_gpu_buf = nullptr;
+    size_t stage_buf_size = 0;
+#if HAVE_CUDA
+    if (stage_enabled) {
+        stage_buf_size = static_cast<size_t>(local_desc[0].len);
+        cudaError_t crc = cudaMalloc(&stage_gpu_buf, stage_buf_size);
+        if (crc != cudaSuccess) {
+            std::cerr << "cuda_stage_after_op: cudaMalloc(" << stage_buf_size
+                      << ") failed: " << cudaGetErrorString(crc) << std::endl;
+            return -1;
+        }
+    }
+    auto stage_h2d = [&](size_t len) {
+        // After a READ completes: host buffer -> GPU device buffer.
+        if (!stage_enabled) return;
+        cudaError_t crc = cudaMemcpy(stage_gpu_buf,
+                                     reinterpret_cast<const void *>(local_desc[0].addr),
+                                     len, cudaMemcpyHostToDevice);
+        if (crc != cudaSuccess)
+            std::cerr << "stage_h2d cudaMemcpy failed: "
+                      << cudaGetErrorString(crc) << std::endl;
+    };
+    auto stage_d2h = [&](size_t len) {
+        // Before a WRITE: GPU device buffer -> host buffer (so the
+        // network op then sends the staged bytes).
+        if (!stage_enabled) return;
+        cudaError_t crc = cudaMemcpy(reinterpret_cast<void *>(local_desc[0].addr),
+                                     stage_gpu_buf, len, cudaMemcpyDeviceToHost);
+        if (crc != cudaSuccess)
+            std::cerr << "stage_d2h cudaMemcpy failed: "
+                      << cudaGetErrorString(crc) << std::endl;
+    };
+    // Cleanup helper used at every return from this function below.
+    auto stage_cleanup = [&]() {
+        if (stage_gpu_buf) { cudaFree(stage_gpu_buf); stage_gpu_buf = nullptr; }
+    };
+#else
+    auto stage_h2d = [](size_t) {};
+    auto stage_d2h = [](size_t) {};
+    auto stage_cleanup = []() {};
+#endif
+
+    // ----------------------------------------------------------------------
+    // iodepth > 1: sliding-window async path (FIO-style)
+    //
+    // Maintain Q outstanding nixlXferReq handles. Fill the window by posting
+    // Q requests, then loop: poll all slots round-robin for any DONE, on
+    // completion record the per-request latency and immediately post the
+    // next iteration into the freed slot. Sliding window invariant:
+    // (posted - completed) == Q at steady state, dropping naturally during
+    // the final drain phase.
+    //
+    // Notes:
+    //   - Both recreate and non-recreate paths are supported. In recreate
+    //     mode (used by OBJ prepop key rotation) we createXferReq() per slot
+    //     per iteration so devId can rotate. In non-recreate mode we create
+    //     Q distinct request handles upfront and reuse each one within its
+    //     slot for the lifetime of the run.
+    //   - Per-request latency = wall-clock from postXferReq to NIXL_SUCCESS,
+    //     measured per slot. Throughput = total_bytes / total_wall_clock
+    //     (formula unchanged from the iodepth=1 path; printStats handles it).
+    //   - For OBJ backends, num_threads also sizes the AWS SDK asio pool, so
+    //     for full pipelining you typically want num_threads >= iodepth.
+    // ----------------------------------------------------------------------
+    const int iodepth = std::max(1, xferBenchConfig::iodepth);
+    if (iodepth > 1) {
+        std::vector<nixlXferReqH *> slot_req(iodepth, nullptr);
+        std::vector<xferBenchTimer> slot_timer(iodepth);
+        std::vector<bool>           slot_armed(iodepth, false);
+        nixlTime::us_t total_prepare_duration = 0;
+
+        // Helper: build (or rebuild) a request for slot `s` to service iter `it`,
+        // then postXferReq it and start the per-slot timer.
+        auto post_slot = [&](int s, int it) -> int {
+            // Apply prepop devId rotation for THIS iteration if needed.
+            if (use_recreate && prepop_keys && !prepop_keys->empty()) {
+                int num_chunks = (int)prepop_keys->size();
+                int idx = (prepop_iter_offset + it) % num_chunks;
+                remote_desc[0].devId = prepop_base_dev_id + idx;
+            }
+
+            // (Re)create the request for this slot if needed.
+            if (use_recreate || slot_req[s] == nullptr) {
+                if (use_recreate && slot_req[s] != nullptr) {
+                    agent->releaseXferReq(slot_req[s]);
+                    slot_req[s] = nullptr;
+                }
+                nixl_status_t create_rc = agent->createXferReq(
+                    op, local_desc, remote_desc, target, slot_req[s], &params);
+                if (NIXL_SUCCESS != create_rc) {
+                    std::cerr << "createXferReq failed: "
+                              << nixlEnumStrings::statusStr(create_rc) << std::endl;
+                    return -1;
+                }
+            }
+            total_prepare_duration += timer.lap();
+
+            // Start per-slot timer immediately before postXferReq so the
+            // measurement covers post + transfer + completion poll.
+            slot_timer[s] = xferBenchTimer{};
+            // CPU-staged WRITE: D2H copy before the network op so the
+            // bytes the NIC sends come from the GPU buffer. Inside the
+            // slot timer so the cost is included in iter latency.
+            if (op == NIXL_WRITE) stage_d2h(local_desc[0].len);
+            nixl_trace("POST", omp_get_thread_num(), s, it);
+            nixl_status_t rc = agent->postXferReq(slot_req[s]);
+            thread_stats.post_duration.add(timer.lap());
+            if (rc != NIXL_SUCCESS && rc != NIXL_IN_PROG) {
+                std::cout << "NIXL postXferReq failed: "
+                          << nixlEnumStrings::statusStr(rc) << std::endl;
+                return -1;
+            }
+            slot_armed[s] = true;
+            return 0;
+        };
+
+        // Helper: drain a slot that has reached NIXL_SUCCESS, recording stats.
+        auto reap_slot = [&](int s) -> int {
+            nixl_trace("DONE", omp_get_thread_num(), s, -1);
+            // CPU-staged READ: H2D copy after the data lands in host
+            // memory but before we lap the timers, so the cost shows up
+            // in transfer_duration / iter_duration.
+            if (op == NIXL_READ) stage_h2d(local_desc[0].len);
+            thread_stats.transfer_duration.add(timer.lap());
+            thread_stats.iter_duration.add(slot_timer[s].lap());
+            slot_armed[s] = false;
+            if (use_recreate) {
+                if (agent->releaseXferReq(slot_req[s]) != NIXL_SUCCESS) {
+                    std::cout << "NIXL releaseXferReq failed" << std::endl;
+                    return -1;
+                }
+                slot_req[s] = nullptr;
+            }
+            return 0;
+        };
+
+        int posted = 0;
+        int completed = 0;
+
+        // Phase 1: fill the initial window.
+        while (posted < num_iter && posted < iodepth) {
+            if (post_slot(posted, posted) < 0) return -1;
+            posted++;
+        }
+
+        // Phase 2: slide — reap any DONE, post next iter into the freed slot.
+        while (completed < num_iter) {
+            int idx = -1;
+            // Round-robin poll until at least one slot reports SUCCESS.
+            // Mirrors FIO's daos_eq_poll(min=1) behavior.
+            while (idx < 0) {
+                for (int s = 0; s < iodepth; ++s) {
+                    if (!slot_armed[s]) continue;
+                    nixl_status_t rc = agent->getXferStatus(slot_req[s]);
+                    if (rc == NIXL_SUCCESS) {
+                        idx = s;
+                        break;
+                    }
+                    if (rc != NIXL_IN_PROG) {
+                        std::cout << "NIXL Xfer failed with status: "
+                                  << nixlEnumStrings::statusStr(rc) << std::endl;
+                        return -1;
+                    }
+                }
+                // Tight spin — same as the iodepth=1 path's busy wait. If
+                // CPU pressure becomes a problem add std::this_thread::yield()
+                // here, but for max throughput keep spinning.
+            }
+
+            if (reap_slot(idx) < 0) return -1;
+            completed++;
+
+            if (posted < num_iter) {
+                if (post_slot(idx, posted) < 0) return -1;
+                posted++;
+            }
+        }
+
+        // End of run: release any remaining (non-recreate) request handles.
+        if (!use_recreate) {
+            for (int s = 0; s < iodepth; ++s) {
+                if (slot_req[s] != nullptr) {
+                    if (agent->releaseXferReq(slot_req[s]) != NIXL_SUCCESS) {
+                        std::cout << "NIXL releaseXferReq failed" << std::endl;
+                        return -1;
+                    }
+                    slot_req[s] = nullptr;
+                }
+            }
+        }
+
+        thread_stats.prepare_duration.add(
+            num_iter > 0 ? total_prepare_duration / num_iter : 0);
+        stage_cleanup();
+        return 0;
+    }
+    // ----------------------------------------------------------------------
+    // iodepth == 1: original serial post-then-wait path, unchanged below.
+    // ----------------------------------------------------------------------
+
     // Create request once if not recreating per iteration
-    if (!recreate_per_iteration) {
+    if (!use_recreate) {
         nixl_status_t create_rc =
             agent->createXferReq(op, local_desc, remote_desc, target, req, &params);
         if (NIXL_SUCCESS != create_rc) {
             std::cerr << "createXferReq failed: " << nixlEnumStrings::statusStr(create_rc)
                       << std::endl;
+            stage_cleanup();
             return -1;
         }
         thread_stats.prepare_duration.add(timer.lap());
     }
 
     // Execute transfer iterations
-    // Branch prediction hint: most backends don't recreate per iteration
-    if (__builtin_expect(recreate_per_iteration, 0)) {
-        // GUSLI path: Create/execute/release per iteration
+    if (__builtin_expect(use_recreate, 0)) {
+        // Recreate path: used by GUSLI and OBJ prepop (devId rotation).
         for (int i = 0; i < num_iter; ++i) {
+            if (iter_barrier_enabled()) {
+                #pragma omp barrier
+                #pragma omp master
+                obj_trace_iter_marker("nixlbench_iter_start", i);
+            }
+            // Rotate to a different pre-registered object by updating the remote devId.
+            // The OBJ backend resolves devId → S3 key via its devIdToObjKey_ map.
+            if (prepop_keys && !prepop_keys->empty()) {
+                int num_chunks = (int)prepop_keys->size();
+                int idx = (prepop_iter_offset + i) % num_chunks;
+                remote_desc[0].devId = prepop_base_dev_id + idx;
+            }
+
+            xferBenchTimer iter_timer;
+            // CPU-staged WRITE: D2H copy must happen BEFORE the network op
+            // so the bytes the network sends come from the GPU buffer.
+            if (op == NIXL_WRITE) stage_d2h(local_desc[0].len);
             nixl_status_t create_rc =
                 agent->createXferReq(op, local_desc, remote_desc, target, req, &params);
             if (__builtin_expect(create_rc != NIXL_SUCCESS, 0)) {
                 std::cerr << "createXferReq failed: " << nixlEnumStrings::statusStr(create_rc)
                           << std::endl;
+                stage_cleanup();
                 return -1;
             }
             total_prepare_duration += timer.lap();
 
-            nixl_status_t rc = execSingleTransfer(agent, req, timer, thread_stats);
+            nixl_status_t rc = execSingleTransfer(agent, req, timer, thread_stats, i);
 
             if (__builtin_expect(rc != NIXL_SUCCESS, 0)) {
                 std::cout << "NIXL Xfer failed with status: " << nixlEnumStrings::statusStr(rc)
                           << std::endl;
                 agent->releaseXferReq(req);
+                stage_cleanup();
                 return -1;
             }
+            // CPU-staged READ: H2D copy must happen AFTER the network op
+            // delivers data into the host buffer, before we lap the timer.
+            if (op == NIXL_READ) stage_h2d(local_desc[0].len);
             thread_stats.transfer_duration.add(timer.lap());
 
             if (__builtin_expect(agent->releaseXferReq(req) != NIXL_SUCCESS, 0)) {
                 std::cout << "NIXL releaseXferReq failed" << std::endl;
+                stage_cleanup();
                 return -1;
+            }
+            thread_stats.iter_duration.add(iter_timer.lap());
+            if (iter_barrier_enabled()) {
+                #pragma omp barrier
+                #pragma omp master
+                obj_trace_iter_marker("nixlbench_iter_end", i);
             }
         }
         // Average prepare duration across iterations
@@ -1291,24 +1915,41 @@ execTransferIterations(nixlAgent *agent,
     } else {
         // Standard path: Single request for all iterations
         for (int i = 0; i < num_iter; ++i) {
-            nixl_status_t rc = execSingleTransfer(agent, req, timer, thread_stats);
+            if (iter_barrier_enabled()) {
+                #pragma omp barrier
+                #pragma omp master
+                obj_trace_iter_marker("nixlbench_iter_start", i);
+            }
+            xferBenchTimer iter_timer;
+            if (op == NIXL_WRITE) stage_d2h(local_desc[0].len);
+            nixl_status_t rc = execSingleTransfer(agent, req, timer, thread_stats, i);
 
             if (__builtin_expect(rc != NIXL_SUCCESS, 0)) {
                 std::cout << "NIXL Xfer failed with status: " << nixlEnumStrings::statusStr(rc)
                           << std::endl;
                 agent->releaseXferReq(req);
+                stage_cleanup();
                 return -1;
             }
+            if (op == NIXL_READ) stage_h2d(local_desc[0].len);
             thread_stats.transfer_duration.add(timer.lap());
+            thread_stats.iter_duration.add(iter_timer.lap());
+            if (iter_barrier_enabled()) {
+                #pragma omp barrier
+                #pragma omp master
+                obj_trace_iter_marker("nixlbench_iter_end", i);
+            }
         }
 
         // Release request once after all iterations
         if (__builtin_expect(agent->releaseXferReq(req) != NIXL_SUCCESS, 0)) {
             std::cout << "NIXL releaseXferReq failed" << std::endl;
+            stage_cleanup();
             return -1;
         }
     }
 
+    stage_cleanup();
     return 0;
 }
 
@@ -1319,7 +1960,10 @@ execTransfer(nixlAgent *agent,
              const nixl_xfer_op_t op,
              const int num_iter,
              const int num_threads,
-             xferBenchStats &stats) {
+             xferBenchStats &stats,
+             const std::vector<std::vector<std::string>> &prepop_keys = {},
+             const int prepop_iter_offset = 0,
+             const std::vector<uint64_t> &prepop_base_dev_ids = {}) {
     int ret = 0;
     stats.clear();
 
@@ -1345,7 +1989,19 @@ execTransfer(nixlAgent *agent,
             params.notif = "0xBEEF";
         }
 
-        // Execute transfers
+        const std::vector<std::string> *thread_keys =
+            (!prepop_keys.empty() && tid < (int)prepop_keys.size()) ?
+                &prepop_keys[tid] : nullptr;
+
+        // Override prepop_base_dev_id from the stored per-thread value
+        // instead of relying on remote_desc[0].devId (which may be wrong).
+        const uint64_t thread_base_dev_id =
+            (!prepop_base_dev_ids.empty() && tid < (int)prepop_base_dev_ids.size())
+                ? prepop_base_dev_ids[tid] : 0;
+        if (thread_keys && !thread_keys->empty()) {
+            remote_desc[0].devId = thread_base_dev_id;
+        }
+
         const int result = execTransferIterations(agent,
                                                   op,
                                                   local_desc,
@@ -1355,7 +2011,9 @@ execTransfer(nixlAgent *agent,
                                                   num_iter,
                                                   timer,
                                                   thread_stats,
-                                                  xferBenchConfig::recreate_xfer);
+                                                  xferBenchConfig::recreate_xfer,
+                                                  thread_keys,
+                                                  prepop_iter_offset);
 
         if (__builtin_expect(result != 0, 0)) {
             ret = result;
@@ -1387,9 +2045,20 @@ xferBenchNixlWorker::transfer(size_t block_size,
         num_iter /= xferBenchConfig::large_blk_iter_ftr;
     }
 
+    // One-shot config marker so post-processing knows num_threads + the rest
+    // of the run-wide knobs without parsing the CLI separately.
+    obj_trace_emit_config(
+        xferBenchConfig::num_threads, xferBenchConfig::num_iter,
+        xferBenchConfig::warmup_iter, xferBenchConfig::start_batch_size,
+        xferBenchConfig::batch_mode, xferBenchConfig::batch_size,
+        xferBenchConfig::num_threads_batch,
+        (xfer_op == NIXL_READ) ? "READ" : "WRITE");
+
+    int prepop_start = xferBenchConfig::obj_prepop_start;
     if (skip > 0) {
-        ret = execTransfer(
-            agent, local_iovs, remote_iovs, xfer_op, skip, xferBenchConfig::num_threads, stats);
+        ret = execTransfer(agent, local_iovs, remote_iovs, xfer_op, skip,
+                           xferBenchConfig::num_threads, stats, prepop_keys_, prepop_start,
+                           prepop_base_dev_ids_);
         if (ret < 0) {
             return std::variant<xferBenchStats, int>(ret);
         }
@@ -1400,8 +2069,9 @@ xferBenchNixlWorker::transfer(size_t block_size,
 
     stats.clear();
 
-    ret = execTransfer(
-        agent, local_iovs, remote_iovs, xfer_op, num_iter, xferBenchConfig::num_threads, stats);
+    ret = execTransfer(agent, local_iovs, remote_iovs, xfer_op, num_iter,
+                       xferBenchConfig::num_threads, stats, prepop_keys_, prepop_start + skip,
+                       prepop_base_dev_ids_);
     if (ret < 0) {
         return std::variant<xferBenchStats, int>(ret);
     }

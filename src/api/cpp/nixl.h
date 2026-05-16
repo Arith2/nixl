@@ -299,6 +299,18 @@ class nixlAgent {
         nixl_status_t
         getXferStatus (nixlXferReqH* req_hndl) const;
 
+        /**
+         * @brief  Return descriptor indices that completed since the previous
+         *         descriptor-level query for this transfer request.
+         *
+         * Backends that do not support descriptor-level completion return
+         * NIXL_ERR_NOT_SUPPORTED. The whole request remains active until
+         * getXferStatus() returns NIXL_SUCCESS or an error.
+         */
+        nixl_status_t
+        getXferDoneIndices(nixlXferReqH* req_hndl,
+                           std::vector<int>& done_indices) const;
+
 
         /**
          * @brief  Get the telemetry data associated with `req_hndl`.

@@ -718,6 +718,16 @@ PYBIND11_MODULE(_bindings, m) {
             },
             py::call_guard<py::gil_scoped_release>())
         .def(
+            "getXferDoneIndices",
+            [](nixlAgent &agent, uintptr_t reqh) -> std::vector<int> {
+                std::vector<int> done_indices;
+                nixl_status_t ret = agent.getXferDoneIndices(
+                    (nixlXferReqH *)reqh, done_indices);
+                throw_nixl_exception(ret);
+                return done_indices;
+            },
+            py::call_guard<py::gil_scoped_release>())
+        .def(
             "getXferTelemetry",
             [](nixlAgent &agent, uintptr_t reqh) -> nixl_xfer_telem_t {
                 nixl_xfer_telem_t telemetry;

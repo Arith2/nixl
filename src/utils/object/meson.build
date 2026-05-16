@@ -17,6 +17,8 @@
 aws_s3 = dependency('aws-cpp-sdk-s3', static: false, required: false)
 aws_s3_crt = dependency('aws-cpp-sdk-s3-crt', static: false, required: false)
 aws_core = dependency('aws-cpp-sdk-core', required: false, static: false)
+cc_obj = meson.get_compiler('cpp')
+aws_crt_cpp = cc_obj.find_library('aws-crt-cpp', required: false)
 
 if aws_s3.found() and aws_s3_crt.found() and aws_core.found()
     # By default aws-cpp-sdk sets c++11 compile flag for the whole project
@@ -34,7 +36,7 @@ if aws_s3.found() and aws_s3_crt.found() and aws_core.found()
     obj_utils_interface = declare_dependency(
         link_with: obj_utils_lib,
         include_directories: [include_directories('.'), include_directories('s3')],
-        dependencies: [partial_aws_s3, partial_aws_s3_crt, partial_aws_core]
+        dependencies: [partial_aws_s3, partial_aws_s3_crt, partial_aws_core, aws_crt_cpp]
     )
 else
     warning('AWS SDK dependencies not found, skipping obj_utils library build')

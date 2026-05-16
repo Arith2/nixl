@@ -1,0 +1,377 @@
+From: Zhuyu <noreply@local>
+Subject: [PATCH] rgw: x-amz-kvcache PUT path mirror of GET
+
+Mirrors the existing kvcache GET (kvcache_stream_daos / RGWGetObj_ObjStore_S3::
+kvcache_stream) onto PUT.  Workflow:
+
+  1 client HTTP PUT with x-amz-kvcache + x-amz-rdma-token
+    -> 1 captain Beast worker
+    -> per layer-aggregate group:
+         a. captain rdma_read_batch(token+offset, group_total)
+            (pulls one group's worth of layer-major bytes from client GPU
+             VRAM into pre_buf_, single 16-WR sliding window)
+         b. DaosReadPool::run_batch(N, daos_array_write per chunk)
+            (16 helper threads, 16 in-flight DAOS RPCs, mirrors GET fan-out)
+    -> empty HTTP 200
+
+Layout convention (chosen to be symmetric with GET): within one
+layer-aggregate group, the client lays out its registered RDMA buffer as
+[chunk0_layers, chunk1_layers, ..., chunkN-1_layers], where each chunkI block
+is `group_size * layer_slice` bytes.  Across groups the offset advances by
+`N * group_size * layer_slice`, identical to how the GET path advances
+group_tok.addr.
+
+Object creation: each chunk is opened (already exists) or created
+(ds3_obj_create) on demand inside the captain's pre-flight loop.  This lets a
+single kvcache PUT both write fresh chunks and overwrite existing ones.
+
+Status: NOT yet built or run.  Apply with `patch -p1` inside
+~/ceph_hsc14_daos_v18.2.7, then `cd build && ninja radosgw`, then restart
+radosgw via vstart per RUNBOOK_DEV_RDMA.md Step 4.
+---
+diff --git a/src/rgw/rgw_rest_s3.h b/src/rgw/rgw_rest_s3.h
+--- a/src/rgw/rgw_rest_s3.h
++++ b/src/rgw/rgw_rest_s3.h
+@@ class RGWPutObj_ObjStore_S3 : public RGWPutObj_ObjStore {
+ private:
+   std::map<std::string, std::string> crypt_http_responses;
+   // RDMA PUT state: parallel post + per-chunk poll pipeline
+   static constexpr size_t kRdmaChunk = 1UL << 20;  // match RGWRdmaServer::kRdmaChunk
+   bool           rdma_done_      = false;
+   bool           rdma_posted_    = false;     // true after rdma_read_post_all()
+   uint64_t       rdma_buf_len_   = 0;         // total transfer size (from token)
+   uint64_t       rdma_buf_ofs_   = 0;         // bytes fed to execute() so far
+   NixlRdmaToken  rdma_saved_tok_{};           // saved token for multi-chunk reads
+
++  // KV cache PUT streaming state: set in get_params() when client sends
++  // x-amz-kvcache + x-amz-rdma-token together. Mirror of the GET-side fields
++  // in RGWGetObj_ObjStore_S3.
++  NixlRdmaToken rdma_put_tok_kv_{};
++  bool          kvcache_put_active_{false};
++  std::vector<std::string> kvcache_chunks_;
++  int           kvcache_num_layers_{0};
++  size_t        kvcache_kv_per_token_per_layer_{0};
++  size_t        kvcache_tokens_per_chunk_{0};
++  int           kvcache_layer_aggregate_{1};
++
+ public:
+   RGWPutObj_ObjStore_S3() {}
+   ~RGWPutObj_ObjStore_S3() override = default;
+
+   int get_params(optional_yield y) override;
+   int get_data(bufferlist& bl) override;
+   void send_response() override;
+
++  // KV cache PUT short-circuit: invoked from RGWPutObj::execute() when
++  // is_kvcache_put_active() returns true. Bypasses the normal get_data()
++  // streaming path entirely.
++  bool is_kvcache_put_active() const { return kvcache_put_active_; }
++  int  kvcache_stream_put();
++
+   int get_encrypt_filter(std::unique_ptr<rgw::sal::DataProcessor> *filter,
+                          rgw::sal::DataProcessor *cb) override;
+   void send_response_end() override;
+
+diff --git a/src/rgw/rgw_rest_s3.cc b/src/rgw/rgw_rest_s3.cc
+--- a/src/rgw/rgw_rest_s3.cc
++++ b/src/rgw/rgw_rest_s3.cc
+@@ int RGWPutObj_ObjStore_S3::get_params(optional_yield y)
+   // ... existing position-string parsing ...
+   return RGWPutObj_ObjStore::get_params(y);
+ }
+
++// New: parse x-amz-kvcache + x-amz-rdma-token at the bottom of get_params().
++// This is added by hand-editing the closing brace of the existing function;
++// see the apply note at the top of the patch file.
++//
++// Replace the existing `return RGWPutObj_ObjStore::get_params(y);` with the
++// block below (inserted just before it).
++
++/* INSERT INTO RGWPutObj_ObjStore_S3::get_params() BEFORE THE FINAL RETURN: */
++
++  // KV cache PUT streaming descriptor (mirror of the GET-side parser in
++  // RGWGetObj_ObjStore_S3::get_params). Requires both x-amz-rdma-token (so
++  // we can pull the data plane via captain rdma_read_batch) and the
++  // x-amz-kvcache JSON descriptor listing N chunk hashes + layer geometry.
++  {
++    const char* rdma_hdr_kv = s->info.env->get("HTTP_X_AMZ_RDMA_TOKEN");
++    const char* kv_hdr      = s->info.env->get("HTTP_X_AMZ_KVCACHE");
++    if (rdma_hdr_kv && kv_hdr &&
++        RGWRdmaServer::parse_token(rdma_hdr_kv, rdma_put_tok_kv_)) {
++      picojson::value v;
++      std::string err = picojson::parse(v, std::string(kv_hdr));
++      if (err.empty() && v.is<picojson::object>()) {
++        auto& obj = v.get<picojson::object>();
++        if (obj.count("chunks") && obj.at("chunks").is<picojson::array>()) {
++          for (auto& c : obj.at("chunks").get<picojson::array>())
++            if (c.is<std::string>())
++              kvcache_chunks_.push_back(c.get<std::string>());
++        }
++        if (obj.count("num_layers"))
++          kvcache_num_layers_ = (int)obj.at("num_layers").get<double>();
++        if (obj.count("kv_per_token_per_layer"))
++          kvcache_kv_per_token_per_layer_ = (size_t)obj.at("kv_per_token_per_layer").get<double>();
++        if (obj.count("tokens_per_chunk"))
++          kvcache_tokens_per_chunk_ = (size_t)obj.at("tokens_per_chunk").get<double>();
++        if (obj.count("layer_aggregate"))
++          kvcache_layer_aggregate_ = (int)obj.at("layer_aggregate").get<double>();
++        if (!kvcache_chunks_.empty() && kvcache_num_layers_ > 0) {
++          kvcache_put_active_ = true;
++          // Parent class field — same trick as the chunk-wise RDMA PUT path
++          // in get_data(): suppress MD5/torrent hashing because the body is
++          // delivered via RDMA, not over the HTTP TCP body.
++          rdma_active_ = true;
++        }
++        ldpp_dout(this, 0) << "x-amz-kvcache PUT: chunks=" << kvcache_chunks_.size()
++          << " layers=" << kvcache_num_layers_
++          << " kv_per_tok_layer=" << kvcache_kv_per_token_per_layer_
++          << " tok_per_chunk=" << kvcache_tokens_per_chunk_
++          << " layer_agg=" << kvcache_layer_aggregate_
++          << " active=" << kvcache_put_active_ << dendl;
++      }
++    }
++  }
++
++/* END INSERT */
++
++
++// New method definition — place anywhere in rgw_rest_s3.cc after the existing
++// RGWPutObj_ObjStore_S3 method definitions. Recommend right after
++// RGWPutObj_ObjStore_S3::send_response_end().
++
++int RGWPutObj_ObjStore_S3::kvcache_stream_put()
++{
++  return rgw::sal::kvcache_write_daos(
++      static_cast<void*>(s->bucket.get()),
++      rdma_put_tok_kv_,
++      kvcache_chunks_,
++      kvcache_num_layers_,
++      kvcache_kv_per_token_per_layer_,
++      kvcache_tokens_per_chunk_,
++      kvcache_layer_aggregate_,
++      this);
++}
+
+diff --git a/src/rgw/rgw_op.cc b/src/rgw/rgw_op.cc
+--- a/src/rgw/rgw_op.cc
++++ b/src/rgw/rgw_op.cc
+@@ void RGWPutObj::execute(optional_yield y)
+ {
+   // ... existing top-of-function code: md5 vars, perfcounter, scope_guard ...
+
+   op_ret = -EINVAL;
+   if (rgw::sal::Object::empty(s->object.get())) {
+     return;
+   }
+
+   if (!s->bucket_exists) {
+     op_ret = -ERR_NO_SUCH_BUCKET;
+     return;
+   }
+
++  // KV cache PUT streaming: short-circuit the normal PUT path when the
++  // request carries x-amz-kvcache + x-amz-rdma-token. Mirror of the GET hook
++  // in RGWGetObj::execute around line 2229.
++  //
++  // Note: get_params() must already have run by this point so that the S3
++  // subclass has parsed the headers and populated kvcache_*_ fields. Per the
++  // GET path the framework calls get_params() before execute(), so the same
++  // ordering applies here.
++  if (auto* s3put = dynamic_cast<RGWPutObj_ObjStore_S3*>(this)) {
++    if (s3put->is_kvcache_put_active()) {
++      op_ret = s3put->kvcache_stream_put();
++      // Send empty HTTP 200 (data already delivered via RDMA + DAOS writes).
++      // Skip MD5 finalization, manifest construction, bucket index writes,
++      // and ETag computation entirely — kvcache PUT objects are
++      // content-addressed by their hash key, not by RGW bucket-index entries.
++      return;
++    }
++  }
+
+   op_ret = get_system_versioning_params(s, &olh_epoch, &version_id);
+   // ... rest of execute() unchanged ...
+ }
+
+diff --git a/src/rgw/rgw_sal_daos.h b/src/rgw/rgw_sal_daos.h
+--- a/src/rgw/rgw_sal_daos.h
++++ b/src/rgw/rgw_sal_daos.h
+@@
+ namespace rgw::sal {
++
++// Forward decl of the existing kvcache GET function (defined in
++// rgw_sal_daos.cc). Declared here so callers in rgw_rest_s3.cc don't have to
++// reach into the .cc file's anonymous-namespace context.
++int kvcache_stream_daos(
++    void* bucket_ptr,
++    const NixlRdmaToken& rdma_tok,
++    const std::vector<std::string>& chunk_keys,
++    int num_layers,
++    size_t kv_per_token_per_layer,
++    size_t tokens_per_chunk,
++    int layer_aggregate,
++    const DoutPrefixProvider* dpp);
++
++// New: kvcache PUT path. Mirror of kvcache_stream_daos that pulls data from
++// the client (via captain rdma_read_batch) and writes via parallel
++// daos_array_write fan-out on the DaosReadPool.
++int kvcache_write_daos(
++    void* bucket_ptr,
++    const NixlRdmaToken& rdma_tok,
++    const std::vector<std::string>& chunk_keys,
++    int num_layers,
++    size_t kv_per_token_per_layer,
++    size_t tokens_per_chunk,
++    int layer_aggregate,
++    const DoutPrefixProvider* dpp);
++
+ }  // namespace rgw::sal
+
+diff --git a/src/rgw/rgw_sal_daos.cc b/src/rgw/rgw_sal_daos.cc
+--- a/src/rgw/rgw_sal_daos.cc
++++ b/src/rgw/rgw_sal_daos.cc
+@@
+ // Add this function definition immediately AFTER kvcache_stream_daos and
+ // BEFORE the closing `}  // namespace rgw::sal`.
+
+ int kvcache_write_daos(
+     void* bucket_ptr,
+     const NixlRdmaToken& rdma_tok,
+     const std::vector<std::string>& chunk_keys,
+     int num_layers,
+     size_t kv_per_token_per_layer,
+     size_t tokens_per_chunk,
+     int layer_aggregate,
+     const DoutPrefixProvider* dpp)
+ {
+   auto& rdma_srv = RGWRdmaServer::instance();
+   if (!rdma_srv.is_ready()) {
+     ldpp_dout(dpp, 0) << "kvcache_write_daos: RDMA server not ready" << dendl;
+     return -EIO;
+   }
+
+   auto* daos_bucket = static_cast<DaosBucket*>(bucket_ptr);
+   if (!daos_bucket || !daos_bucket->ds3b) {
+     ldpp_dout(dpp, 0) << "kvcache_write_daos: DAOS bucket not available" << dendl;
+     return -EIO;
+   }
+
+   const size_t N           = chunk_keys.size();
+   const size_t layer_slice = kv_per_token_per_layer * tokens_per_chunk;
+   const size_t total_bytes = static_cast<size_t>(num_layers) * N * layer_slice;
+
+   ldpp_dout(dpp, 0) << "kvcache_write_daos: N=" << N << " layers=" << num_layers
+     << " layer_slice=" << layer_slice << " total_bytes=" << total_bytes << dendl;
+
+   if (total_bytes > RGWRdmaServer::kPutBufSz) {
+     ldpp_dout(dpp, 0) << "kvcache_write_daos: total_bytes too large for pre_buf_" << dendl;
+     return -EINVAL;
+   }
+
+   // Clamp layer_aggregate
+   if (layer_aggregate <= 0 || layer_aggregate > num_layers)
+     layer_aggregate = num_layers;
+
+   // Pre-open / pre-create all chunk objects. Try open first; if missing,
+   // create. This lets a kvcache PUT both populate fresh chunks and overwrite
+   // existing ones in a single call.
+   std::vector<ds3_obj_t*> chunk_objs(N, nullptr);
+   for (size_t ci = 0; ci < N; ci++) {
+     std::string oid = chunk_keys[ci];
+     if (!oid.empty() && oid[0] == '_') oid = std::string("_") + oid;
+
+     int ret = ds3_obj_open(oid.c_str(), &chunk_objs[ci], daos_bucket->ds3b);
+     if (ret != 0) {
+       // Object doesn't exist yet — create it.
+       ret = ds3_obj_create(oid.c_str(), &chunk_objs[ci], daos_bucket->ds3b);
+     }
+     if (ret != 0) {
+       ldpp_dout(dpp, 0) << "kvcache_write_daos: ds3_obj_open/create failed chunk="
+         << chunk_keys[ci] << " ret=" << ret << dendl;
+       for (size_t j = 0; j < ci; j++) ds3_obj_close(chunk_objs[j]);
+       return ret;
+     }
+   }
+
+   using sc = std::chrono::steady_clock;
+   using ms = std::chrono::milliseconds;
+   auto t_start = sc::now();
+
+   char* assembly = static_cast<char*>(rdma_srv.put_buf());
+   size_t total_rdma_ms = 0;
+   size_t total_write_ms = 0;
+
+   // Per-group: pull one group's bytes from the client into pre_buf_, then
+   // fan out N parallel daos_array_writes through the DaosReadPool.
+   for (int group_start = 0; group_start < num_layers; group_start += layer_aggregate) {
+     int group_end   = std::min(group_start + layer_aggregate, num_layers);
+     int group_size  = group_end - group_start;
+     size_t group_bytes_per_chunk = static_cast<size_t>(group_size) * layer_slice;
+     size_t group_total           = group_bytes_per_chunk * N;
+
+     // Phase A: captain pulls this group's bytes from the client. Mirror of
+     // the GET path's group_tok.addr arithmetic.
+     NixlRdmaToken group_tok = rdma_tok;
+     group_tok.addr += static_cast<uint64_t>(group_start) * (N * layer_slice);
+
+     auto t_rd0 = sc::now();
+     int ret_rd = rdma_srv.rdma_read_batch(group_tok, group_total);
+     if (ret_rd < 0) {
+       ldpp_dout(dpp, 0) << "kvcache_write_daos: rdma_read_batch failed group="
+         << group_start << " ret=" << ret_rd << dendl;
+       for (size_t j = 0; j < N; j++) ds3_obj_close(chunk_objs[j]);
+       return ret_rd;
+     }
+     auto t_rd1 = sc::now();
+     total_rdma_ms += std::chrono::duration_cast<ms>(t_rd1 - t_rd0).count();
+
+     // Phase B: parallel DAOS writes via the persistent thread pool. Same
+     // pool used by kvcache_stream_daos — pool name says "Read" but the
+     // worker_loop runs whatever lambda is dispatched. Up to kPoolSize=16
+     // helpers run concurrently.
+     std::vector<int> per_chunk_ret(N, 0);
+     auto t_wr0 = sc::now();
+
+     DaosReadPool::instance().run_batch(N, [&](size_t ci) {
+       daos_range_t rg;
+       rg.rg_idx = static_cast<uint64_t>(group_start) * layer_slice;
+       rg.rg_len = group_bytes_per_chunk;
+
+       daos_array_iod_t iod{};
+       iod.arr_nr  = 1;
+       iod.arr_rgs = &rg;
+
+       d_iov_t iov;
+       d_iov_set(&iov, assembly + ci * group_bytes_per_chunk, group_bytes_per_chunk);
+       d_sg_list_t sgl{};
+       sgl.sg_nr     = 1;
+       sgl.sg_iovs   = &iov;
+       sgl.sg_nr_out = 1;
+
+       per_chunk_ret[ci] = daos_array_write(get_array_oh(chunk_objs[ci]),
+                                            DAOS_TX_NONE, &iod, &sgl, nullptr);
+     });
+
+     auto t_wr1 = sc::now();
+     total_write_ms += std::chrono::duration_cast<ms>(t_wr1 - t_wr0).count();
+
+     for (size_t ci = 0; ci < N; ci++) {
+       if (per_chunk_ret[ci] != 0) {
+         ldpp_dout(dpp, 0) << "kvcache_write_daos: daos_array_write failed chunk="
+           << ci << " group=" << group_start << " ret=" << per_chunk_ret[ci] << dendl;
+         for (size_t j = 0; j < N; j++) ds3_obj_close(chunk_objs[j]);
+         return -per_chunk_ret[ci];
+       }
+     }
+   }
+
+   auto t_done = sc::now();
+   for (size_t ci = 0; ci < N; ci++) ds3_obj_close(chunk_objs[ci]);
+
+   ldpp_dout(dpp, 0) << "kvcache_write_daos: complete (LAYER-MAJOR Shape2 thread-pool). "
+     << N << " chunks x " << num_layers << " layers in "
+     << std::chrono::duration_cast<ms>(t_done - t_start).count() << "ms "
+     << "(rdma_total=" << total_rdma_ms << "ms daos_write_total=" << total_write_ms
+     << "ms layer_slice=" << layer_slice << " agg=" << layer_aggregate << ")" << dendl;
+
+   return 0;
+ }

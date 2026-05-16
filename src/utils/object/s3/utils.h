@@ -56,6 +56,19 @@ getBucketName(nixl_b_params_t *custom_params);
 template<typename ConfigType>
 void
 configureClientCommon(ConfigType &config, nixl_b_params_t *custom_params) {
+    // Tune client-side concurrency knobs FIRST so they apply even when
+    // custom_params is null. The AWS C++ SDK defaults maxConnections to 25
+    // and doesn't tune libcurl's connection cache; empirically this caps
+    // wire-level concurrent HTTP requests at ~3-4 even when nixlbench drives
+    // 8+ requests in parallel via OpenMP threads. Bumping these knobs
+    // explicitly removes that bottleneck so each PutObjectAsync gets its own
+    // libcurl easy handle and TCP connection without contention.
+    config.maxConnections = 128;        // pool size for libcurl easy handles (default: 25)
+    config.requestTimeoutMs = 60000;    // long enough that multi-MB PUTs don't time out
+    config.connectTimeoutMs = 5000;     // 5s is plenty on LAN
+    config.enableTcpKeepAlive = true;   // keep idle connections warm across runs
+    config.tcpKeepAliveIntervalMs = 30000;
+
     if (!custom_params) return;
 
     auto endpoint_override_it = custom_params->find("endpoint_override");
